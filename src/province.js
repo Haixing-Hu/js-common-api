@@ -85,9 +85,9 @@ class ProvinceApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *     - `cityId: string|number|bigint` 所属城市的ID；
-   *     - `cityCode: string` 所属城市的编码；
-   *     - `cityName: string` 所属城市的名称中应包含的字符串；
+   *     - `countryId: string|number|bigint` 所属国家的ID；
+   *     - `countryCode: string` 所属国家的编码；
+   *     - `countryName: string` 所属国家的名称中应包含的字符串；
    *     - `name: string` 名称中应包含的字符串；
    *     - `phoneArea: string` 电话区号；
    *     - `postalcode: string` 邮政编码；
