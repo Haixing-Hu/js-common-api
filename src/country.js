@@ -10,7 +10,7 @@ import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
   Country,
-  InfoWithEntity,
+  Info,
   Page,
   PageRequest,
 } from '@haixing_hu/common-model';
@@ -97,7 +97,7 @@ class CountryApi {
    * @param {object} sort
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<InfoWithEntity>>}
+   * @return {Promise<Page<Info>>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Country`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -116,7 +116,7 @@ class CountryApi {
       params,
     }).then((data) => {
       const page = Page.create(data);
-      page.content = InfoWithEntity.createArray(page.content);
+      page.content = Info.createArray(page.content);
       logger.info('Successfully list the infos of Country.');
       logger.debug('The page of infos of Country is:', page);
       return page;
@@ -170,8 +170,8 @@ class CountryApi {
    *
    * @param {string|number|bigint} id
    *     `Country`对象的ID。
-   * @return {Promise<InfoWithEntity>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`InfoWithEntity`对象；
+   * @return {Promise<Info>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Info`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
@@ -179,7 +179,7 @@ class CountryApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/country/${stringifyId(id)}/info`).then((data) => {
-      const info = InfoWithEntity.create(data, assignOptions);
+      const info = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Country by ID:', id);
       logger.debug('The info of the Country is:', info);
       return info;
@@ -191,8 +191,8 @@ class CountryApi {
    *
    * @param {string} code
    *     `Country`对象的编码。
-   * @return {Promise<InfoWithEntity>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`InfoWithEntity`对象；
+   * @return {Promise<Info>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Info`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
@@ -200,7 +200,7 @@ class CountryApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/country/code/${code}/info`).then((data) => {
-      const info = InfoWithEntity.create(data, assignOptions);
+      const info = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Country by code:', code);
       logger.debug('The info of the Country is:', info);
       return info;
