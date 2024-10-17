@@ -377,40 +377,6 @@ class CategoryApi {
     return http.delete(`/category/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the Category by code:', code));
   }
-
-  /**
-   * 根据ID，清除一个`Category`对象。
-   *
-   * @param {string} id
-   *     要清除的`Category`对象的ID，该对象不必是已经被标记删除的。
-   * @return {Promise}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
-   *     则解析失败并返回一个`ErrorInfo`对象。
-   */
-  @Log
-  erase(id) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showErasing();
-    return http.delete(`/category/${stringifyId(id)}/erase`)
-      .then(() => logger.info('Successfully erase the Category by ID:', id));
-  }
-
-  /**
-   * 根据编码，清除一个`Category`对象。
-   *
-   * @param {string} code
-   *     要清除的`Category`对象的编码，该对象不必是已经被标记删除的。
-   * @return {Promise}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
-   *     则解析失败并返回一个`ErrorInfo`对象。
-   */
-  @Log
-  eraseByCode(code) {
-    checkArgumentType('code', code, String);
-    loading.showErasing();
-    return http.delete(`/category/code/${code}/erase`)
-      .then(() => logger.info('Successfully erase the Category by code:', code));
-  }
 }
 
 const categoryApi = new CategoryApi();
