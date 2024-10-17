@@ -33,7 +33,7 @@ class CityApi {
    * @param {PageRequest} pageRequest
    *     分页请求。
    * @param {object} criteria
-   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：；
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *     - `provinceId: string|number|bigint` 所属省份的ID；
    *     - `provinceCode: string` 所属省份的编码；
    *     - `provinceName: string` 所属省份的名称中应包含的字符串；
@@ -84,7 +84,7 @@ class CityApi {
    * @param {PageRequest} pageRequest
    *     分页请求。
    * @param {object} criteria
-   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：；
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *     - `provinceId: string|number|bigint` 所属省份的ID；
    *     - `provinceCode: string` 所属省份的编码；
    *     - `provinceName: string` 所属省份的名称中应包含的字符串；
