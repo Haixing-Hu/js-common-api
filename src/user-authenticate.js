@@ -9,8 +9,9 @@
 import { http } from '@haixing_hu/common-app';
 import { toJSON } from '@haixing_hu/common-decorator';
 import {
-  Environment, LoginResponse,
-  RegisterUserParams, SocialNetwork,
+  LoginResponse,
+  RegisterUserParams,
+  SocialNetwork,
   Token,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
@@ -21,7 +22,7 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('UserAuthenticateApi');
 
 /**
- * 用户认证相关API。
+ * 提供用户认证相关API。
  *
  * @author 胡海星
  */
