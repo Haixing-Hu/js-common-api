@@ -16,7 +16,7 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('AppAuthenticateApi');
 
 /**
- * 应用认证相关API。
+ * 提供应用认证相关API。
  *
  * @author 胡海星
  */
