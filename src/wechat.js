@@ -14,7 +14,7 @@ import { Log, Logger } from '@haixing_hu/logging';
 const logger = Logger.getLogger('WechatApi');
 
 /**
- * 微信相关服务API
+ * 提供微信相关服务API
  *
  * @author 胡海星
  */
