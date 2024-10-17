@@ -9,6 +9,7 @@
 import { http } from '@haixing_hu/common-app';
 import { toJSON } from '@haixing_hu/common-decorator';
 import { Environment, Token } from '@haixing_hu/common-model';
+import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
 import { assignOptions, toJsonOptions } from './impl/options';
@@ -50,6 +51,7 @@ class AppAuthenticateApi {
       ...environment,
       platform: 'WEB',
     }, toJsonOptions);
+    loading.show('正在获取应用令牌...');
     return http.post('/authenticate/app', data).then((data) => {
       const token = Token.create(data, assignOptions);
       logger.info('Successfully authenticate the apps.');
@@ -72,6 +74,7 @@ class AppAuthenticateApi {
   checkToken(code, token) {
     checkArgumentType('code', code, String);
     checkArgumentType('token', token, Token);
+    loading.show('正在检查应用令牌...');
     return http.get(`/authenticate/app/check?code=${code}&token=${token.value}`).then((data) => {
       const token = Token.create(data, assignOptions);
       logger.info('The token is valid.');
@@ -100,6 +103,7 @@ class AppAuthenticateApi {
   refreshToken(code, token) {
     checkArgumentType('code', code, String);
     checkArgumentType('token', token, Token);
+    loading.show('正在刷新应用令牌...');
     return http.get(`/authenticate/app/refresh?code=${code}&token=${token.value}`).then((data) => {
       const token = Token.create(data, assignOptions);
       logger.info('The token was successfully refreshed.');
