@@ -13,7 +13,7 @@ import {
   Page,
   PageRequest,
   State,
-  StatefulInfo,
+  EmployeeInfo,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
@@ -133,7 +133,7 @@ class EmployeeApi {
    * @param {object} sort
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<StatefulInfo>>}
+   * @return {Promise<Page<EmployeeInfo>>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Employee`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -152,7 +152,7 @@ class EmployeeApi {
       params,
     }).then((data) => {
       const page = Page.create(data, assignOptions);
-      page.content = StatefulInfo.createArray(page.content, assignOptions);
+      page.content = EmployeeInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of Employee.');
       logger.debug('The page of infos of Employee is:', page);
       return page;
@@ -206,8 +206,8 @@ class EmployeeApi {
    *
    * @param {string|number|bigint} id
    *     `Employee`对象的ID。
-   * @return {Promise<StatefulInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`StatefulInfo`对象；
+   * @return {Promise<EmployeeInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`EmployeeInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
@@ -215,7 +215,7 @@ class EmployeeApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/employee/${stringifyId(id)}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const info = EmployeeInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Employee by ID:', id);
       logger.debug('The info of the Employee is:', info);
       return info;
@@ -227,8 +227,8 @@ class EmployeeApi {
    *
    * @param {string} code
    *     `Employee`对象的编码。
-   * @return {Promise<StatefulInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`StatefulInfo`对象；
+   * @return {Promise<EmployeeInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`EmployeeInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
@@ -236,7 +236,7 @@ class EmployeeApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/employee/code/${code}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const info = EmployeeInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Employee by code:', code);
       logger.debug('The info of the Employee is:', info);
       return info;
