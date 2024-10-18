@@ -42,7 +42,7 @@ class AttachmentApi {
    *     - `categoryCode: string` 所属类别的编码；
    *     - `categoryName: string` 所属类别的名称包含的字符串；
    *     - `title: string` 标题所包含的字符串；
-   *     - `uploadId: string|number|bigint` 所对应的上传的文件的ID；
+   *     - `attachmentId: string|number|bigint` 所对应的上传的文件的ID；
    *     - `state: State|string` 状态；
    *     - `visible: boolean` 是否可见；
    *     - `deleted: boolean` 是否已经被标记删除；
@@ -243,6 +243,20 @@ class AttachmentApi {
     loading.showPurging();
     return http.delete(`/attachment/${stringifyId(id)}/purge`)
       .then(() => logger.info('Successfully purge the Attachment by ID:', id));
+  }
+
+  /**
+   * 根彻底清除全部已被标记删除的`Attachment`对象。
+   *
+   * @return {Promise}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purgeAll() {
+    loading.showPurging();
+    return http.delete('/attachment/purge')
+      .then(() => logger.info('Successfully purge all deleted Attachment.'));
   }
 }
 

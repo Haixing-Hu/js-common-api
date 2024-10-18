@@ -474,6 +474,20 @@ class OrganizationApi {
     return http.delete(`/organization/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the Organization by code:', code));
   }
+
+  /**
+   * 根彻底清除全部已被标记删除的`Organization`对象。
+   *
+   * @return {Promise}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purgeAll() {
+    loading.showPurging();
+    return http.delete('/organization/purge')
+      .then(() => logger.info('Successfully purge all deleted Organization.'));
+  }
 }
 
 const organizationApi = new OrganizationApi();
