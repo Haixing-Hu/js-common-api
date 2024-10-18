@@ -56,7 +56,7 @@ class EmployeeApi {
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
    *     - `jobTitle: string` 职称中应包含的字符串；
-   *     - `state: state|String` 状态；
+   *     - `state: State|string` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `deleted: boolean` 是否已经被标记删除；
    *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -121,7 +121,7 @@ class EmployeeApi {
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
    *     - `jobTitle: string` 职称中应包含的字符串；
-   *     - `state: state|String` 状态；
+   *     - `state: State|string` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `deleted: boolean` 是否已经被标记删除；
    *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；

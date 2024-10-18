@@ -134,7 +134,7 @@ class OrganizationApi {
    *     - `phone: string` 座机号码；
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `state: state|String` 状态；
+   *     - `state: State|string` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `predefined: boolean` 是否是预定义数据；
    *     - `deleted: boolean` 是否已经被标记删除；
