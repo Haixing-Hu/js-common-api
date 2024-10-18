@@ -151,10 +151,10 @@ class DictApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/dict/${stringifyId(id)}`).then((data) => {
-      const dict = Dict.create(data, assignOptions);
+      const result = Dict.create(data, assignOptions);
       logger.info('Successfully get the Dict by ID:', id);
-      logger.debug('The Dict is:', dict);
-      return dict;
+      logger.debug('The Dict is:', result);
+      return result;
     });
   }
 
@@ -172,10 +172,10 @@ class DictApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/dict/code/${code}`).then((data) => {
-      const dict = Dict.create(data, assignOptions);
+      const result = Dict.create(data, assignOptions);
       logger.info('Successfully get the Dict by code:', code);
-      logger.debug('The Dict is:', dict);
-      return dict;
+      logger.debug('The Dict is:', result);
+      return result;
     });
   }
 
@@ -193,10 +193,10 @@ class DictApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/dict/${stringifyId(id)}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Dict by ID:', id);
-      logger.debug('The info of the Dict is:', info);
-      return info;
+      logger.debug('The info of the Dict is:', result);
+      return result;
     });
   }
 
@@ -214,10 +214,10 @@ class DictApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/dict/code/${code}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Dict by code:', code);
-      logger.debug('The info of the Dict is:', info);
-      return info;
+      logger.debug('The info of the Dict is:', result);
+      return result;
     });
   }
 
@@ -236,10 +236,10 @@ class DictApi {
     const data = toJSON(dict, toJsonOptions);
     loading.showAdding();
     return http.post('/dict', data).then((data) => {
-      const dict = Dict.create(data, assignOptions);
-      logger.info('Successfully add the Dict:', dict.id);
-      logger.debug('The added Dict is:', dict);
-      return dict;
+      const result = Dict.create(data, assignOptions);
+      logger.info('Successfully add the Dict:', result.id);
+      logger.debug('The added Dict is:', result);
+      return result;
     });
   }
 
@@ -258,10 +258,10 @@ class DictApi {
     const data = toJSON(dict, toJsonOptions);
     loading.showUpdating();
     return http.put(`/dict/${stringifyId(dict.id)}`, data).then((data) => {
-      const dict = Dict.create(data, assignOptions);
-      logger.info('Successfully update the Dict by ID %s at:', dict.id, dict.modifyTime);
-      logger.debug('The updated Dict is:', dict);
-      return dict;
+      const result = Dict.create(data, assignOptions);
+      logger.info('Successfully update the Dict by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Dict is:', result);
+      return result;
     });
   }
 
@@ -280,10 +280,10 @@ class DictApi {
     const data = toJSON(dict, toJsonOptions);
     loading.showUpdating();
     return http.put(`/dict/code/${dict.code}`, data).then((data) => {
-      const dict = Dict.create(data, assignOptions);
-      logger.info('Successfully update the Dict by code "%s" at:', dict.code, dict.modifyTime);
-      logger.debug('The updated Dict is:', dict);
-      return dict;
+      const result = Dict.create(data, assignOptions);
+      logger.info('Successfully update the Dict by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Dict is:', result);
+      return result;
     });
   }
 

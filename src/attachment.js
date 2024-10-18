@@ -95,10 +95,10 @@ class AttachmentApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/attachment/${stringifyId(id)}}`).then((data) => {
-      const attachment = Attachment.create(data, assignOptions);
+      const result = Attachment.create(data, assignOptions);
       logger.info('Successfully get the Attachment by ID:', id);
-      logger.debug('The Attachment is:', attachment);
-      return attachment;
+      logger.debug('The Attachment is:', result);
+      return result;
     });
   }
 
@@ -117,10 +117,10 @@ class AttachmentApi {
     const data = toJSON(attachment, toJsonOptions);
     loading.showAdding();
     return http.post('/attachment', data).then((data) => {
-      const attachment = Attachment.create(data, assignOptions);
-      logger.info('Successfully add the Attachment:', attachment.id);
-      logger.debug('The added Attachment is:', attachment);
-      return attachment;
+      const result = Attachment.create(data, assignOptions);
+      logger.info('Successfully add the Attachment:', result.id);
+      logger.debug('The added Attachment is:', result);
+      return result;
     });
   }
 
@@ -139,10 +139,10 @@ class AttachmentApi {
     const data = toJSON(attachment, toJsonOptions);
     loading.showUpdating();
     return http.put(`/attachment/${stringifyId(attachment.id)}`, data).then((data) => {
-      const attachment = Attachment.create(data, assignOptions);
-      logger.info('Successfully update the Attachment by ID %s at:', attachment.id, attachment.modifyTime);
-      logger.debug('The updated Attachment is:', attachment);
-      return attachment;
+      const result = Attachment.create(data, assignOptions);
+      logger.info('Successfully update the Attachment by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Attachment is:', result);
+      return result;
     });
   }
 

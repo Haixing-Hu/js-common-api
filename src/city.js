@@ -143,10 +143,10 @@ class CityApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/city/${stringifyId(id)}}`).then((data) => {
-      const city = City.create(data, assignOptions);
+      const result = City.create(data, assignOptions);
       logger.info('Successfully get the City by ID:', id);
-      logger.debug('The City is:', city);
-      return city;
+      logger.debug('The City is:', result);
+      return result;
     });
   }
 
@@ -164,10 +164,10 @@ class CityApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/city/code/${code}`).then((data) => {
-      const city = City.create(data, assignOptions);
+      const result = City.create(data, assignOptions);
       logger.info('Successfully get the City by code:', code);
-      logger.debug('The City is:', city);
-      return city;
+      logger.debug('The City is:', result);
+      return result;
     });
   }
 
@@ -185,10 +185,10 @@ class CityApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/city/${stringifyId(id)}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the City by ID:', id);
-      logger.debug('The info of the City is:', info);
-      return info;
+      logger.debug('The info of the City is:', result);
+      return result;
     });
   }
 
@@ -206,10 +206,10 @@ class CityApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/city/code/${code}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the City by code:', code);
-      logger.debug('The info of the City is:', info);
-      return info;
+      logger.debug('The info of the City is:', result);
+      return result;
     });
   }
 
@@ -228,10 +228,10 @@ class CityApi {
     const data = toJSON(city, toJsonOptions);
     loading.showAdding();
     return http.post('/city', data).then((data) => {
-      const city = City.create(data, assignOptions);
-      logger.info('Successfully add the City:', city.id);
-      logger.debug('The added City is:', city);
-      return city;
+      const result = City.create(data, assignOptions);
+      logger.info('Successfully add the City:', result.id);
+      logger.debug('The added City is:', result);
+      return result;
     });
   }
 
@@ -250,10 +250,10 @@ class CityApi {
     const data = toJSON(city, toJsonOptions);
     loading.showUpdating();
     return http.put(`/city/${stringifyId(city.id)}`, data).then((data) => {
-      const city = City.create(data, assignOptions);
-      logger.info('Successfully update the City by ID %s at:', city.id, city.modifyTime);
-      logger.debug('The updated City is:', city);
-      return city;
+      const result = City.create(data, assignOptions);
+      logger.info('Successfully update the City by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated City is:', result);
+      return result;
     });
   }
 
@@ -272,10 +272,10 @@ class CityApi {
     const data = toJSON(city, toJsonOptions);
     loading.showUpdating();
     return http.put(`/city/code/${city.code}`, data).then((data) => {
-      const city = City.create(data, assignOptions);
-      logger.info('Successfully update the City by code "%s" at:', city.code, city.modifyTime);
-      logger.debug('The updated City is:', city);
-      return city;
+      const result = City.create(data, assignOptions);
+      logger.info('Successfully update the City by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated City is:', result);
+      return result;
     });
   }
 

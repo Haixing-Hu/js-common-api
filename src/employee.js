@@ -173,10 +173,10 @@ class EmployeeApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/employee/${stringifyId(id)}`).then((data) => {
-      const employee = Employee.create(data, assignOptions);
+      const result = Employee.create(data, assignOptions);
       logger.info('Successfully get the Employee by ID:', id);
-      logger.debug('The Employee is:', employee);
-      return employee;
+      logger.debug('The Employee is:', result);
+      return result;
     });
   }
 
@@ -194,10 +194,10 @@ class EmployeeApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/employee/code/${code}`).then((data) => {
-      const employee = Employee.create(data, assignOptions);
+      const result = Employee.create(data, assignOptions);
       logger.info('Successfully get the Employee by code:', code);
-      logger.debug('The Employee is:', employee);
-      return employee;
+      logger.debug('The Employee is:', result);
+      return result;
     });
   }
 
@@ -215,10 +215,10 @@ class EmployeeApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/employee/${stringifyId(id)}/info`).then((data) => {
-      const info = EmployeeInfo.create(data, assignOptions);
+      const result = EmployeeInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Employee by ID:', id);
-      logger.debug('The info of the Employee is:', info);
-      return info;
+      logger.debug('The info of the Employee is:', result);
+      return result;
     });
   }
 
@@ -236,10 +236,10 @@ class EmployeeApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/employee/code/${code}/info`).then((data) => {
-      const info = EmployeeInfo.create(data, assignOptions);
+      const result = EmployeeInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Employee by code:', code);
-      logger.debug('The info of the Employee is:', info);
-      return info;
+      logger.debug('The info of the Employee is:', result);
+      return result;
     });
   }
 
@@ -258,10 +258,10 @@ class EmployeeApi {
     const data = toJSON(employee, toJsonOptions);
     loading.showAdding();
     return http.post('/employee', data).then((data) => {
-      const employee = Employee.create(data, assignOptions);
-      logger.info('Successfully add the Employee:', employee.id);
-      logger.debug('The added Employee is:', employee);
-      return employee;
+      const result = Employee.create(data, assignOptions);
+      logger.info('Successfully add the Employee:', result.id);
+      logger.debug('The added Employee is:', result);
+      return result;
     });
   }
 
@@ -280,10 +280,10 @@ class EmployeeApi {
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
     return http.put(`/employee/${stringifyId(employee.id)}`, data).then((data) => {
-      const employee = Employee.create(data, assignOptions);
-      logger.info('Successfully update the Employee by ID %s at:', employee.id, employee.modifyTime);
-      logger.debug('The updated Employee is:', employee);
-      return employee;
+      const result = Employee.create(data, assignOptions);
+      logger.info('Successfully update the Employee by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Employee is:', result);
+      return result;
     });
   }
 
@@ -302,10 +302,10 @@ class EmployeeApi {
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
     return http.put(`/employee/code/${employee.code}`, data).then((data) => {
-      const employee = Employee.create(data, assignOptions);
-      logger.info('Successfully update the Employee by code "%s" at:', employee.code, employee.modifyTime);
-      logger.debug('The updated Employee is:', employee);
-      return employee;
+      const result = Employee.create(data, assignOptions);
+      logger.info('Successfully update the Employee by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Employee is:', result);
+      return result;
     });
   }
 

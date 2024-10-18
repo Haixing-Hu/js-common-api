@@ -139,10 +139,10 @@ class CategoryApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/category/${stringifyId(id)}}`).then((data) => {
-      const category = Category.create(data, assignOptions);
+      const result = Category.create(data, assignOptions);
       logger.info('Successfully get the Category by ID:', id);
-      logger.debug('The Category is:', category);
-      return category;
+      logger.debug('The Category is:', result);
+      return result;
     });
   }
 
@@ -160,10 +160,10 @@ class CategoryApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/category/code/${code}`).then((data) => {
-      const category = Category.create(data, assignOptions);
+      const result = Category.create(data, assignOptions);
       logger.info('Successfully get the Category by code:', code);
-      logger.debug('The Category is:', category);
-      return category;
+      logger.debug('The Category is:', result);
+      return result;
     });
   }
 
@@ -181,10 +181,10 @@ class CategoryApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/category/${stringifyId(id)}/info`).then((data) => {
-      const info = InfoWithEntity.create(data, assignOptions);
+      const result = InfoWithEntity.create(data, assignOptions);
       logger.info('Successfully get the info of the Category by ID:', id);
-      logger.debug('The info of the Category is:', info);
-      return info;
+      logger.debug('The info of the Category is:', result);
+      return result;
     });
   }
 
@@ -202,10 +202,10 @@ class CategoryApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/category/code/${code}/info`).then((data) => {
-      const info = InfoWithEntity.create(data, assignOptions);
+      const result = InfoWithEntity.create(data, assignOptions);
       logger.info('Successfully get the info of the Category by code:', code);
-      logger.debug('The info of the Category is:', info);
-      return info;
+      logger.debug('The info of the Category is:', result);
+      return result;
     });
   }
 
@@ -224,10 +224,10 @@ class CategoryApi {
     const data = toJSON(category, toJsonOptions);
     loading.showAdding();
     return http.post('/category', data).then((data) => {
-      const category = Category.create(data, assignOptions);
-      logger.info('Successfully add the Category:', category.id);
-      logger.debug('The added Category is:', category);
-      return category;
+      const result = Category.create(data, assignOptions);
+      logger.info('Successfully add the Category:', result.id);
+      logger.debug('The added Category is:', result);
+      return result;
     });
   }
 
@@ -246,10 +246,10 @@ class CategoryApi {
     const data = toJSON(category, toJsonOptions);
     loading.showUpdating();
     return http.put(`/category/${stringifyId(category.id)}`, data).then((data) => {
-      const category = Category.create(data, assignOptions);
-      logger.info('Successfully update the Category by ID %s at:', category.id, category.modifyTime);
-      logger.debug('The updated Category is:', category);
-      return category;
+      const result = Category.create(data, assignOptions);
+      logger.info('Successfully update the Category by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Category is:', result);
+      return result;
     });
   }
 
@@ -268,10 +268,10 @@ class CategoryApi {
     const data = toJSON(category, toJsonOptions);
     loading.showUpdating();
     return http.put(`/category/code/${category.code}`, data).then((data) => {
-      const category = Category.create(data, assignOptions);
-      logger.info('Successfully update the Category by code "%s" at:', category.code, category.modifyTime);
-      logger.debug('The updated Category is:', category);
-      return category;
+      const result = Category.create(data, assignOptions);
+      logger.info('Successfully update the Category by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Category is:', result);
+      return result;
     });
   }
 

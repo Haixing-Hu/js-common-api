@@ -143,10 +143,10 @@ class StreetApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/street/${stringifyId(id)}}`).then((data) => {
-      const street = Street.create(data, assignOptions);
+      const result = Street.create(data, assignOptions);
       logger.info('Successfully get the Street by ID:', id);
-      logger.debug('The Street is:', street);
-      return street;
+      logger.debug('The Street is:', result);
+      return result;
     });
   }
 
@@ -164,10 +164,10 @@ class StreetApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/street/code/${code}`).then((data) => {
-      const street = Street.create(data, assignOptions);
+      const result = Street.create(data, assignOptions);
       logger.info('Successfully get the Street by code:', code);
-      logger.debug('The Street is:', street);
-      return street;
+      logger.debug('The Street is:', result);
+      return result;
     });
   }
 
@@ -185,10 +185,10 @@ class StreetApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/street/${stringifyId(id)}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Street by ID:', id);
-      logger.debug('The info of the Street is:', info);
-      return info;
+      logger.debug('The info of the Street is:', result);
+      return result;
     });
   }
 
@@ -206,10 +206,10 @@ class StreetApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/street/code/${code}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Street by code:', code);
-      logger.debug('The info of the Street is:', info);
-      return info;
+      logger.debug('The info of the Street is:', result);
+      return result;
     });
   }
 
@@ -228,10 +228,10 @@ class StreetApi {
     const data = toJSON(street, toJsonOptions);
     loading.showAdding();
     return http.post('/street', data).then((data) => {
-      const street = Street.create(data, assignOptions);
-      logger.info('Successfully add the Street:', street.id);
-      logger.debug('The added Street is:', street);
-      return street;
+      const result = Street.create(data, assignOptions);
+      logger.info('Successfully add the Street:', result.id);
+      logger.debug('The added Street is:', result);
+      return result;
     });
   }
 
@@ -250,10 +250,10 @@ class StreetApi {
     const data = toJSON(street, toJsonOptions);
     loading.showUpdating();
     return http.put(`/street/${stringifyId(street.id)}`, data).then((data) => {
-      const street = Street.create(data, assignOptions);
-      logger.info('Successfully update the Street by ID %s at:', street.id, street.modifyTime);
-      logger.debug('The updated Street is:', street);
-      return street;
+      const result = Street.create(data, assignOptions);
+      logger.info('Successfully update the Street by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Street is:', result);
+      return result;
     });
   }
 
@@ -272,10 +272,10 @@ class StreetApi {
     const data = toJSON(street, toJsonOptions);
     loading.showUpdating();
     return http.put(`/street/code/${street.code}`, data).then((data) => {
-      const street = Street.create(data, assignOptions);
-      logger.info('Successfully update the Street by code "%s" at:', street.code, street.modifyTime);
-      logger.debug('The updated Street is:', street);
-      return street;
+      const result = Street.create(data, assignOptions);
+      logger.info('Successfully update the Street by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Street is:', result);
+      return result;
     });
   }
 

@@ -137,10 +137,10 @@ class CountryApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/country/${stringifyId(id)}}`).then((data) => {
-      const country = Country.create(data, assignOptions);
+      const result = Country.create(data, assignOptions);
       logger.info('Successfully get the Country by ID:', id);
-      logger.debug('The Country is:', country);
-      return country;
+      logger.debug('The Country is:', result);
+      return result;
     });
   }
 
@@ -158,10 +158,10 @@ class CountryApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/country/code/${code}`).then((data) => {
-      const country = Country.create(data, assignOptions);
+      const result = Country.create(data, assignOptions);
       logger.info('Successfully get the Country by code:', code);
-      logger.debug('The Country is:', country);
-      return country;
+      logger.debug('The Country is:', result);
+      return result;
     });
   }
 
@@ -179,10 +179,10 @@ class CountryApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/country/${stringifyId(id)}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Country by ID:', id);
-      logger.debug('The info of the Country is:', info);
-      return info;
+      logger.debug('The info of the Country is:', result);
+      return result;
     });
   }
 
@@ -200,10 +200,10 @@ class CountryApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/country/code/${code}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Country by code:', code);
-      logger.debug('The info of the Country is:', info);
-      return info;
+      logger.debug('The info of the Country is:', result);
+      return result;
     });
   }
 
@@ -222,10 +222,10 @@ class CountryApi {
     const data = toJSON(country, toJsonOptions);
     loading.showAdding();
     return http.post('/country', data).then((data) => {
-      const country = Country.create(data, assignOptions);
-      logger.info('Successfully add the Country:', country.id);
-      logger.debug('The added Country is:', country);
-      return country;
+      const result = Country.create(data, assignOptions);
+      logger.info('Successfully add the Country:', result.id);
+      logger.debug('The added Country is:', result);
+      return result;
     });
   }
 
@@ -244,10 +244,10 @@ class CountryApi {
     const data = toJSON(country, toJsonOptions);
     loading.showUpdating();
     return http.put(`/country/${stringifyId(country.id)}`, data).then((data) => {
-      const country = Country.create(data, assignOptions);
-      logger.info('Successfully update the Country by ID %s at:', country.id, country.modifyTime);
-      logger.debug('The updated Country is:', country);
-      return country;
+      const result = Country.create(data, assignOptions);
+      logger.info('Successfully update the Country by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Country is:', result);
+      return result;
     });
   }
 
@@ -266,10 +266,10 @@ class CountryApi {
     const data = toJSON(country, toJsonOptions);
     loading.showUpdating();
     return http.put(`/country/code/${country.code}`, data).then((data) => {
-      const country = Country.create(data, assignOptions);
-      logger.info('Successfully update the Country by code "%s" at:', country.code, country.modifyTime);
-      logger.debug('The updated Country is:', country);
-      return country;
+      const result = Country.create(data, assignOptions);
+      logger.info('Successfully update the Country by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Country is:', result);
+      return result;
     });
   }
 

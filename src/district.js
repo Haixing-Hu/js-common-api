@@ -143,10 +143,10 @@ class DistrictApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/district/${stringifyId(id)}}`).then((data) => {
-      const district = District.create(data, assignOptions);
+      const result = District.create(data, assignOptions);
       logger.info('Successfully get the District by ID:', id);
-      logger.debug('The District is:', district);
-      return district;
+      logger.debug('The District is:', result);
+      return result;
     });
   }
 
@@ -164,10 +164,10 @@ class DistrictApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/district/code/${code}`).then((data) => {
-      const district = District.create(data, assignOptions);
+      const result = District.create(data, assignOptions);
       logger.info('Successfully get the District by code:', code);
-      logger.debug('The District is:', district);
-      return district;
+      logger.debug('The District is:', result);
+      return result;
     });
   }
 
@@ -185,10 +185,10 @@ class DistrictApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/district/${stringifyId(id)}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the District by ID:', id);
-      logger.debug('The info of the District is:', info);
-      return info;
+      logger.debug('The info of the District is:', result);
+      return result;
     });
   }
 
@@ -206,10 +206,10 @@ class DistrictApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/district/code/${code}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the District by code:', code);
-      logger.debug('The info of the District is:', info);
-      return info;
+      logger.debug('The info of the District is:', result);
+      return result;
     });
   }
 
@@ -227,10 +227,10 @@ class DistrictApi {
     checkArgumentType('district', district, District);
     loading.showAdding();
     return http.post('/district', toJSON(district, toJsonOptions)).then((data) => {
-      const district = District.create(data, assignOptions);
-      logger.info('Successfully add the District:', district.id);
-      logger.debug('The added District is:', district);
-      return district;
+      const result = District.create(data, assignOptions);
+      logger.info('Successfully add the District:', result.id);
+      logger.debug('The added District is:', result);
+      return result;
     });
   }
 
@@ -248,10 +248,10 @@ class DistrictApi {
     checkArgumentType('district', district, District);
     loading.showUpdating();
     return http.put(`/district/${stringifyId(district.id)}`, toJSON(district, toJsonOptions)).then((data) => {
-      const district = District.create(data, assignOptions);
-      logger.info('Successfully update the District by ID %s at:', district.id, district.modifyTime);
-      logger.debug('The updated District is:', district);
-      return district;
+      const result = District.create(data, assignOptions);
+      logger.info('Successfully update the District by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated District is:', result);
+      return result;
     });
   }
 
@@ -269,10 +269,10 @@ class DistrictApi {
     checkArgumentType('district', district, District);
     loading.showUpdating();
     return http.put(`/district/code/${district.code}`, toJSON(district, toJsonOptions)).then((data) => {
-      const district = District.create(data, assignOptions);
-      logger.info('Successfully update the District by code "%s" at:', district.code, district.modifyTime);
-      logger.debug('The updated District is:', district);
-      return district;
+      const result = District.create(data, assignOptions);
+      logger.info('Successfully update the District by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated District is:', result);
+      return result;
     });
   }
 
@@ -328,7 +328,7 @@ class DistrictApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showRestoring();
     return http.patch(`/district/${stringifyId(id)}`)
-    .then(() => logger.info('Successfully restore the District by ID:', id));
+      .then(() => logger.info('Successfully restore the District by ID:', id));
   }
 
   /**
@@ -345,7 +345,7 @@ class DistrictApi {
     checkArgumentType('code', code, String);
     loading.showRestoring();
     return http.patch(`/district/code/${code}`)
-    .then(() => logger.info('Successfully restore the District by code:', code));
+      .then(() => logger.info('Successfully restore the District by code:', code));
   }
 
   /**

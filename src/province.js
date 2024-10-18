@@ -143,10 +143,10 @@ class ProvinceApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/province/${stringifyId(id)}}`).then((data) => {
-      const province = Province.create(data, assignOptions);
+      const result = Province.create(data, assignOptions);
       logger.info('Successfully get the Province by ID:', id);
-      logger.debug('The Province is:', province);
-      return province;
+      logger.debug('The Province is:', result);
+      return result;
     });
   }
 
@@ -164,10 +164,10 @@ class ProvinceApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/province/code/${code}`).then((data) => {
-      const province = Province.create(data, assignOptions);
+      const result = Province.create(data, assignOptions);
       logger.info('Successfully get the Province by code:', code);
-      logger.debug('The Province is:', province);
-      return province;
+      logger.debug('The Province is:', result);
+      return result;
     });
   }
 
@@ -185,10 +185,10 @@ class ProvinceApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/province/${stringifyId(id)}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Province by ID:', id);
-      logger.debug('The info of the Province is:', info);
-      return info;
+      logger.debug('The info of the Province is:', result);
+      return result;
     });
   }
 
@@ -206,10 +206,10 @@ class ProvinceApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/province/code/${code}/info`).then((data) => {
-      const info = Info.create(data, assignOptions);
+      const result = Info.create(data, assignOptions);
       logger.info('Successfully get the info of the Province by code:', code);
-      logger.debug('The info of the Province is:', info);
-      return info;
+      logger.debug('The info of the Province is:', result);
+      return result;
     });
   }
 
@@ -228,10 +228,10 @@ class ProvinceApi {
     const data = toJSON(province, toJsonOptions);
     loading.showAdding();
     return http.post('/province', data).then((data) => {
-      const province = Province.create(data, assignOptions);
-      logger.info('Successfully add the Province:', province.id);
-      logger.debug('The added Province is:', province);
-      return province;
+      const result = Province.create(data, assignOptions);
+      logger.info('Successfully add the Province:', result.id);
+      logger.debug('The added Province is:', result);
+      return result;
     });
   }
 
@@ -250,10 +250,10 @@ class ProvinceApi {
     const data = toJSON(province, toJsonOptions);
     loading.showUpdating();
     return http.put(`/province/${stringifyId(province.id)}`, data).then((data) => {
-      const province = Province.create(data, assignOptions);
-      logger.info('Successfully update the Province by ID %s at:', province.id, province.modifyTime);
-      logger.debug('The updated Province is:', province);
-      return province;
+      const result = Province.create(data, assignOptions);
+      logger.info('Successfully update the Province by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Province is:', result);
+      return result;
     });
   }
 
@@ -272,10 +272,10 @@ class ProvinceApi {
     const data = toJSON(province, toJsonOptions);
     loading.showUpdating();
     return http.put(`/province/code/${province.code}`, data).then((data) => {
-      const province = Province.create(data, assignOptions);
-      logger.info('Successfully update the Province by code "%s" at:', province.code, province.modifyTime);
-      logger.debug('The updated Province is:', province);
-      return province;
+      const result = Province.create(data, assignOptions);
+      logger.info('Successfully update the Province by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Province is:', result);
+      return result;
     });
   }
 

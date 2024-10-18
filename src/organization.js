@@ -187,10 +187,10 @@ class OrganizationApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/organization/${stringifyId(id)}`).then((data) => {
-      const organization = Organization.create(data, assignOptions);
+      const result = Organization.create(data, assignOptions);
       logger.info('Successfully get the Organization by ID:', id);
-      logger.debug('The Organization is:', organization);
-      return organization;
+      logger.debug('The Organization is:', result);
+      return result;
     });
   }
 
@@ -208,10 +208,10 @@ class OrganizationApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/organization/code/${code}`).then((data) => {
-      const organization = Organization.create(data, assignOptions);
+      const result = Organization.create(data, assignOptions);
       logger.info('Successfully get the Organization by code:', code);
-      logger.debug('The Organization is:', organization);
-      return organization;
+      logger.debug('The Organization is:', result);
+      return result;
     });
   }
 
@@ -229,10 +229,10 @@ class OrganizationApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/organization/${stringifyId(id)}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Organization by ID:', id);
-      logger.debug('The info of the Organization is:', info);
-      return info;
+      logger.debug('The info of the Organization is:', result);
+      return result;
     });
   }
 
@@ -250,10 +250,10 @@ class OrganizationApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/organization/code/${code}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Organization by code:', code);
-      logger.debug('The info of the Organization is:', info);
-      return info;
+      logger.debug('The info of the Organization is:', result);
+      return result;
     });
   }
 
@@ -272,10 +272,10 @@ class OrganizationApi {
     const data = toJSON(organization, toJsonOptions);
     loading.showAdding();
     return http.post('/organization', data).then((data) => {
-      const organization = Organization.create(data, assignOptions);
-      logger.info('Successfully add the Organization:', organization.id);
-      logger.debug('The added Organization is:', organization);
-      return organization;
+      const result = Organization.create(data, assignOptions);
+      logger.info('Successfully add the Organization:', result.id);
+      logger.debug('The added Organization is:', result);
+      return result;
     });
   }
 
@@ -294,10 +294,10 @@ class OrganizationApi {
     const data = toJSON(organization, toJsonOptions);
     loading.showUpdating();
     return http.put(`/organization/${stringifyId(organization.id)}`, data).then((data) => {
-      const organization = Organization.create(data, assignOptions);
-      logger.info('Successfully update the Organization by ID %s at:', organization.id, organization.modifyTime);
-      logger.debug('The updated Organization is:', organization);
-      return organization;
+      const result = Organization.create(data, assignOptions);
+      logger.info('Successfully update the Organization by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Organization is:', result);
+      return result;
     });
   }
 
@@ -316,10 +316,10 @@ class OrganizationApi {
     const data = toJSON(organization, toJsonOptions);
     loading.showUpdating();
     return http.put(`/organization/code/${organization.code}`, data).then((data) => {
-      const organization = Organization.create(data, assignOptions);
-      logger.info('Successfully update the Organization by code "%s" at:', organization.code, organization.modifyTime);
-      logger.debug('The updated Organization is:', organization);
-      return organization;
+      const result = Organization.create(data, assignOptions);
+      logger.info('Successfully update the Organization by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Organization is:', result);
+      return result;
     });
   }
 

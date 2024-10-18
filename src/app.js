@@ -149,10 +149,10 @@ class AppApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/app/${stringifyId(id)}`).then((data) => {
-      const app = App.create(data, assignOptions);
+      const result = App.create(data, assignOptions);
       logger.info('Successfully get the App by ID:', id);
-      logger.debug('The App is:', app);
-      return app;
+      logger.debug('The App is:', result);
+      return result;
     });
   }
 
@@ -170,10 +170,10 @@ class AppApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/app/code/${code}`).then((data) => {
-      const app = App.create(data, assignOptions);
+      const result = App.create(data, assignOptions);
       logger.info('Successfully get the App by code:', code);
-      logger.debug('The App is:', app);
-      return app;
+      logger.debug('The App is:', result);
+      return result;
     });
   }
 
@@ -191,10 +191,10 @@ class AppApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/app/${stringifyId(id)}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the App by ID:', id);
-      logger.debug('The info of the App is:', info);
-      return info;
+      logger.debug('The info of the App is:', result);
+      return result;
     });
   }
 
@@ -212,10 +212,10 @@ class AppApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/app/code/${code}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the App by code:', code);
-      logger.debug('The info of the App is:', info);
-      return info;
+      logger.debug('The info of the App is:', result);
+      return result;
     });
   }
 
@@ -234,10 +234,10 @@ class AppApi {
     const data = toJSON(app, toJsonOptions);
     loading.showAdding();
     return http.post('/app', data).then((data) => {
-      const app = App.create(data, assignOptions);
-      logger.info('Successfully add the App:', app.id);
-      logger.debug('The added App is:', app);
-      return app;
+      const result = App.create(data, assignOptions);
+      logger.info('Successfully add the App:', result.id);
+      logger.debug('The added App is:', result);
+      return result;
     });
   }
 
@@ -256,10 +256,10 @@ class AppApi {
     const data = toJSON(app, toJsonOptions);
     loading.showUpdating();
     return http.put(`/app/${stringifyId(app.id)}`, data).then((data) => {
-      const app = App.create(data, assignOptions);
-      logger.info('Successfully update the App by ID %s at:', app.id, app.modifyTime);
-      logger.debug('The updated App is:', app);
-      return app;
+      const result = App.create(data, assignOptions);
+      logger.info('Successfully update the App by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated App is:', result);
+      return result;
     });
   }
 
@@ -278,10 +278,10 @@ class AppApi {
     const data = toJSON(app, toJsonOptions);
     loading.showUpdating();
     return http.put(`/app/code/${app.code}`, data).then((data) => {
-      const app = App.create(data, assignOptions);
-      logger.info('Successfully update the App by code "%s" at:', app.code, app.modifyTime);
-      logger.debug('The updated App is:', app);
-      return app;
+      const result = App.create(data, assignOptions);
+      logger.info('Successfully update the App by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated App is:', result);
+      return result;
     });
   }
 

@@ -195,10 +195,10 @@ class DepartmentApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/department/${stringifyId(id)}`).then((data) => {
-      const department = Department.create(data, assignOptions);
+      const result = Department.create(data, assignOptions);
       logger.info('Successfully get the Department by ID:', id);
-      logger.debug('The Department is:', department);
-      return department;
+      logger.debug('The Department is:', result);
+      return result;
     });
   }
 
@@ -216,10 +216,10 @@ class DepartmentApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/department/code/${code}`).then((data) => {
-      const department = Department.create(data, assignOptions);
+      const result = Department.create(data, assignOptions);
       logger.info('Successfully get the Department by code:', code);
-      logger.debug('The Department is:', department);
-      return department;
+      logger.debug('The Department is:', result);
+      return result;
     });
   }
 
@@ -237,10 +237,10 @@ class DepartmentApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/department/${stringifyId(id)}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Department by ID:', id);
-      logger.debug('The info of the Department is:', info);
-      return info;
+      logger.debug('The info of the Department is:', result);
+      return result;
     });
   }
 
@@ -258,10 +258,10 @@ class DepartmentApi {
     checkArgumentType('code', code, String);
     loading.showGetting();
     return http.get(`/department/code/${code}/info`).then((data) => {
-      const info = StatefulInfo.create(data, assignOptions);
+      const result = StatefulInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the Department by code:', code);
-      logger.debug('The info of the Department is:', info);
-      return info;
+      logger.debug('The info of the Department is:', result);
+      return result;
     });
   }
 
@@ -280,10 +280,10 @@ class DepartmentApi {
     const data = toJSON(department, toJsonOptions);
     loading.showAdding();
     return http.post('/department', data).then((data) => {
-      const department = Department.create(data, assignOptions);
-      logger.info('Successfully add the Department:', department.id);
-      logger.debug('The added Department is:', department);
-      return department;
+      const result = Department.create(data, assignOptions);
+      logger.info('Successfully add the Department:', result.id);
+      logger.debug('The added Department is:', result);
+      return result;
     });
   }
 
@@ -302,10 +302,10 @@ class DepartmentApi {
     const data = toJSON(department, toJsonOptions);
     loading.showUpdating();
     return http.put(`/department/${stringifyId(department.id)}`, data).then((data) => {
-      const department = Department.create(data, assignOptions);
-      logger.info('Successfully update the Department by ID %s at:', department.id, department.modifyTime);
-      logger.debug('The updated Department is:', department);
-      return department;
+      const result = Department.create(data, assignOptions);
+      logger.info('Successfully update the Department by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated Department is:', result);
+      return result;
     });
   }
 
@@ -324,10 +324,10 @@ class DepartmentApi {
     const data = toJSON(department, toJsonOptions);
     loading.showUpdating();
     return http.put(`/department/code/${department.code}`, data).then((data) => {
-      const department = Department.create(data, assignOptions);
-      logger.info('Successfully update the Department by code "%s" at:', department.code, department.modifyTime);
-      logger.debug('The updated Department is:', department);
-      return department;
+      const result = Department.create(data, assignOptions);
+      logger.info('Successfully update the Department by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated Department is:', result);
+      return result;
     });
   }
 

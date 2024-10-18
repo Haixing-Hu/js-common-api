@@ -84,10 +84,10 @@ class UploadApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
     return http.get(`/upload/${stringifyId(id)}}`).then((data) => {
-      const upload = Upload.create(data, assignOptions);
+      const result = Upload.create(data, assignOptions);
       logger.info('Successfully get the Upload by ID:', id);
-      logger.debug('The Upload is:', upload);
-      return upload;
+      logger.debug('The Upload is:', result);
+      return result;
     });
   }
 
