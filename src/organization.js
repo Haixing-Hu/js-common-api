@@ -17,7 +17,6 @@ import {
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
-import { Json } from '@haixing_hu/json';
 import { Log, Logger } from '@haixing_hu/logging';
 import { assignOptions, toJsonOptions } from './impl/options';
 
@@ -338,7 +337,7 @@ class OrganizationApi {
   updateState(id, state) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('state', state, State);
-    const data = { state: Json.stringify(state) };
+    const data = { state: String(state) };
     loading.showUpdating();
     return http.put(`/organization/${stringifyId(id)}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the Organization by ID %s at:', id, timestamp);
@@ -361,7 +360,7 @@ class OrganizationApi {
   updateStateByCode(code, state) {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, State);
-    const data = { state: Json.stringify(state) };
+    const data = { state: String(state) };
     loading.showUpdating();
     return http.put(`/organization/code/${code}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the Organization by code "%s" at:', code, timestamp);

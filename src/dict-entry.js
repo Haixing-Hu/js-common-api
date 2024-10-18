@@ -214,16 +214,16 @@ class DictEntryApi {
   /**
    * 添加一个`DictEntry`对象。
    *
-   * @param {DictEntry} dict
+   * @param {DictEntry} entry
    *     要添加的`DictEntry`对象。
    * @return {Promise<DictEntry>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(dict) {
-    checkArgumentType('dict', dict, DictEntry);
-    const data = toJSON(dict, toJsonOptions);
+  add(entry) {
+    checkArgumentType('entry', entry, DictEntry);
+    const data = toJSON(entry, toJsonOptions);
     loading.showAdding();
     return http.post('/dict/entry', data).then((data) => {
       const result = DictEntry.create(data, assignOptions);
@@ -236,18 +236,18 @@ class DictEntryApi {
   /**
    * 根据ID，更新一个`DictEntry`对象。
    *
-   * @param {DictEntry} dict
+   * @param {DictEntry} entry
    *     要更新的`DictEntry`对象的数据，根据其ID确定要更新的对象。
    * @return {Promise<DictEntry>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(dict) {
-    checkArgumentType('dict', dict, DictEntry);
-    const data = toJSON(dict, toJsonOptions);
+  update(entry) {
+    checkArgumentType('entry', entry, DictEntry);
+    const data = toJSON(entry, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/entry/${stringifyId(dict.id)}`, data).then((data) => {
+    return http.put(`/dict/entry/${stringifyId(entry.id)}`, data).then((data) => {
       const result = DictEntry.create(data, assignOptions);
       logger.info('Successfully update the DictEntry by ID %s at:', result.id, result.modifyTime);
       logger.debug('The updated DictEntry is:', result);
@@ -258,18 +258,18 @@ class DictEntryApi {
   /**
    * 根据编码，更新一个`DictEntry`对象。
    *
-   * @param {DictEntry} dict
+   * @param {DictEntry} entry
    *     要更新的`DictEntry`对象的数据，根据其编码确定要更新的对象。
    * @return {Promise<DictEntry>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(dict) {
-    checkArgumentType('dict', dict, DictEntry);
-    const data = toJSON(dict, toJsonOptions);
+  updateByCode(entry) {
+    checkArgumentType('entry', entry, DictEntry);
+    const data = toJSON(entry, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/entry/code/${dict.code}`, data).then((data) => {
+    return http.put(`/dict/entry/code/${entry.code}`, data).then((data) => {
       const result = DictEntry.create(data, assignOptions);
       logger.info('Successfully update the DictEntry by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated DictEntry is:', result);

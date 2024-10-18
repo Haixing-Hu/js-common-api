@@ -10,7 +10,6 @@ import { http } from '@haixing_hu/common-app';
 import { VerifyScene } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
-import { Json } from '@haixing_hu/json';
 import { Log, Logger } from '@haixing_hu/logging';
 
 const logger = Logger.getLogger('VerifyCodeApi');
@@ -38,7 +37,7 @@ class VerifyCodeApi {
     logger.info('Sending verification code to the mobile:', mobile);
     const params = new URLSearchParams();
     params.append('mobile', mobile);
-    params.append('scene', Json.stringify(scene));
+    params.append('scene', String(scene));
     loading.show('正在发送手机验证码...');
     return http.post('/verify-code/sms', params, {
       headers: {
@@ -64,7 +63,7 @@ class VerifyCodeApi {
     logger.info('Sending verification code to the email:', email);
     const params = new URLSearchParams();
     params.append('email', email);
-    params.append('scene', Json.stringify(scene));
+    params.append('scene', String(scene));
     loading.show('正在发送邮箱验证码...');
     return http.post('/verify-code/email', params, {
       headers: {
