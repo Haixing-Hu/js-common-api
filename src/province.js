@@ -225,8 +225,9 @@ class ProvinceApi {
   @Log
   add(province) {
     checkArgumentType('province', province, Province);
+    const data = toJSON(province, toJsonOptions);
     loading.showAdding();
-    return http.post('/province', toJSON(province, toJsonOptions)).then((data) => {
+    return http.post('/province', data).then((data) => {
       const province = Province.create(data, assignOptions);
       logger.info('Successfully add the Province:', province.id);
       logger.debug('The added Province is:', province);
@@ -246,8 +247,9 @@ class ProvinceApi {
   @Log
   update(province) {
     checkArgumentType('province', province, Province);
+    const data = toJSON(province, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/province/${stringifyId(province.id)}`, toJSON(province, toJsonOptions)).then((data) => {
+    return http.put(`/province/${stringifyId(province.id)}`, data).then((data) => {
       const province = Province.create(data, assignOptions);
       logger.info('Successfully update the Province by ID %s at:', province.id, province.modifyTime);
       logger.debug('The updated Province is:', province);
@@ -267,8 +269,9 @@ class ProvinceApi {
   @Log
   updateByCode(province) {
     checkArgumentType('province', province, Province);
+    const data = toJSON(province, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/province/code/${province.code}`, toJSON(province, toJsonOptions)).then((data) => {
+    return http.put(`/province/code/${province.code}`, data).then((data) => {
       const province = Province.create(data, assignOptions);
       logger.info('Successfully update the Province by code "%s" at:', province.code, province.modifyTime);
       logger.debug('The updated Province is:', province);

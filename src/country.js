@@ -219,8 +219,9 @@ class CountryApi {
   @Log
   add(country) {
     checkArgumentType('country', country, Country);
+    const data = toJSON(country, toJsonOptions);
     loading.showAdding();
-    return http.post('/country', toJSON(country, toJsonOptions)).then((data) => {
+    return http.post('/country', data).then((data) => {
       const country = Country.create(data, assignOptions);
       logger.info('Successfully add the Country:', country.id);
       logger.debug('The added Country is:', country);
@@ -240,8 +241,9 @@ class CountryApi {
   @Log
   update(country) {
     checkArgumentType('country', country, Country);
+    const data = toJSON(country, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/country/${stringifyId(country.id)}`, toJSON(country, toJsonOptions)).then((data) => {
+    return http.put(`/country/${stringifyId(country.id)}`, data).then((data) => {
       const country = Country.create(data, assignOptions);
       logger.info('Successfully update the Country by ID %s at:', country.id, country.modifyTime);
       logger.debug('The updated Country is:', country);
@@ -261,8 +263,9 @@ class CountryApi {
   @Log
   updateByCode(country) {
     checkArgumentType('country', country, Country);
+    const data = toJSON(country, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/country/code/${country.code}`, toJSON(country, toJsonOptions)).then((data) => {
+    return http.put(`/country/code/${country.code}`, data).then((data) => {
       const country = Country.create(data, assignOptions);
       logger.info('Successfully update the Country by code "%s" at:', country.code, country.modifyTime);
       logger.debug('The updated Country is:', country);

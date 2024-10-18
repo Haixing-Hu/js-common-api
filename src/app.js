@@ -17,6 +17,7 @@ import {
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
+import { Json } from '@haixing_hu/json';
 import { Log, Logger } from '@haixing_hu/logging';
 import { assignOptions, toJsonOptions } from './impl/options';
 
@@ -41,7 +42,7 @@ class AppApi {
    *     - `categoryId: string|number|bigint` 所属类别的ID；
    *     - `categoryCode: string` 所属类别的编码；
    *     - `categoryName: string` 所属类别的名称包含的字符串；
-   *     - `state: string|State` 状态；
+   *     - `state: State|string` 状态；
    *     - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *     - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
    *     - `predefined: boolean` 是否是预定义数据；
@@ -94,7 +95,7 @@ class AppApi {
    *     - `categoryId: string|number|bigint` 所属类别的ID；
    *     - `categoryCode: string` 所属类别的编码；
    *     - `categoryName: string` 所属类别的名称包含的字符串；
-   *     - `state: string|State` 状态；
+   *     - `state: State|string` 状态；
    *     - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *     - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
    *     - `predefined: boolean` 是否是预定义数据；
@@ -230,8 +231,9 @@ class AppApi {
   @Log
   add(app) {
     checkArgumentType('app', app, App);
+    const data = toJSON(app, toJsonOptions);
     loading.showAdding();
-    return http.post('/app', toJSON(app, toJsonOptions)).then((data) => {
+    return http.post('/app', data).then((data) => {
       const app = App.create(data, assignOptions);
       logger.info('Successfully add the App:', app.id);
       logger.debug('The added App is:', app);
@@ -251,8 +253,9 @@ class AppApi {
   @Log
   update(app) {
     checkArgumentType('app', app, App);
+    const data = toJSON(app, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/app/${stringifyId(app.id)}`, toJSON(app, toJsonOptions)).then((data) => {
+    return http.put(`/app/${stringifyId(app.id)}`, data).then((data) => {
       const app = App.create(data, assignOptions);
       logger.info('Successfully update the App by ID %s at:', app.id, app.modifyTime);
       logger.debug('The updated App is:', app);
@@ -272,8 +275,9 @@ class AppApi {
   @Log
   updateByCode(app) {
     checkArgumentType('app', app, App);
+    const data = toJSON(app, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/app/code/${app.code}`, toJSON(app, toJsonOptions)).then((data) => {
+    return http.put(`/app/code/${app.code}`, data).then((data) => {
       const app = App.create(data, assignOptions);
       logger.info('Successfully update the App by code "%s" at:', app.code, app.modifyTime);
       logger.debug('The updated App is:', app);
@@ -296,8 +300,9 @@ class AppApi {
   updateState(id, state) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('state', state, State);
+    const data = { state: Json.stringify(state) };
     loading.showUpdating();
-    return http.put(`/app/${stringifyId(id)}/state`, { state: state.value }).then((timestamp) => {
+    return http.put(`/app/${stringifyId(id)}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the App by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -318,8 +323,9 @@ class AppApi {
   updateStateByCode(code, state) {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, State);
+    const data = { state: Json.stringify(state) };
     loading.showUpdating();
-    return http.put(`/app/code/${code}/state`, { state: state.value }).then((timestamp) => {
+    return http.put(`/app/code/${code}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the App by code "%s" at:', code, timestamp);
       return timestamp;
     });

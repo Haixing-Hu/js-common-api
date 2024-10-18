@@ -225,8 +225,9 @@ class CityApi {
   @Log
   add(city) {
     checkArgumentType('city', city, City);
+    const data = toJSON(city, toJsonOptions);
     loading.showAdding();
-    return http.post('/city', toJSON(city, toJsonOptions)).then((data) => {
+    return http.post('/city', data).then((data) => {
       const city = City.create(data, assignOptions);
       logger.info('Successfully add the City:', city.id);
       logger.debug('The added City is:', city);
@@ -246,8 +247,9 @@ class CityApi {
   @Log
   update(city) {
     checkArgumentType('city', city, City);
+    const data = toJSON(city, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/city/${stringifyId(city.id)}`, toJSON(city, toJsonOptions)).then((data) => {
+    return http.put(`/city/${stringifyId(city.id)}`, data).then((data) => {
       const city = City.create(data, assignOptions);
       logger.info('Successfully update the City by ID %s at:', city.id, city.modifyTime);
       logger.debug('The updated City is:', city);
@@ -267,8 +269,9 @@ class CityApi {
   @Log
   updateByCode(city) {
     checkArgumentType('city', city, City);
+    const data = toJSON(city, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/city/code/${city.code}`, toJSON(city, toJsonOptions)).then((data) => {
+    return http.put(`/city/code/${city.code}`, data).then((data) => {
       const city = City.create(data, assignOptions);
       logger.info('Successfully update the City by code "%s" at:', city.code, city.modifyTime);
       logger.debug('The updated City is:', city);

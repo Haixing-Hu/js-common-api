@@ -17,6 +17,7 @@ import {
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
+import { Json } from '@haixing_hu/json';
 import { Log, Logger } from '@haixing_hu/logging';
 import { assignOptions, toJsonOptions } from './impl/options';
 
@@ -65,7 +66,7 @@ class DepartmentApi {
    *     - `phone: string` 座机号码；
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `state: string|State` 状态；
+   *     - `state: state|String` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `predefined: boolean` 是否是预定义数据；
    *     - `deleted: boolean` 是否已经被标记删除；
@@ -141,7 +142,7 @@ class DepartmentApi {
    *     - `phone: string` 座机号码；
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `state: string|State` 状态；
+   *     - `state: state|String` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `predefined: boolean` 是否是预定义数据；
    *     - `deleted: boolean` 是否已经被标记删除；
@@ -276,8 +277,9 @@ class DepartmentApi {
   @Log
   add(department) {
     checkArgumentType('department', department, Department);
+    const data = toJSON(department, toJsonOptions);
     loading.showAdding();
-    return http.post('/department', toJSON(department, toJsonOptions)).then((data) => {
+    return http.post('/department', data).then((data) => {
       const department = Department.create(data, assignOptions);
       logger.info('Successfully add the Department:', department.id);
       logger.debug('The added Department is:', department);
@@ -297,8 +299,9 @@ class DepartmentApi {
   @Log
   update(department) {
     checkArgumentType('department', department, Department);
+    const data = toJSON(department, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/department/${stringifyId(department.id)}`, toJSON(department, toJsonOptions)).then((data) => {
+    return http.put(`/department/${stringifyId(department.id)}`, data).then((data) => {
       const department = Department.create(data, assignOptions);
       logger.info('Successfully update the Department by ID %s at:', department.id, department.modifyTime);
       logger.debug('The updated Department is:', department);
@@ -318,8 +321,9 @@ class DepartmentApi {
   @Log
   updateByCode(department) {
     checkArgumentType('department', department, Department);
+    const data = toJSON(department, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/department/code/${department.code}`, toJSON(department, toJsonOptions)).then((data) => {
+    return http.put(`/department/code/${department.code}`, data).then((data) => {
       const department = Department.create(data, assignOptions);
       logger.info('Successfully update the Department by code "%s" at:', department.code, department.modifyTime);
       logger.debug('The updated Department is:', department);
@@ -342,8 +346,9 @@ class DepartmentApi {
   updateState(id, state) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('state', state, State);
+    const data = { state: Json.stringify(state) };
     loading.showUpdating();
-    return http.put(`/department/${stringifyId(id)}/state`, { state: state.value }).then((timestamp) => {
+    return http.put(`/department/${stringifyId(id)}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the Department by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -364,8 +369,9 @@ class DepartmentApi {
   updateStateByCode(code, state) {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, State);
+    const data = { state: Json.stringify(state) };
     loading.showUpdating();
-    return http.put(`/department/code/${code}/state`, { state: state.value }).then((timestamp) => {
+    return http.put(`/department/code/${code}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the Department by code "%s" at:', code, timestamp);
       return timestamp;
     });

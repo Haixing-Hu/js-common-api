@@ -225,8 +225,9 @@ class StreetApi {
   @Log
   add(street) {
     checkArgumentType('street', street, Street);
+    const data = toJSON(street, toJsonOptions);
     loading.showAdding();
-    return http.post('/street', toJSON(street, toJsonOptions)).then((data) => {
+    return http.post('/street', data).then((data) => {
       const street = Street.create(data, assignOptions);
       logger.info('Successfully add the Street:', street.id);
       logger.debug('The added Street is:', street);
@@ -246,8 +247,9 @@ class StreetApi {
   @Log
   update(street) {
     checkArgumentType('street', street, Street);
+    const data = toJSON(street, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/street/${stringifyId(street.id)}`, toJSON(street, toJsonOptions)).then((data) => {
+    return http.put(`/street/${stringifyId(street.id)}`, data).then((data) => {
       const street = Street.create(data, assignOptions);
       logger.info('Successfully update the Street by ID %s at:', street.id, street.modifyTime);
       logger.debug('The updated Street is:', street);
@@ -267,8 +269,9 @@ class StreetApi {
   @Log
   updateByCode(street) {
     checkArgumentType('street', street, Street);
+    const data = toJSON(street, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/street/code/${street.code}`, toJSON(street, toJsonOptions)).then((data) => {
+    return http.put(`/street/code/${street.code}`, data).then((data) => {
       const street = Street.create(data, assignOptions);
       logger.info('Successfully update the Street by code "%s" at:', street.code, street.modifyTime);
       logger.debug('The updated Street is:', street);

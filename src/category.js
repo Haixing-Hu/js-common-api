@@ -221,8 +221,9 @@ class CategoryApi {
   @Log
   add(category) {
     checkArgumentType('category', category, Category);
+    const data = toJSON(category, toJsonOptions);
     loading.showAdding();
-    return http.post('/category', toJSON(category, toJsonOptions)).then((data) => {
+    return http.post('/category', data).then((data) => {
       const category = Category.create(data, assignOptions);
       logger.info('Successfully add the Category:', category.id);
       logger.debug('The added Category is:', category);
@@ -242,8 +243,9 @@ class CategoryApi {
   @Log
   update(category) {
     checkArgumentType('category', category, Category);
+    const data = toJSON(category, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/category/${stringifyId(category.id)}`, toJSON(category, toJsonOptions)).then((data) => {
+    return http.put(`/category/${stringifyId(category.id)}`, data).then((data) => {
       const category = Category.create(data, assignOptions);
       logger.info('Successfully update the Category by ID %s at:', category.id, category.modifyTime);
       logger.debug('The updated Category is:', category);
@@ -263,8 +265,9 @@ class CategoryApi {
   @Log
   updateByCode(category) {
     checkArgumentType('category', category, Category);
+    const data = toJSON(category, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/category/code/${category.code}`, toJSON(category, toJsonOptions)).then((data) => {
+    return http.put(`/category/code/${category.code}`, data).then((data) => {
       const category = Category.create(data, assignOptions);
       logger.info('Successfully update the Category by code "%s" at:', category.code, category.modifyTime);
       logger.debug('The updated Category is:', category);

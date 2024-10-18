@@ -17,6 +17,7 @@ import {
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
+import { Json } from '@haixing_hu/json';
 import { Log, Logger } from '@haixing_hu/logging';
 import { assignOptions, toJsonOptions } from './impl/options';
 
@@ -61,7 +62,7 @@ class OrganizationApi {
    *     - `phone: string` 座机号码；
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `state: string|State` 状态；
+   *     - `state: State|string` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `predefined: boolean` 是否是预定义数据；
    *     - `deleted: boolean` 是否已经被标记删除；
@@ -133,7 +134,7 @@ class OrganizationApi {
    *     - `phone: string` 座机号码；
    *     - `mobile: string` 手机号码；
    *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `state: string|State` 状态；
+   *     - `state: state|String` 状态；
    *     - `test: boolean` 是否是测试数据；
    *     - `predefined: boolean` 是否是预定义数据；
    *     - `deleted: boolean` 是否已经被标记删除；
@@ -268,8 +269,9 @@ class OrganizationApi {
   @Log
   add(organization) {
     checkArgumentType('organization', organization, Organization);
+    const data = toJSON(organization, toJsonOptions);
     loading.showAdding();
-    return http.post('/organization', toJSON(organization, toJsonOptions)).then((data) => {
+    return http.post('/organization', data).then((data) => {
       const organization = Organization.create(data, assignOptions);
       logger.info('Successfully add the Organization:', organization.id);
       logger.debug('The added Organization is:', organization);
@@ -289,8 +291,9 @@ class OrganizationApi {
   @Log
   update(organization) {
     checkArgumentType('organization', organization, Organization);
+    const data = toJSON(organization, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/organization/${stringifyId(organization.id)}`, toJSON(organization, toJsonOptions)).then((data) => {
+    return http.put(`/organization/${stringifyId(organization.id)}`, data).then((data) => {
       const organization = Organization.create(data, assignOptions);
       logger.info('Successfully update the Organization by ID %s at:', organization.id, organization.modifyTime);
       logger.debug('The updated Organization is:', organization);
@@ -310,8 +313,9 @@ class OrganizationApi {
   @Log
   updateByCode(organization) {
     checkArgumentType('organization', organization, Organization);
+    const data = toJSON(organization, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/organization/code/${organization.code}`, toJSON(organization, toJsonOptions)).then((data) => {
+    return http.put(`/organization/code/${organization.code}`, data).then((data) => {
       const organization = Organization.create(data, assignOptions);
       logger.info('Successfully update the Organization by code "%s" at:', organization.code, organization.modifyTime);
       logger.debug('The updated Organization is:', organization);
@@ -334,8 +338,9 @@ class OrganizationApi {
   updateState(id, state) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('state', state, State);
+    const data = { state: Json.stringify(state) };
     loading.showUpdating();
-    return http.put(`/organization/${stringifyId(id)}/state`, { state: state.value }).then((timestamp) => {
+    return http.put(`/organization/${stringifyId(id)}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the Organization by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -356,8 +361,9 @@ class OrganizationApi {
   updateStateByCode(code, state) {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, State);
+    const data = { state: Json.stringify(state) };
     loading.showUpdating();
-    return http.put(`/organization/code/${code}/state`, { state: state.value }).then((timestamp) => {
+    return http.put(`/organization/code/${code}/state`, data).then((timestamp) => {
       logger.info('Successfully update the state of the Organization by code "%s" at:', code, timestamp);
       return timestamp;
     });
