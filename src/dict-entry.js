@@ -398,6 +398,6 @@ class DictEntryApi {
   }
 }
 
-const dictApi = new DictEntryApi();
+const dictEntryApi = new DictEntryApi();
 
-export default dictApi;
+export default dictEntryApi;
