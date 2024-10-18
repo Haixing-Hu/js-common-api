@@ -66,7 +66,7 @@ class DictEntryApi {
       ...sort,
     }, toJsonOptions);
     loading.showGetting();
-    return http.get('/dict', {
+    return http.get('/dict/entry', {
       params,
     }).then((data) => {
       const page = Page.create(data, assignOptions);
@@ -116,7 +116,7 @@ class DictEntryApi {
       ...sort,
     }, toJsonOptions);
     loading.showGetting();
-    return http.get('/dict/info', {
+    return http.get('/dict/entry/info', {
       params,
     }).then((data) => {
       const page = Page.create(data, assignOptions);
@@ -140,11 +140,11 @@ class DictEntryApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/dict/${stringifyId(id)}`).then((data) => {
-      const dict = DictEntry.create(data, assignOptions);
+    return http.get(`/dict/entry/${stringifyId(id)}`).then((data) => {
+      const result = DictEntry.create(data, assignOptions);
       logger.info('Successfully get the DictEntry by ID:', id);
-      logger.debug('The DictEntry is:', dict);
-      return dict;
+      logger.debug('The DictEntry is:', result);
+      return result;
     });
   }
 
@@ -161,11 +161,11 @@ class DictEntryApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/dict/code/${code}`).then((data) => {
-      const dict = DictEntry.create(data, assignOptions);
+    return http.get(`/dict/entry/code/${code}`).then((data) => {
+      const result = DictEntry.create(data, assignOptions);
       logger.info('Successfully get the DictEntry by code:', code);
-      logger.debug('The DictEntry is:', dict);
-      return dict;
+      logger.debug('The DictEntry is:', result);
+      return result;
     });
   }
 
@@ -182,11 +182,11 @@ class DictEntryApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/dict/${stringifyId(id)}/info`).then((data) => {
-      const info = DictEntryInfo.create(data, assignOptions);
+    return http.get(`/dict/entry/${stringifyId(id)}/info`).then((data) => {
+      const result = DictEntryInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the DictEntry by ID:', id);
-      logger.debug('The info of the DictEntry is:', info);
-      return info;
+      logger.debug('The info of the DictEntry is:', result);
+      return result;
     });
   }
 
@@ -203,11 +203,11 @@ class DictEntryApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/dict/code/${code}/info`).then((data) => {
-      const info = DictEntryInfo.create(data, assignOptions);
+    return http.get(`/dict/entry/code/${code}/info`).then((data) => {
+      const result = DictEntryInfo.create(data, assignOptions);
       logger.info('Successfully get the info of the DictEntry by code:', code);
-      logger.debug('The info of the DictEntry is:', info);
-      return info;
+      logger.debug('The info of the DictEntry is:', result);
+      return result;
     });
   }
 
@@ -225,11 +225,11 @@ class DictEntryApi {
     checkArgumentType('dict', dict, DictEntry);
     const data = toJSON(dict, toJsonOptions);
     loading.showAdding();
-    return http.post('/dict', data).then((data) => {
-      const dict = DictEntry.create(data, assignOptions);
-      logger.info('Successfully add the DictEntry:', dict.id);
-      logger.debug('The added DictEntry is:', dict);
-      return dict;
+    return http.post('/dict/entry', data).then((data) => {
+      const result = DictEntry.create(data, assignOptions);
+      logger.info('Successfully add the DictEntry:', result.id);
+      logger.debug('The added DictEntry is:', result);
+      return result;
     });
   }
 
@@ -247,11 +247,11 @@ class DictEntryApi {
     checkArgumentType('dict', dict, DictEntry);
     const data = toJSON(dict, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/${stringifyId(dict.id)}`, data).then((data) => {
-      const dict = DictEntry.create(data, assignOptions);
-      logger.info('Successfully update the DictEntry by ID %s at:', dict.id, dict.modifyTime);
-      logger.debug('The updated DictEntry is:', dict);
-      return dict;
+    return http.put(`/dict/entry/${stringifyId(dict.id)}`, data).then((data) => {
+      const result = DictEntry.create(data, assignOptions);
+      logger.info('Successfully update the DictEntry by ID %s at:', result.id, result.modifyTime);
+      logger.debug('The updated DictEntry is:', result);
+      return result;
     });
   }
 
@@ -269,11 +269,11 @@ class DictEntryApi {
     checkArgumentType('dict', dict, DictEntry);
     const data = toJSON(dict, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/code/${dict.code}`, data).then((data) => {
-      const dict = DictEntry.create(data, assignOptions);
-      logger.info('Successfully update the DictEntry by code "%s" at:', dict.code, dict.modifyTime);
-      logger.debug('The updated DictEntry is:', dict);
-      return dict;
+    return http.put(`/dict/entry/code/${dict.code}`, data).then((data) => {
+      const result = DictEntry.create(data, assignOptions);
+      logger.info('Successfully update the DictEntry by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated DictEntry is:', result);
+      return result;
     });
   }
 
@@ -290,7 +290,7 @@ class DictEntryApi {
   delete(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showDeleting();
-    return http.delete(`/dict/${stringifyId(id)}`).then((timestamp) => {
+    return http.delete(`/dict/entry/${stringifyId(id)}`).then((timestamp) => {
       logger.info('Successfully delete the DictEntry by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -309,7 +309,7 @@ class DictEntryApi {
   deleteByCode(code) {
     checkArgumentType('code', code, String);
     loading.showDeleting();
-    return http.delete(`/dict/code/${code}`).then((timestamp) => {
+    return http.delete(`/dict/entry/code/${code}`).then((timestamp) => {
       logger.info('Successfully delete the DictEntry by code "%s" at:', code, timestamp);
       return timestamp;
     });
@@ -328,7 +328,7 @@ class DictEntryApi {
   restore(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showRestoring();
-    return http.patch(`/dict/${stringifyId(id)}`)
+    return http.patch(`/dict/entry/${stringifyId(id)}`)
       .then(() => logger.info('Successfully restore the DictEntry by ID:', id));
   }
 
@@ -345,7 +345,7 @@ class DictEntryApi {
   restoreByCode(code) {
     checkArgumentType('code', code, String);
     loading.showRestoring();
-    return http.patch(`/dict/code/${code}`)
+    return http.patch(`/dict/entry/code/${code}`)
       .then(() => logger.info('Successfully restore the DictEntry by code:', code));
   }
 
@@ -362,7 +362,7 @@ class DictEntryApi {
   purge(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showPurging();
-    return http.delete(`/dict/${stringifyId(id)}/purge`)
+    return http.delete(`/dict/entry/${stringifyId(id)}/purge`)
       .then(() => logger.info('Successfully purge the DictEntry by ID:', id));
   }
 
@@ -379,7 +379,7 @@ class DictEntryApi {
   purgeByCode(code) {
     checkArgumentType('code', code, String);
     loading.showPurging();
-    return http.delete(`/dict/code/${code}/purge`)
+    return http.delete(`/dict/entry/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the DictEntry by code:', code));
   }
 
@@ -393,7 +393,7 @@ class DictEntryApi {
   @Log
   purgeAll() {
     loading.showPurging();
-    return http.delete('/dict/purge')
+    return http.delete('/dict/entry/purge')
       .then(() => logger.info('Successfully purge all deleted DictEntry.'));
   }
 }
