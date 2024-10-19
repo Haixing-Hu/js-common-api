@@ -50,6 +50,7 @@ class ProvinceApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Province>>}
@@ -57,10 +58,10 @@ class ProvinceApi {
    *     件的`Province`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -69,8 +70,8 @@ class ProvinceApi {
     loading.showGetting();
     return http.get('/province', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Province.createArray(page.content, assignOptions);
       logger.info('Successfully list the Province.');
       logger.debug('The page of Province is:', page);
@@ -101,6 +102,7 @@ class ProvinceApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Info>>}
@@ -108,9 +110,9 @@ class ProvinceApi {
    *     件的`Province`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
+    checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, [Object], true);
     const params = toJSON({
       ...pageRequest,
@@ -120,8 +122,8 @@ class ProvinceApi {
     loading.showGetting();
     return http.get('/province/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data);
+    }).then((obj) => {
+      const page = Page.create(obj);
       page.content = Info.createArray(page.content);
       logger.info('Successfully list the infos of Province.');
       logger.debug('The page of infos of Province is:', page);
@@ -142,8 +144,8 @@ class ProvinceApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/province/${stringifyId(id)}}`).then((data) => {
-      const result = Province.create(data, assignOptions);
+    return http.get(`/province/${stringifyId(id)}}`).then((obj) => {
+      const result = Province.create(obj, assignOptions);
       logger.info('Successfully get the Province by ID:', id);
       logger.debug('The Province is:', result);
       return result;
@@ -163,8 +165,8 @@ class ProvinceApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/province/code/${code}`).then((data) => {
-      const result = Province.create(data, assignOptions);
+    return http.get(`/province/code/${code}`).then((obj) => {
+      const result = Province.create(obj, assignOptions);
       logger.info('Successfully get the Province by code:', code);
       logger.debug('The Province is:', result);
       return result;
@@ -184,8 +186,8 @@ class ProvinceApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/province/${stringifyId(id)}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/province/${stringifyId(id)}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Province by ID:', id);
       logger.debug('The info of the Province is:', result);
       return result;
@@ -205,8 +207,8 @@ class ProvinceApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/province/code/${code}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/province/code/${code}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Province by code:', code);
       logger.debug('The info of the Province is:', result);
       return result;
@@ -227,8 +229,8 @@ class ProvinceApi {
     checkArgumentType('province', province, Province);
     const data = toJSON(province, toJsonOptions);
     loading.showAdding();
-    return http.post('/province', data).then((data) => {
-      const result = Province.create(data, assignOptions);
+    return http.post('/province', data).then((obj) => {
+      const result = Province.create(obj, assignOptions);
       logger.info('Successfully add the Province:', result.id);
       logger.debug('The added Province is:', result);
       return result;
@@ -247,11 +249,12 @@ class ProvinceApi {
   @Log
   update(province) {
     checkArgumentType('province', province, Province);
+    const id = stringifyId(province.id);
     const data = toJSON(province, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/province/${stringifyId(province.id)}`, data).then((data) => {
-      const result = Province.create(data, assignOptions);
-      logger.info('Successfully update the Province by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/province/${id}`, data).then((obj) => {
+      const result = Province.create(obj, assignOptions);
+      logger.info('Successfully update the Province by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Province is:', result);
       return result;
     });
@@ -271,8 +274,8 @@ class ProvinceApi {
     checkArgumentType('province', province, Province);
     const data = toJSON(province, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/province/code/${province.code}`, data).then((data) => {
-      const result = Province.create(data, assignOptions);
+    return http.put(`/province/code/${province.code}`, data).then((obj) => {
+      const result = Province.create(obj, assignOptions);
       logger.info('Successfully update the Province by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Province is:', result);
       return result;

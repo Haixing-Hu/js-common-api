@@ -48,6 +48,7 @@ class CategoryApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Category>>}
@@ -55,10 +56,10 @@ class CategoryApi {
    *     件的`Category`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -67,8 +68,8 @@ class CategoryApi {
     loading.showGetting();
     return http.get('/category', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Category.createArray(page.content, assignOptions);
       logger.info('Successfully list the Category.');
       logger.debug('The page of Category is:', page);
@@ -97,6 +98,7 @@ class CategoryApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<InfoWithEntity>>}
@@ -104,10 +106,10 @@ class CategoryApi {
    *     件的`Category`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -116,8 +118,8 @@ class CategoryApi {
     loading.showGetting();
     return http.get('/category/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data);
+    }).then((obj) => {
+      const page = Page.create(obj);
       page.content = InfoWithEntity.createArray(page.content);
       logger.info('Successfully list the infos of Category.');
       logger.debug('The page of infos of Category is:', page);
@@ -138,8 +140,8 @@ class CategoryApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/category/${stringifyId(id)}}`).then((data) => {
-      const result = Category.create(data, assignOptions);
+    return http.get(`/category/${stringifyId(id)}}`).then((obj) => {
+      const result = Category.create(obj, assignOptions);
       logger.info('Successfully get the Category by ID:', id);
       logger.debug('The Category is:', result);
       return result;
@@ -159,8 +161,8 @@ class CategoryApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/category/code/${code}`).then((data) => {
-      const result = Category.create(data, assignOptions);
+    return http.get(`/category/code/${code}`).then((obj) => {
+      const result = Category.create(obj, assignOptions);
       logger.info('Successfully get the Category by code:', code);
       logger.debug('The Category is:', result);
       return result;
@@ -180,8 +182,8 @@ class CategoryApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/category/${stringifyId(id)}/info`).then((data) => {
-      const result = InfoWithEntity.create(data, assignOptions);
+    return http.get(`/category/${stringifyId(id)}/info`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
       logger.info('Successfully get the info of the Category by ID:', id);
       logger.debug('The info of the Category is:', result);
       return result;
@@ -201,8 +203,8 @@ class CategoryApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/category/code/${code}/info`).then((data) => {
-      const result = InfoWithEntity.create(data, assignOptions);
+    return http.get(`/category/code/${code}/info`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
       logger.info('Successfully get the info of the Category by code:', code);
       logger.debug('The info of the Category is:', result);
       return result;
@@ -223,8 +225,8 @@ class CategoryApi {
     checkArgumentType('category', category, Category);
     const data = toJSON(category, toJsonOptions);
     loading.showAdding();
-    return http.post('/category', data).then((data) => {
-      const result = Category.create(data, assignOptions);
+    return http.post('/category', data).then((obj) => {
+      const result = Category.create(obj, assignOptions);
       logger.info('Successfully add the Category:', result.id);
       logger.debug('The added Category is:', result);
       return result;
@@ -243,11 +245,12 @@ class CategoryApi {
   @Log
   update(category) {
     checkArgumentType('category', category, Category);
+    const id = stringifyId(category.id);
     const data = toJSON(category, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/category/${stringifyId(category.id)}`, data).then((data) => {
-      const result = Category.create(data, assignOptions);
-      logger.info('Successfully update the Category by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/category/${id}`, data).then((obj) => {
+      const result = Category.create(obj, assignOptions);
+      logger.info('Successfully update the Category by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Category is:', result);
       return result;
     });
@@ -267,8 +270,8 @@ class CategoryApi {
     checkArgumentType('category', category, Category);
     const data = toJSON(category, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/category/code/${category.code}`, data).then((data) => {
-      const result = Category.create(data, assignOptions);
+    return http.put(`/category/code/${category.code}`, data).then((obj) => {
+      const result = Category.create(obj, assignOptions);
       logger.info('Successfully update the Category by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Category is:', result);
       return result;

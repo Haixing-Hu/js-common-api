@@ -72,6 +72,7 @@ class PersonApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Person>>}
@@ -79,10 +80,10 @@ class PersonApi {
    *     件的`Person`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -91,8 +92,8 @@ class PersonApi {
     loading.showGetting();
     return http.get('/person', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Person.createArray(page.content, assignOptions);
       logger.info('Successfully list the Person.');
       logger.debug('The page of Person is:', page);
@@ -145,6 +146,7 @@ class PersonApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<PersonInfo>>}
@@ -152,10 +154,10 @@ class PersonApi {
    *     件的`Person`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -164,8 +166,8 @@ class PersonApi {
     loading.showGetting();
     return http.get('/person/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = PersonInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of Person.');
       logger.debug('The page of infos of Person is:', page);
@@ -186,8 +188,8 @@ class PersonApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/person/${stringifyId(id)}`).then((data) => {
-      const person = Person.create(data, assignOptions);
+    return http.get(`/person/${stringifyId(id)}`).then((obj) => {
+      const person = Person.create(obj, assignOptions);
       logger.info('Successfully get the Person by ID:', id);
       logger.debug('The Person is:', person);
       return person;
@@ -207,8 +209,8 @@ class PersonApi {
   getByUsername(username) {
     checkArgumentType('username', username, String);
     loading.showGetting();
-    return http.get(`/person/username/${username}`).then((data) => {
-      const person = Person.create(data, assignOptions);
+    return http.get(`/person/username/${username}`).then((obj) => {
+      const person = Person.create(obj, assignOptions);
       logger.info('Successfully get the Person by username:', username);
       logger.debug('The Person is:', person);
       return person;
@@ -228,8 +230,8 @@ class PersonApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/person/${stringifyId(id)}/info`).then((data) => {
-      const info = PersonInfo.create(data, assignOptions);
+    return http.get(`/person/${stringifyId(id)}/info`).then((obj) => {
+      const info = PersonInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Person by ID:', id);
       logger.debug('The info of the Person is:', info);
       return info;
@@ -249,8 +251,8 @@ class PersonApi {
   getInfoByUsername(username) {
     checkArgumentType('username', username, String);
     loading.showGetting();
-    return http.get(`/person/username/${username}/info`).then((data) => {
-      const info = PersonInfo.create(data, assignOptions);
+    return http.get(`/person/username/${username}/info`).then((obj) => {
+      const info = PersonInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Person by username:', username);
       logger.debug('The info of the Person is:', info);
       return info;
@@ -271,8 +273,8 @@ class PersonApi {
     checkArgumentType('person', person, Person);
     const data = toJSON(person, toJsonOptions);
     loading.showAdding();
-    return http.post('/person', data).then((data) => {
-      const person = Person.create(data, assignOptions);
+    return http.post('/person', data).then((obj) => {
+      const person = Person.create(obj, assignOptions);
       logger.info('Successfully add the Person:', person.id);
       logger.debug('The added Person is:', person);
       return person;
@@ -291,11 +293,12 @@ class PersonApi {
   @Log
   update(person) {
     checkArgumentType('person', person, Person);
+    const id = stringifyId(person.id);
     const data = toJSON(person, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/person/${stringifyId(person.id)}`, data).then((data) => {
-      const person = Person.create(data, assignOptions);
-      logger.info('Successfully update the Person by ID %s at:', person.id, person.modifyTime);
+    return http.put(`/person/${id}`, data).then((obj) => {
+      const person = Person.create(obj, assignOptions);
+      logger.info('Successfully update the Person by ID %s at:', id, person.modifyTime);
       logger.debug('The updated Person is:', person);
       return person;
     });

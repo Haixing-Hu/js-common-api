@@ -44,6 +44,7 @@ class SocialNetworkAccountApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<SocialNetworkAccount>>}
@@ -52,10 +53,10 @@ class SocialNetworkAccountApi {
    *     `ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -64,8 +65,8 @@ class SocialNetworkAccountApi {
     loading.showGetting();
     return http.get('/social-network-account', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = SocialNetworkAccount.createArray(page.content, assignOptions);
       logger.info('Successfully list the SocialNetworkAccount.');
       logger.debug('The page of SocialNetworkAccount is:', page);
@@ -86,8 +87,8 @@ class SocialNetworkAccountApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/social-network-account/${stringifyId(id)}`).then((data) => {
-      const result = SocialNetworkAccount.create(data, assignOptions);
+    return http.get(`/social-network-account/${stringifyId(id)}`).then((obj) => {
+      const result = SocialNetworkAccount.create(obj, assignOptions);
       logger.info('Successfully get the SocialNetworkAccount by ID:', id);
       logger.debug('The SocialNetworkAccount is:', result);
       return result;
@@ -114,8 +115,8 @@ class SocialNetworkAccountApi {
     checkArgumentType('openId', openId, String);
     const url = `/social-network-account/open-id/${socialNetwork}/${appId}/${openId}`;
     loading.showGetting();
-    return http.get(url).then((data) => {
-      const result = SocialNetworkAccount.create(data, assignOptions);
+    return http.get(url).then((obj) => {
+      const result = SocialNetworkAccount.create(obj, assignOptions);
       logger.info('Successfully get the SocialNetworkAccount by open ID:', socialNetwork, appId, openId);
       logger.debug('The SocialNetworkAccount is:', result);
       return result;
@@ -136,8 +137,8 @@ class SocialNetworkAccountApi {
     checkArgumentType('account', account, SocialNetworkAccount);
     const data = toJSON(account, toJsonOptions);
     loading.showAdding();
-    return http.post('/social-network-account', data).then((data) => {
-      const result = SocialNetworkAccount.create(data, assignOptions);
+    return http.post('/social-network-account', data).then((obj) => {
+      const result = SocialNetworkAccount.create(obj, assignOptions);
       logger.info('Successfully add the SocialNetworkAccount:', result.id);
       logger.debug('The added SocialNetworkAccount is:', result);
       return result;
@@ -156,10 +157,11 @@ class SocialNetworkAccountApi {
   @Log
   update(account) {
     checkArgumentType('account', account, SocialNetworkAccount);
+    const url = `/social-network-account/${stringifyId(account.id)}`;
     const data = toJSON(account, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/social-network-account/${stringifyId(account.id)}`, data).then((data) => {
-      const result = SocialNetworkAccount.create(data, assignOptions);
+    return http.put(url, data).then((obj) => {
+      const result = SocialNetworkAccount.create(obj, assignOptions);
       logger.info('Successfully update the SocialNetworkAccount by ID %s at:', result.id, result.modifyTime);
       logger.debug('The updated SocialNetworkAccount is:', result);
       return result;
@@ -181,8 +183,8 @@ class SocialNetworkAccountApi {
     const data = toJSON(account, toJsonOptions);
     const url = `/social-network-account/open-id/${data.socialNetwork}/${data.appId}/${data.openId}`;
     loading.showUpdating();
-    return http.put(url, data).then((data) => {
-      const result = SocialNetworkAccount.create(data, assignOptions);
+    return http.put(url, data).then((obj) => {
+      const result = SocialNetworkAccount.create(obj, assignOptions);
       logger.info('Successfully update the SocialNetworkAccount by open ID "%s-%s-%s" at:',
         result.socialNetwork,
         result.appId,

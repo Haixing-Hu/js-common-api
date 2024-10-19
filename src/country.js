@@ -47,6 +47,7 @@ class CountryApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Country>>}
@@ -54,10 +55,10 @@ class CountryApi {
    *     件的`Country`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -95,6 +96,7 @@ class CountryApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Info>>}
@@ -102,10 +104,10 @@ class CountryApi {
    *     件的`Country`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -136,8 +138,8 @@ class CountryApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/country/${stringifyId(id)}}`).then((data) => {
-      const result = Country.create(data, assignOptions);
+    return http.get(`/country/${stringifyId(id)}}`).then((obj) => {
+      const result = Country.create(obj, assignOptions);
       logger.info('Successfully get the Country by ID:', id);
       logger.debug('The Country is:', result);
       return result;
@@ -157,8 +159,8 @@ class CountryApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/country/code/${code}`).then((data) => {
-      const result = Country.create(data, assignOptions);
+    return http.get(`/country/code/${code}`).then((obj) => {
+      const result = Country.create(obj, assignOptions);
       logger.info('Successfully get the Country by code:', code);
       logger.debug('The Country is:', result);
       return result;
@@ -178,8 +180,8 @@ class CountryApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/country/${stringifyId(id)}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/country/${stringifyId(id)}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Country by ID:', id);
       logger.debug('The info of the Country is:', result);
       return result;
@@ -199,8 +201,8 @@ class CountryApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/country/code/${code}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/country/code/${code}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Country by code:', code);
       logger.debug('The info of the Country is:', result);
       return result;
@@ -221,8 +223,8 @@ class CountryApi {
     checkArgumentType('country', country, Country);
     const data = toJSON(country, toJsonOptions);
     loading.showAdding();
-    return http.post('/country', data).then((data) => {
-      const result = Country.create(data, assignOptions);
+    return http.post('/country', data).then((obj) => {
+      const result = Country.create(obj, assignOptions);
       logger.info('Successfully add the Country:', result.id);
       logger.debug('The added Country is:', result);
       return result;
@@ -241,11 +243,12 @@ class CountryApi {
   @Log
   update(country) {
     checkArgumentType('country', country, Country);
+    const id = stringifyId(country.id);
     const data = toJSON(country, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/country/${stringifyId(country.id)}`, data).then((data) => {
-      const result = Country.create(data, assignOptions);
-      logger.info('Successfully update the Country by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/country/${id}`, data).then((obj) => {
+      const result = Country.create(obj, assignOptions);
+      logger.info('Successfully update the Country by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Country is:', result);
       return result;
     });
@@ -265,8 +268,8 @@ class CountryApi {
     checkArgumentType('country', country, Country);
     const data = toJSON(country, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/country/code/${country.code}`, data).then((data) => {
-      const result = Country.create(data, assignOptions);
+    return http.put(`/country/code/${country.code}`, data).then((obj) => {
+      const result = Country.create(obj, assignOptions);
       logger.info('Successfully update the Country by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Country is:', result);
       return result;

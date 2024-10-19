@@ -79,8 +79,8 @@ class FileApi {
     const params = {
       path,
     };
-    return http.get('/file/download/url', { params }).then((data) => {
-      const url = String(data);
+    return http.get('/file/download/url', { params }).then((response) => {
+      const url = String(response);
       logger.info('Successfully get the download URL for file %s:', path, url);
       return url;
     });

@@ -50,6 +50,7 @@ class StreetApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Street>>}
@@ -57,10 +58,10 @@ class StreetApi {
    *     件的`Street`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -69,8 +70,8 @@ class StreetApi {
     loading.showGetting();
     return http.get('/street', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Street.createArray(page.content, assignOptions);
       logger.info('Successfully list the Street.');
       logger.debug('The page of Street is:', page);
@@ -101,6 +102,7 @@ class StreetApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Info>>}
@@ -108,10 +110,10 @@ class StreetApi {
    *     件的`Street`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -120,8 +122,8 @@ class StreetApi {
     loading.showGetting();
     return http.get('/street/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data);
+    }).then((obj) => {
+      const page = Page.create(obj);
       page.content = Info.createArray(page.content);
       logger.info('Successfully list the infos of Street.');
       logger.debug('The page of infos of Street is:', page);
@@ -142,8 +144,8 @@ class StreetApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/street/${stringifyId(id)}}`).then((data) => {
-      const result = Street.create(data, assignOptions);
+    return http.get(`/street/${stringifyId(id)}}`).then((obj) => {
+      const result = Street.create(obj, assignOptions);
       logger.info('Successfully get the Street by ID:', id);
       logger.debug('The Street is:', result);
       return result;
@@ -163,8 +165,8 @@ class StreetApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/street/code/${code}`).then((data) => {
-      const result = Street.create(data, assignOptions);
+    return http.get(`/street/code/${code}`).then((obj) => {
+      const result = Street.create(obj, assignOptions);
       logger.info('Successfully get the Street by code:', code);
       logger.debug('The Street is:', result);
       return result;
@@ -184,8 +186,8 @@ class StreetApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/street/${stringifyId(id)}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/street/${stringifyId(id)}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Street by ID:', id);
       logger.debug('The info of the Street is:', result);
       return result;
@@ -205,8 +207,8 @@ class StreetApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/street/code/${code}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/street/code/${code}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Street by code:', code);
       logger.debug('The info of the Street is:', result);
       return result;
@@ -227,8 +229,8 @@ class StreetApi {
     checkArgumentType('street', street, Street);
     const data = toJSON(street, toJsonOptions);
     loading.showAdding();
-    return http.post('/street', data).then((data) => {
-      const result = Street.create(data, assignOptions);
+    return http.post('/street', data).then((obj) => {
+      const result = Street.create(obj, assignOptions);
       logger.info('Successfully add the Street:', result.id);
       logger.debug('The added Street is:', result);
       return result;
@@ -249,8 +251,8 @@ class StreetApi {
     checkArgumentType('street', street, Street);
     const data = toJSON(street, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/street/${stringifyId(street.id)}`, data).then((data) => {
-      const result = Street.create(data, assignOptions);
+    return http.put(`/street/${stringifyId(street.id)}`, data).then((obj) => {
+      const result = Street.create(obj, assignOptions);
       logger.info('Successfully update the Street by ID %s at:', result.id, result.modifyTime);
       logger.debug('The updated Street is:', result);
       return result;
@@ -271,8 +273,8 @@ class StreetApi {
     checkArgumentType('street', street, Street);
     const data = toJSON(street, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/street/code/${street.code}`, data).then((data) => {
-      const result = Street.create(data, assignOptions);
+    return http.put(`/street/code/${street.code}`, data).then((obj) => {
+      const result = Street.create(obj, assignOptions);
       logger.info('Successfully update the Street by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Street is:', result);
       return result;

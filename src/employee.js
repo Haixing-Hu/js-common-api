@@ -65,6 +65,7 @@ class EmployeeApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Employee>>}
@@ -72,10 +73,10 @@ class EmployeeApi {
    *     件的`Employee`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -84,8 +85,8 @@ class EmployeeApi {
     loading.showGetting();
     return http.get('/employee', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Employee.createArray(page.content, assignOptions);
       logger.info('Successfully list the Employee.');
       logger.debug('The page of Employee is:', page);
@@ -130,6 +131,7 @@ class EmployeeApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<EmployeeInfo>>}
@@ -137,10 +139,10 @@ class EmployeeApi {
    *     件的`Employee`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -149,8 +151,8 @@ class EmployeeApi {
     loading.showGetting();
     return http.get('/employee/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = EmployeeInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of Employee.');
       logger.debug('The page of infos of Employee is:', page);
@@ -171,8 +173,8 @@ class EmployeeApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/employee/${stringifyId(id)}`).then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.get(`/employee/${stringifyId(id)}`).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully get the Employee by ID:', id);
       logger.debug('The Employee is:', result);
       return result;
@@ -192,8 +194,8 @@ class EmployeeApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/employee/code/${code}`).then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.get(`/employee/code/${code}`).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully get the Employee by code:', code);
       logger.debug('The Employee is:', result);
       return result;
@@ -213,8 +215,8 @@ class EmployeeApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/employee/${stringifyId(id)}/info`).then((data) => {
-      const result = EmployeeInfo.create(data, assignOptions);
+    return http.get(`/employee/${stringifyId(id)}/info`).then((obj) => {
+      const result = EmployeeInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Employee by ID:', id);
       logger.debug('The info of the Employee is:', result);
       return result;
@@ -234,8 +236,8 @@ class EmployeeApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/employee/code/${code}/info`).then((data) => {
-      const result = EmployeeInfo.create(data, assignOptions);
+    return http.get(`/employee/code/${code}/info`).then((obj) => {
+      const result = EmployeeInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Employee by code:', code);
       logger.debug('The info of the Employee is:', result);
       return result;
@@ -256,8 +258,8 @@ class EmployeeApi {
     checkArgumentType('employee', employee, Employee);
     const data = toJSON(employee, toJsonOptions);
     loading.showAdding();
-    return http.post('/employee', data).then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.post('/employee', data).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully add the Employee:', result.id);
       logger.debug('The added Employee is:', result);
       return result;
@@ -276,11 +278,12 @@ class EmployeeApi {
   @Log
   update(employee) {
     checkArgumentType('employee', employee, Employee);
+    const id = stringifyId(employee.id);
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/employee/${stringifyId(employee.id)}`, data).then((data) => {
-      const result = Employee.create(data, assignOptions);
-      logger.info('Successfully update the Employee by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/employee/${id}`, data).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
+      logger.info('Successfully update the Employee by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Employee is:', result);
       return result;
     });
@@ -300,8 +303,8 @@ class EmployeeApi {
     checkArgumentType('employee', employee, Employee);
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/employee/code/${employee.code}`, data).then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.put(`/employee/code/${employee.code}`, data).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully update the Employee by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Employee is:', result);
       return result;

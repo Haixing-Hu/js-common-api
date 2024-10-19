@@ -49,6 +49,7 @@ class DictEntryApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<DictEntry>>}
@@ -56,10 +57,10 @@ class DictEntryApi {
    *     件的`DictEntry`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -68,8 +69,8 @@ class DictEntryApi {
     loading.showGetting();
     return http.get('/dict/entry', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = DictEntry.createArray(page.content, assignOptions);
       logger.info('Successfully list the DictEntry.');
       logger.debug('The page of DictEntry is:', page);
@@ -99,6 +100,7 @@ class DictEntryApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<DictEntryInfo>>}
@@ -106,10 +108,10 @@ class DictEntryApi {
    *     件的`DictEntry`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -118,8 +120,8 @@ class DictEntryApi {
     loading.showGetting();
     return http.get('/dict/entry/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = DictEntryInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of DictEntry.');
       logger.debug('The page of infos of DictEntry is:', page);
@@ -140,8 +142,8 @@ class DictEntryApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/dict/entry/${stringifyId(id)}`).then((data) => {
-      const result = DictEntry.create(data, assignOptions);
+    return http.get(`/dict/entry/${stringifyId(id)}`).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully get the DictEntry by ID:', id);
       logger.debug('The DictEntry is:', result);
       return result;
@@ -161,8 +163,8 @@ class DictEntryApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/dict/entry/code/${code}`).then((data) => {
-      const result = DictEntry.create(data, assignOptions);
+    return http.get(`/dict/entry/code/${code}`).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully get the DictEntry by code:', code);
       logger.debug('The DictEntry is:', result);
       return result;
@@ -182,8 +184,8 @@ class DictEntryApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/dict/entry/${stringifyId(id)}/info`).then((data) => {
-      const result = DictEntryInfo.create(data, assignOptions);
+    return http.get(`/dict/entry/${stringifyId(id)}/info`).then((obj) => {
+      const result = DictEntryInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the DictEntry by ID:', id);
       logger.debug('The info of the DictEntry is:', result);
       return result;
@@ -203,8 +205,8 @@ class DictEntryApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/dict/entry/code/${code}/info`).then((data) => {
-      const result = DictEntryInfo.create(data, assignOptions);
+    return http.get(`/dict/entry/code/${code}/info`).then((obj) => {
+      const result = DictEntryInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the DictEntry by code:', code);
       logger.debug('The info of the DictEntry is:', result);
       return result;
@@ -225,8 +227,8 @@ class DictEntryApi {
     checkArgumentType('entry', entry, DictEntry);
     const data = toJSON(entry, toJsonOptions);
     loading.showAdding();
-    return http.post('/dict/entry', data).then((data) => {
-      const result = DictEntry.create(data, assignOptions);
+    return http.post('/dict/entry', data).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully add the DictEntry:', result.id);
       logger.debug('The added DictEntry is:', result);
       return result;
@@ -245,11 +247,12 @@ class DictEntryApi {
   @Log
   update(entry) {
     checkArgumentType('entry', entry, DictEntry);
+    const id = stringifyId(entry.id);
     const data = toJSON(entry, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/entry/${stringifyId(entry.id)}`, data).then((data) => {
-      const result = DictEntry.create(data, assignOptions);
-      logger.info('Successfully update the DictEntry by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/dict/entry/${id}`, data).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
+      logger.info('Successfully update the DictEntry by ID %s at:', id, result.modifyTime);
       logger.debug('The updated DictEntry is:', result);
       return result;
     });
@@ -269,8 +272,8 @@ class DictEntryApi {
     checkArgumentType('entry', entry, DictEntry);
     const data = toJSON(entry, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/entry/code/${entry.code}`, data).then((data) => {
-      const result = DictEntry.create(data, assignOptions);
+    return http.put(`/dict/entry/code/${entry.code}`, data).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully update the DictEntry by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated DictEntry is:', result);
       return result;

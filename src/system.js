@@ -30,8 +30,8 @@ class SystemApi {
   @Log
   getInfo() {
     loading.showGetting();
-    return http.get('/system/info').then((data) => {
-      const system = Software.create(data, assignOptions);
+    return http.get('/system/info').then((obj) => {
+      const system = Software.create(obj, assignOptions);
       logger.info('Successfully get the system information.');
       logger.debug('The system information is:', system);
       return system;

@@ -72,6 +72,7 @@ class OrganizationApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Organization>>}
@@ -79,10 +80,10 @@ class OrganizationApi {
    *     件的`Organization`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -91,8 +92,8 @@ class OrganizationApi {
     loading.showGetting();
     return http.get('/organization', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Organization.createArray(page.content, assignOptions);
       logger.info('Successfully list the Organization.');
       logger.debug('The page of Organization is:', page);
@@ -144,6 +145,7 @@ class OrganizationApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<StatefulInfo>>}
@@ -151,10 +153,10 @@ class OrganizationApi {
    *     件的`Organization`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -163,8 +165,8 @@ class OrganizationApi {
     loading.showGetting();
     return http.get('/organization/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = StatefulInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of Organization.');
       logger.debug('The page of infos of Organization is:', page);
@@ -185,8 +187,8 @@ class OrganizationApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/organization/${stringifyId(id)}`).then((data) => {
-      const result = Organization.create(data, assignOptions);
+    return http.get(`/organization/${stringifyId(id)}`).then((obj) => {
+      const result = Organization.create(obj, assignOptions);
       logger.info('Successfully get the Organization by ID:', id);
       logger.debug('The Organization is:', result);
       return result;
@@ -206,8 +208,8 @@ class OrganizationApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/organization/code/${code}`).then((data) => {
-      const result = Organization.create(data, assignOptions);
+    return http.get(`/organization/code/${code}`).then((obj) => {
+      const result = Organization.create(obj, assignOptions);
       logger.info('Successfully get the Organization by code:', code);
       logger.debug('The Organization is:', result);
       return result;
@@ -227,8 +229,8 @@ class OrganizationApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/organization/${stringifyId(id)}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/organization/${stringifyId(id)}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Organization by ID:', id);
       logger.debug('The info of the Organization is:', result);
       return result;
@@ -248,8 +250,8 @@ class OrganizationApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/organization/code/${code}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/organization/code/${code}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Organization by code:', code);
       logger.debug('The info of the Organization is:', result);
       return result;
@@ -270,8 +272,8 @@ class OrganizationApi {
     checkArgumentType('organization', organization, Organization);
     const data = toJSON(organization, toJsonOptions);
     loading.showAdding();
-    return http.post('/organization', data).then((data) => {
-      const result = Organization.create(data, assignOptions);
+    return http.post('/organization', data).then((obj) => {
+      const result = Organization.create(obj, assignOptions);
       logger.info('Successfully add the Organization:', result.id);
       logger.debug('The added Organization is:', result);
       return result;
@@ -290,11 +292,12 @@ class OrganizationApi {
   @Log
   update(organization) {
     checkArgumentType('organization', organization, Organization);
+    const id = stringifyId(organization.id);
     const data = toJSON(organization, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/organization/${stringifyId(organization.id)}`, data).then((data) => {
-      const result = Organization.create(data, assignOptions);
-      logger.info('Successfully update the Organization by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/organization/${id}`, data).then((obj) => {
+      const result = Organization.create(obj, assignOptions);
+      logger.info('Successfully update the Organization by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Organization is:', result);
       return result;
     });
@@ -314,8 +317,8 @@ class OrganizationApi {
     checkArgumentType('organization', organization, Organization);
     const data = toJSON(organization, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/organization/code/${organization.code}`, data).then((data) => {
-      const result = Organization.create(data, assignOptions);
+    return http.put(`/organization/code/${organization.code}`, data).then((obj) => {
+      const result = Organization.create(obj, assignOptions);
       logger.info('Successfully update the Organization by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Organization is:', result);
       return result;

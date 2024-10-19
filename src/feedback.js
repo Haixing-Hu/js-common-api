@@ -9,7 +9,9 @@
 import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
-  Feedback, FeedbackAction, FeedbackTrack,
+  Feedback,
+  FeedbackAction,
+  FeedbackTrack,
   Page,
   PageRequest,
 } from '@haixing_hu/common-model';
@@ -73,8 +75,8 @@ class FeedbackApi {
     loading.showGetting();
     return http.get('/feedback', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Feedback.createArray(page.content, assignOptions);
       logger.info('Successfully list the Feedback.');
       logger.debug('The page of Feedback is:', page);
@@ -101,8 +103,8 @@ class FeedbackApi {
       transformUrls,
     }, toJsonOptions);
     loading.showGetting();
-    return http.get(`/feedback/${stringifyId(id)}`, { params }).then((data) => {
-      const result = Feedback.create(data, assignOptions);
+    return http.get(`/feedback/${stringifyId(id)}`, { params }).then((obj) => {
+      const result = Feedback.create(obj, assignOptions);
       logger.info('Successfully get the Feedback by ID:', id);
       logger.debug('The Feedback is:', result);
       return result;
@@ -128,8 +130,8 @@ class FeedbackApi {
       transformUrls,
     }, toJsonOptions);
     loading.showGetting();
-    return http.get(`/feedback/${stringifyId(id)}/track`, { params }).then((data) => {
-      const result = FeedbackTrack.createArray(data, assignOptions);
+    return http.get(`/feedback/${stringifyId(id)}/track`, { params }).then((obj) => {
+      const result = FeedbackTrack.createArray(obj, assignOptions);
       logger.info('Successfully get all tracks of Feedback by ID:', id);
       logger.debug('The FeedbackTrack is:', result);
       return result;

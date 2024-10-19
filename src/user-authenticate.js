@@ -30,7 +30,7 @@ class UserAuthenticateApi {
   /**
    * 注册新用户。
    *
-   * @param {object|RegisterUserParams} params
+   * @param {RegisterUserParams|object} params
    *     注册新用户所需的参数，必须符合`RegisterUserParams`的字段定义。
    * @return {Promise<LoginResponse>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`LoginResponse`对象，包含
@@ -39,9 +39,10 @@ class UserAuthenticateApi {
   @Log
   register(params) {
     checkArgumentType('params', params, [RegisterUserParams, Object]);
+    const data = toJSON(params, toJsonOptions);
     loading.show('正在注册新用户...');
-    return http.post('/authenticate/user/register', toJSON(params, toJsonOptions)).then((data) => {
-      const response = LoginResponse.create(data, assignOptions);
+    return http.post('/authenticate/user/register', data).then((obj) => {
+      const response = LoginResponse.create(obj, assignOptions);
       logger.info('Successfully register a new user.');
       return response;
     });
@@ -62,13 +63,13 @@ class UserAuthenticateApi {
   loginByUsername(username, password) {
     checkArgumentType('username', username, String);
     checkArgumentType('password', password, String);
-    const params = toJSON({
+    const data = toJSON({
       username,
       password,
     }, toJsonOptions);
     loading.show('正在登录...');
-    return http.post('/authenticate/user/login', params).then((data) => {
-      const response = LoginResponse.create(data, assignOptions);
+    return http.post('/authenticate/user/login', data).then((obj) => {
+      const response = LoginResponse.create(obj, assignOptions);
       logger.info('Successfully login as:', response?.user?.username);
       return response;
     });
@@ -91,13 +92,13 @@ class UserAuthenticateApi {
   loginByMobile(mobile, verifyCode) {
     checkArgumentType('mobile', mobile, String);
     checkArgumentType('verifyCode', verifyCode, String);
-    const params = toJSON({
+    const data = toJSON({
       mobile,
       verifyCode,
     }, toJsonOptions);
     loading.show('正在登录...');
-    return http.post('/authenticate/user/login', params).then((data) => {
-      const response = LoginResponse.create(data, assignOptions);
+    return http.post('/authenticate/user/login', data).then((obj) => {
+      const response = LoginResponse.create(obj, assignOptions);
       logger.info('Successfully login as:', response?.user?.username);
       return response;
     });
@@ -121,14 +122,14 @@ class UserAuthenticateApi {
     checkArgumentType('socialNetwork', socialNetwork, SocialNetwork);
     checkArgumentType('appId', appId, String);
     checkArgumentType('openId', openId, String);
-    const params = toJSON({
+    const data = toJSON({
       socialNetwork,
       appId,
       openId,
     }, toJsonOptions);
     loading.show('正在登录...');
-    return http.post('/authenticate/user/login', params).then((data) => {
-      const response = LoginResponse.create(data);
+    return http.post('/authenticate/user/login', data).then((obj) => {
+      const response = LoginResponse.create(obj);
       logger.info('Successfully login as:', response?.user?.username);
       return response;
     });

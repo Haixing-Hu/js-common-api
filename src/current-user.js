@@ -43,8 +43,8 @@ class CurrentUserApi {
   @Log
   getUser() {
     loading.showGetting();
-    return http.get('/me/user').then((data) => {
-      const result = User.create(data, assignOptions);
+    return http.get('/me/user').then((obj) => {
+      const result = User.create(obj, assignOptions);
       logger.info('Successfully get the current user:', result);
       return result;
     });
@@ -60,8 +60,8 @@ class CurrentUserApi {
   @Log
   getUserInfo() {
     loading.showGetting();
-    return http.get('/me/user/info').then((data) => {
-      const result = UserInfo.create(data, assignOptions);
+    return http.get('/me/user/info').then((obj) => {
+      const result = UserInfo.create(obj, assignOptions);
       logger.info('Successfully get the current user:', result);
       return result;
     });
@@ -81,8 +81,8 @@ class CurrentUserApi {
     checkArgumentType('user', user, User);
     const data = toJSON(user, toJsonOptions);
     loading.showUpdating();
-    return http.put('/me/user', data).then((data) => {
-      const result = User.create(data, assignOptions);
+    return http.put('/me/user', data).then((obj) => {
+      const result = User.create(obj, assignOptions);
       logger.info('Successfully update the current login user to:', result);
       return result;
     });
@@ -112,8 +112,8 @@ class CurrentUserApi {
   @Log
   getPerson() {
     loading.showGetting();
-    return http.get('/me/person').then((data) => {
-      const result = Person.create(data, assignOptions);
+    return http.get('/me/person').then((obj) => {
+      const result = Person.create(obj, assignOptions);
       logger.info('Successfully get the profile of the current user:', result);
       return result;
     });
@@ -129,8 +129,8 @@ class CurrentUserApi {
   @Log
   getPersonInfo() {
     loading.showGetting();
-    return http.get('/me/person/info').then((data) => {
-      const result = PersonInfo.create(data, assignOptions);
+    return http.get('/me/person/info').then((obj) => {
+      const result = PersonInfo.create(obj, assignOptions);
       logger.info('Successfully get the basic profile of the current user:', result);
       return result;
     });
@@ -150,8 +150,8 @@ class CurrentUserApi {
     checkArgumentType('person', person, Person);
     const data = toJSON(person, toJsonOptions);
     loading.showUpdating();
-    return http.post('/me/person', data).then((data) => {
-      const result = Person.create(data, assignOptions);
+    return http.post('/me/person', data).then((obj) => {
+      const result = Person.create(obj, assignOptions);
       logger.info('Successfully add the profile of the current user:', result);
       return result;
     });
@@ -171,8 +171,8 @@ class CurrentUserApi {
     checkArgumentType('person', person, Person);
     const data = toJSON(person, toJsonOptions);
     loading.showUpdating();
-    return http.put('/me/person', data).then((data) => {
-      const result = Person.create(data, assignOptions);
+    return http.put('/me/person', data).then((obj) => {
+      const result = Person.create(obj, assignOptions);
       logger.info('Successfully update the profile of the current user to:', result);
       return result;
     });
@@ -209,8 +209,8 @@ class CurrentUserApi {
       verifyCode,
     }, toJsonOptions);
     loading.showUpdating();
-    return http.post('/me/person/bind', data).then((data) => {
-      const result = PersonInfo.create(data, assignOptions);
+    return http.post('/me/person/bind', data).then((obj) => {
+      const result = PersonInfo.create(obj, assignOptions);
       logger.info('Successfully bind the Person to the current user:', result);
       return result;
     });
@@ -240,8 +240,8 @@ class CurrentUserApi {
   @Log
   getEmployee() {
     loading.showGetting();
-    return http.get('/me/employee').then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.get('/me/employee').then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully get the Employee of the current user:', result);
       return result;
     });
@@ -257,8 +257,8 @@ class CurrentUserApi {
   @Log
   getEmployeeInfo() {
     loading.showGetting();
-    return http.get('/me/employee/info').then((data) => {
-      const result = EmployeeInfo.create(data, assignOptions);
+    return http.get('/me/employee/info').then((obj) => {
+      const result = EmployeeInfo.create(obj, assignOptions);
       logger.info('Successfully get the EmployeeInfo of the current user:', result);
       return result;
     });
@@ -280,8 +280,8 @@ class CurrentUserApi {
     checkArgumentType('employee', employee, Employee);
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
-    return http.post('/me/employee', data).then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.post('/me/employee', data).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully add an Employee to the current user:', result);
       return result;
     });
@@ -303,8 +303,8 @@ class CurrentUserApi {
     checkArgumentType('employee', employee, Employee);
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
-    return http.put('/me/employee', data).then((data) => {
-      const result = Employee.create(data, assignOptions);
+    return http.put('/me/employee', data).then((obj) => {
+      const result = Employee.create(obj, assignOptions);
       logger.info('Successfully update the Employee of the current user to:', result);
       return result;
     });
@@ -338,8 +338,8 @@ class CurrentUserApi {
       verifyCode,
     }, toJsonOptions);
     loading.showUpdating();
-    return http.post('/me/employee/bind', data).then((data) => {
-      const result = EmployeeInfo.create(data, assignOptions);
+    return http.post('/me/employee/bind', data).then((obj) => {
+      const result = EmployeeInfo.create(obj, assignOptions);
       logger.info('Successfully bind the Employee to the current user:', result);
       return result;
     });

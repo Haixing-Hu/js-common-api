@@ -53,6 +53,7 @@ class AppApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<App>>}
@@ -60,10 +61,10 @@ class AppApi {
    *     件的`App`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -72,8 +73,8 @@ class AppApi {
     loading.showGetting();
     return http.get('/app', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = App.createArray(page.content, assignOptions);
       logger.info('Successfully list the App.');
       logger.debug('The page of App is:', page);
@@ -106,6 +107,7 @@ class AppApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<StatefulInfo>>}
@@ -113,10 +115,10 @@ class AppApi {
    *     件的`App`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -125,8 +127,8 @@ class AppApi {
     loading.showGetting();
     return http.get('/app/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = StatefulInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of App.');
       logger.debug('The page of infos of App is:', page);
@@ -147,8 +149,8 @@ class AppApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/app/${stringifyId(id)}`).then((data) => {
-      const result = App.create(data, assignOptions);
+    return http.get(`/app/${stringifyId(id)}`).then((obj) => {
+      const result = App.create(obj, assignOptions);
       logger.info('Successfully get the App by ID:', id);
       logger.debug('The App is:', result);
       return result;
@@ -168,8 +170,8 @@ class AppApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/app/code/${code}`).then((data) => {
-      const result = App.create(data, assignOptions);
+    return http.get(`/app/code/${code}`).then((obj) => {
+      const result = App.create(obj, assignOptions);
       logger.info('Successfully get the App by code:', code);
       logger.debug('The App is:', result);
       return result;
@@ -189,8 +191,8 @@ class AppApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/app/${stringifyId(id)}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/app/${stringifyId(id)}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the App by ID:', id);
       logger.debug('The info of the App is:', result);
       return result;
@@ -210,8 +212,8 @@ class AppApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/app/code/${code}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/app/code/${code}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the App by code:', code);
       logger.debug('The info of the App is:', result);
       return result;
@@ -232,8 +234,8 @@ class AppApi {
     checkArgumentType('app', app, App);
     const data = toJSON(app, toJsonOptions);
     loading.showAdding();
-    return http.post('/app', data).then((data) => {
-      const result = App.create(data, assignOptions);
+    return http.post('/app', data).then((obj) => {
+      const result = App.create(obj, assignOptions);
       logger.info('Successfully add the App:', result.id);
       logger.debug('The added App is:', result);
       return result;
@@ -252,11 +254,12 @@ class AppApi {
   @Log
   update(app) {
     checkArgumentType('app', app, App);
+    const id = stringifyId(app.id);
     const data = toJSON(app, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/app/${stringifyId(app.id)}`, data).then((data) => {
-      const result = App.create(data, assignOptions);
-      logger.info('Successfully update the App by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/app/${id}`, data).then((obj) => {
+      const result = App.create(obj, assignOptions);
+      logger.info('Successfully update the App by ID %s at:', id, result.modifyTime);
       logger.debug('The updated App is:', result);
       return result;
     });
@@ -276,8 +279,8 @@ class AppApi {
     checkArgumentType('app', app, App);
     const data = toJSON(app, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/app/code/${app.code}`, data).then((data) => {
-      const result = App.create(data, assignOptions);
+    return http.put(`/app/code/${app.code}`, data).then((obj) => {
+      const result = App.create(obj, assignOptions);
       logger.info('Successfully update the App by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated App is:', result);
       return result;

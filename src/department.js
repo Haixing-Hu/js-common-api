@@ -76,6 +76,7 @@ class DepartmentApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Department>>}
@@ -83,10 +84,10 @@ class DepartmentApi {
    *     件的`Department`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -95,8 +96,8 @@ class DepartmentApi {
     loading.showGetting();
     return http.get('/department', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Department.createArray(page.content, assignOptions);
       logger.info('Successfully list the Department.');
       logger.debug('The page of Department is:', page);
@@ -152,6 +153,7 @@ class DepartmentApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<StatefulInfo>>}
@@ -159,10 +161,10 @@ class DepartmentApi {
    *     件的`Department`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -171,8 +173,8 @@ class DepartmentApi {
     loading.showGetting();
     return http.get('/department/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = StatefulInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of Department.');
       logger.debug('The page of infos of Department is:', page);
@@ -193,8 +195,8 @@ class DepartmentApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/department/${stringifyId(id)}`).then((data) => {
-      const result = Department.create(data, assignOptions);
+    return http.get(`/department/${stringifyId(id)}`).then((obj) => {
+      const result = Department.create(obj, assignOptions);
       logger.info('Successfully get the Department by ID:', id);
       logger.debug('The Department is:', result);
       return result;
@@ -214,8 +216,8 @@ class DepartmentApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/department/code/${code}`).then((data) => {
-      const result = Department.create(data, assignOptions);
+    return http.get(`/department/code/${code}`).then((obj) => {
+      const result = Department.create(obj, assignOptions);
       logger.info('Successfully get the Department by code:', code);
       logger.debug('The Department is:', result);
       return result;
@@ -235,8 +237,8 @@ class DepartmentApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/department/${stringifyId(id)}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/department/${stringifyId(id)}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Department by ID:', id);
       logger.debug('The info of the Department is:', result);
       return result;
@@ -256,8 +258,8 @@ class DepartmentApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/department/code/${code}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/department/code/${code}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Department by code:', code);
       logger.debug('The info of the Department is:', result);
       return result;
@@ -278,8 +280,8 @@ class DepartmentApi {
     checkArgumentType('department', department, Department);
     const data = toJSON(department, toJsonOptions);
     loading.showAdding();
-    return http.post('/department', data).then((data) => {
-      const result = Department.create(data, assignOptions);
+    return http.post('/department', data).then((obj) => {
+      const result = Department.create(obj, assignOptions);
       logger.info('Successfully add the Department:', result.id);
       logger.debug('The added Department is:', result);
       return result;
@@ -298,11 +300,12 @@ class DepartmentApi {
   @Log
   update(department) {
     checkArgumentType('department', department, Department);
+    const id = stringifyId(department.id);
     const data = toJSON(department, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/department/${stringifyId(department.id)}`, data).then((data) => {
-      const result = Department.create(data, assignOptions);
-      logger.info('Successfully update the Department by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/department/${id}`, data).then((obj) => {
+      const result = Department.create(obj, assignOptions);
+      logger.info('Successfully update the Department by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Department is:', result);
       return result;
     });
@@ -322,8 +325,8 @@ class DepartmentApi {
     checkArgumentType('department', department, Department);
     const data = toJSON(department, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/department/code/${department.code}`, data).then((data) => {
-      const result = Department.create(data, assignOptions);
+    return http.put(`/department/code/${department.code}`, data).then((obj) => {
+      const result = Department.create(obj, assignOptions);
       logger.info('Successfully update the Department by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Department is:', result);
       return result;

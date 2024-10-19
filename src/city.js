@@ -50,6 +50,7 @@ class CityApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<City>>}
@@ -57,10 +58,10 @@ class CityApi {
    *     件的`City`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -69,8 +70,8 @@ class CityApi {
     loading.showGetting();
     return http.get('/city', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = City.createArray(page.content, assignOptions);
       logger.info('Successfully list the City.');
       logger.debug('The page of City is:', page);
@@ -101,6 +102,7 @@ class CityApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Info>>}
@@ -108,10 +110,10 @@ class CityApi {
    *     件的`City`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -120,8 +122,8 @@ class CityApi {
     loading.showGetting();
     return http.get('/city/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data);
+    }).then((obj) => {
+      const page = Page.create(obj);
       page.content = Info.createArray(page.content);
       logger.info('Successfully list the infos of City.');
       logger.debug('The page of infos of City is:', page);
@@ -142,8 +144,8 @@ class CityApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/city/${stringifyId(id)}}`).then((data) => {
-      const result = City.create(data, assignOptions);
+    return http.get(`/city/${stringifyId(id)}}`).then((obj) => {
+      const result = City.create(obj, assignOptions);
       logger.info('Successfully get the City by ID:', id);
       logger.debug('The City is:', result);
       return result;
@@ -163,8 +165,8 @@ class CityApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/city/code/${code}`).then((data) => {
-      const result = City.create(data, assignOptions);
+    return http.get(`/city/code/${code}`).then((obj) => {
+      const result = City.create(obj, assignOptions);
       logger.info('Successfully get the City by code:', code);
       logger.debug('The City is:', result);
       return result;
@@ -184,8 +186,8 @@ class CityApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/city/${stringifyId(id)}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/city/${stringifyId(id)}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the City by ID:', id);
       logger.debug('The info of the City is:', result);
       return result;
@@ -205,8 +207,8 @@ class CityApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/city/code/${code}/info`).then((data) => {
-      const result = Info.create(data, assignOptions);
+    return http.get(`/city/code/${code}/info`).then((obj) => {
+      const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the City by code:', code);
       logger.debug('The info of the City is:', result);
       return result;
@@ -227,8 +229,8 @@ class CityApi {
     checkArgumentType('city', city, City);
     const data = toJSON(city, toJsonOptions);
     loading.showAdding();
-    return http.post('/city', data).then((data) => {
-      const result = City.create(data, assignOptions);
+    return http.post('/city', data).then((obj) => {
+      const result = City.create(obj, assignOptions);
       logger.info('Successfully add the City:', result.id);
       logger.debug('The added City is:', result);
       return result;
@@ -247,11 +249,12 @@ class CityApi {
   @Log
   update(city) {
     checkArgumentType('city', city, City);
+    const id = stringifyId(city.id);
     const data = toJSON(city, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/city/${stringifyId(city.id)}`, data).then((data) => {
-      const result = City.create(data, assignOptions);
-      logger.info('Successfully update the City by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/city/${id}`, data).then((obj) => {
+      const result = City.create(obj, assignOptions);
+      logger.info('Successfully update the City by ID %s at:', id, result.modifyTime);
       logger.debug('The updated City is:', result);
       return result;
     });
@@ -271,8 +274,8 @@ class CityApi {
     checkArgumentType('city', city, City);
     const data = toJSON(city, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/city/code/${city.code}`, data).then((data) => {
-      const result = City.create(data, assignOptions);
+    return http.put(`/city/code/${city.code}`, data).then((obj) => {
+      const result = City.create(obj, assignOptions);
       logger.info('Successfully update the City by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated City is:', result);
       return result;

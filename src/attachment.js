@@ -52,6 +52,7 @@ class AttachmentApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Attachment>>}
@@ -59,10 +60,10 @@ class AttachmentApi {
    *     件的`Attachment`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria, sort) {
+  list(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -71,8 +72,8 @@ class AttachmentApi {
     loading.showGetting();
     return http.get('/attachment', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Attachment.createArray(page.content, assignOptions);
       logger.info('Successfully list the Attachment.');
       logger.debug('The page of Attachment is:', page);
@@ -93,8 +94,8 @@ class AttachmentApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/attachment/${stringifyId(id)}}`).then((data) => {
-      const result = Attachment.create(data, assignOptions);
+    return http.get(`/attachment/${stringifyId(id)}}`).then((obj) => {
+      const result = Attachment.create(obj, assignOptions);
       logger.info('Successfully get the Attachment by ID:', id);
       logger.debug('The Attachment is:', result);
       return result;
@@ -115,8 +116,8 @@ class AttachmentApi {
     checkArgumentType('attachment', attachment, Attachment);
     const data = toJSON(attachment, toJsonOptions);
     loading.showAdding();
-    return http.post('/attachment', data).then((data) => {
-      const result = Attachment.create(data, assignOptions);
+    return http.post('/attachment', data).then((obj) => {
+      const result = Attachment.create(obj, assignOptions);
       logger.info('Successfully add the Attachment:', result.id);
       logger.debug('The added Attachment is:', result);
       return result;
@@ -135,11 +136,12 @@ class AttachmentApi {
   @Log
   update(attachment) {
     checkArgumentType('attachment', attachment, Attachment);
+    const id = stringifyId(attachment.id);
     const data = toJSON(attachment, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/attachment/${stringifyId(attachment.id)}`, data).then((data) => {
-      const result = Attachment.create(data, assignOptions);
-      logger.info('Successfully update the Attachment by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/attachment/${id}`, data).then((obj) => {
+      const result = Attachment.create(obj, assignOptions);
+      logger.info('Successfully update the Attachment by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Attachment is:', result);
       return result;
     });

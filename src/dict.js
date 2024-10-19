@@ -54,6 +54,7 @@ class DictApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Dict>>}
@@ -73,8 +74,8 @@ class DictApi {
     loading.showGetting();
     return http.get('/dict', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = Dict.createArray(page.content, assignOptions);
       logger.info('Successfully list the Dict.');
       logger.debug('The page of Dict is:', page);
@@ -108,6 +109,7 @@ class DictApi {
    *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<StatefulInfo>>}
@@ -115,10 +117,10 @@ class DictApi {
    *     件的`Dict`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria, sort) {
+  listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, [Object]);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('criteria', criteria, Object);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -127,8 +129,8 @@ class DictApi {
     loading.showGetting();
     return http.get('/dict/info', {
       params,
-    }).then((data) => {
-      const page = Page.create(data, assignOptions);
+    }).then((obj) => {
+      const page = Page.create(obj, assignOptions);
       page.content = StatefulInfo.createArray(page.content, assignOptions);
       logger.info('Successfully list the infos of Dict.');
       logger.debug('The page of infos of Dict is:', page);
@@ -149,8 +151,8 @@ class DictApi {
   get(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/dict/${stringifyId(id)}`).then((data) => {
-      const result = Dict.create(data, assignOptions);
+    return http.get(`/dict/${stringifyId(id)}`).then((obj) => {
+      const result = Dict.create(obj, assignOptions);
       logger.info('Successfully get the Dict by ID:', id);
       logger.debug('The Dict is:', result);
       return result;
@@ -170,8 +172,8 @@ class DictApi {
   getByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/dict/code/${code}`).then((data) => {
-      const result = Dict.create(data, assignOptions);
+    return http.get(`/dict/code/${code}`).then((obj) => {
+      const result = Dict.create(obj, assignOptions);
       logger.info('Successfully get the Dict by code:', code);
       logger.debug('The Dict is:', result);
       return result;
@@ -191,8 +193,8 @@ class DictApi {
   getInfo(id) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showGetting();
-    return http.get(`/dict/${stringifyId(id)}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/dict/${stringifyId(id)}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Dict by ID:', id);
       logger.debug('The info of the Dict is:', result);
       return result;
@@ -212,8 +214,8 @@ class DictApi {
   getInfoByCode(code) {
     checkArgumentType('code', code, String);
     loading.showGetting();
-    return http.get(`/dict/code/${code}/info`).then((data) => {
-      const result = StatefulInfo.create(data, assignOptions);
+    return http.get(`/dict/code/${code}/info`).then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Dict by code:', code);
       logger.debug('The info of the Dict is:', result);
       return result;
@@ -234,8 +236,8 @@ class DictApi {
     checkArgumentType('dict', dict, Dict);
     const data = toJSON(dict, toJsonOptions);
     loading.showAdding();
-    return http.post('/dict', data).then((data) => {
-      const result = Dict.create(data, assignOptions);
+    return http.post('/dict', data).then((obj) => {
+      const result = Dict.create(obj, assignOptions);
       logger.info('Successfully add the Dict:', result.id);
       logger.debug('The added Dict is:', result);
       return result;
@@ -254,11 +256,12 @@ class DictApi {
   @Log
   update(dict) {
     checkArgumentType('dict', dict, Dict);
+    const id = stringifyId(dict.id);
     const data = toJSON(dict, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/${stringifyId(dict.id)}`, data).then((data) => {
-      const result = Dict.create(data, assignOptions);
-      logger.info('Successfully update the Dict by ID %s at:', result.id, result.modifyTime);
+    return http.put(`/dict/${id}`, data).then((obj) => {
+      const result = Dict.create(obj, assignOptions);
+      logger.info('Successfully update the Dict by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Dict is:', result);
       return result;
     });
@@ -278,8 +281,8 @@ class DictApi {
     checkArgumentType('dict', dict, Dict);
     const data = toJSON(dict, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/dict/code/${dict.code}`, data).then((data) => {
-      const result = Dict.create(data, assignOptions);
+    return http.put(`/dict/code/${dict.code}`, data).then((obj) => {
+      const result = Dict.create(obj, assignOptions);
       logger.info('Successfully update the Dict by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Dict is:', result);
       return result;

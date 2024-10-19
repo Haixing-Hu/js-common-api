@@ -52,8 +52,8 @@ class AppAuthenticateApi {
       platform: 'WEB',
     }, toJsonOptions);
     loading.show('正在获取应用令牌...');
-    return http.post('/authenticate/app', data).then((data) => {
-      const token = Token.create(data, assignOptions);
+    return http.post('/authenticate/app', data).then((obj) => {
+      const token = Token.create(obj, assignOptions);
       logger.info('Successfully authenticate the apps.');
       return token;
     });
@@ -74,9 +74,13 @@ class AppAuthenticateApi {
   checkToken(code, token) {
     checkArgumentType('code', code, String);
     checkArgumentType('token', token, Token);
+    const params = toJSON({
+      code,
+      token: token.value,
+    }, toJsonOptions);
     loading.show('正在检查应用令牌...');
-    return http.get(`/authenticate/app/check?code=${code}&token=${token.value}`).then((data) => {
-      const token = Token.create(data, assignOptions);
+    return http.get('/authenticate/app/check', { params }).then((obj) => {
+      const token = Token.create(obj, assignOptions);
       logger.info('The token is valid.');
       return token;
     });
@@ -103,9 +107,13 @@ class AppAuthenticateApi {
   refreshToken(code, token) {
     checkArgumentType('code', code, String);
     checkArgumentType('token', token, Token);
+    const params = toJSON({
+      code,
+      token: token.value,
+    }, toJsonOptions);
     loading.show('正在刷新应用令牌...');
-    return http.get(`/authenticate/app/refresh?code=${code}&token=${token.value}`).then((data) => {
-      const token = Token.create(data, assignOptions);
+    return http.get('/authenticate/app/refresh', { params }).then((obj) => {
+      const token = Token.create(obj, assignOptions);
       logger.info('The token was successfully refreshed.');
       return token;
     });
