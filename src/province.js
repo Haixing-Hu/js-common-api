@@ -113,7 +113,7 @@ class ProvinceApi {
   listInfo(pageRequest, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, [Object], true);
+    checkArgumentType('sort', sort, Object);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
