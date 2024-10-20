@@ -32,7 +32,7 @@ class UserAuthenticateApi {
    *
    * @param {RegisterUserParams|object} params
    *     注册新用户所需的参数，必须符合`RegisterUserParams`的字段定义。
-   * @return {Promise<LoginResponse>}
+   * @return {Promise<LoginResponse|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`LoginResponse`对象，包含
    *     了新注册用户的登录信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -55,7 +55,7 @@ class UserAuthenticateApi {
    *     用户名。
    * @param {string} password
    *     密码
-   * @return {Promise<LoginResponse>}
+   * @return {Promise<LoginResponse|ErrorInfo>}
    *     此 HTTP 请求的 Promise，若操作成功，解析成功并返回一个`LoginResponse`对象，包含
    *     了指定用户的登录信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -84,7 +84,7 @@ class UserAuthenticateApi {
    *     手机号码。
    * @param {string} verifyCode
    *     验证码。
-   * @return {Promise<LoginResponse>}
+   * @return {Promise<LoginResponse|ErrorInfo>}
    *     此 HTTP 请求的 Promise，若操作成功，解析成功并返回一个`LoginResponse`对象，包含
    *     了指定用户的登录信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -113,7 +113,7 @@ class UserAuthenticateApi {
    *     该社交网络下的APP（公众号）的ID。
    * @param {string} openId
    *     用户在该社交网络指定的APP（公众号）下的Open ID。
-   * @return {Promise<LoginResponse>}
+   * @return {Promise<LoginResponse|ErrorInfo>}
    *     此 HTTP 请求的 Promise，若操作成功，解析成功并返回一个`LoginResponse`对象，包含
    *     了指定用户的登录信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -138,7 +138,7 @@ class UserAuthenticateApi {
   /**
    * 用户注销登录。
    *
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此 HTTP 请求的 Promise；若操作成功，解析成功且没有返回值；若操作失败，解析失败并返
    *     回一个`ErrorInfo`对象。
    */
@@ -175,7 +175,7 @@ class UserAuthenticateApi {
    *     用户ID。
    * @param {Token} token
    *     当前的存取令牌。
-   * @return {Promise<Token>}
+   * @return {Promise<Token|ErrorInfo>}
    *     此 HTTP 请求的 Promise；若指定的用户ID和存取令牌依旧有效，则解析成功并返回
    *     一个`Token`对象，包含该存取令牌的详细信息；否则，解析失败并返回一个`ErrorInfo`对象。
    */

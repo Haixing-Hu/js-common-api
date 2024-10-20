@@ -75,7 +75,7 @@ class OrganizationApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<Organization>>}
+   * @return {Promise<Page<Organization>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Organization`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -148,7 +148,7 @@ class OrganizationApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<StatefulInfo>>}
+   * @return {Promise<Page<StatefulInfo>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Organization`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -179,7 +179,7 @@ class OrganizationApi {
    *
    * @param {string|number|bigint} id
    *     `Organization`对象的ID。
-   * @return {Promise<Organization>}
+   * @return {Promise<Organization|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Organization`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -200,7 +200,7 @@ class OrganizationApi {
    *
    * @param {string} code
    *     `Organization`对象的编码。
-   * @return {Promise<Organization>}
+   * @return {Promise<Organization|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Organization`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -221,7 +221,7 @@ class OrganizationApi {
    *
    * @param {string|number|bigint} id
    *     `Organization`对象的ID。
-   * @return {Promise<StatefulInfo>}
+   * @return {Promise<StatefulInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`StatefulInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -242,7 +242,7 @@ class OrganizationApi {
    *
    * @param {string} code
    *     `Organization`对象的编码。
-   * @return {Promise<StatefulInfo>}
+   * @return {Promise<StatefulInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`StatefulInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -263,7 +263,7 @@ class OrganizationApi {
    *
    * @param {Organization} organization
    *     要添加的`Organization`对象。
-   * @return {Promise<Organization>}
+   * @return {Promise<Organization|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Organization`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -285,7 +285,7 @@ class OrganizationApi {
    *
    * @param {Organization} organization
    *     要更新的`Organization`对象的数据，根据其ID确定要更新的对象。
-   * @return {Promise<Organization>}
+   * @return {Promise<Organization|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Organization`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -308,7 +308,7 @@ class OrganizationApi {
    *
    * @param {Organization} organization
    *     要更新的`Organization`对象的数据，根据其编码确定要更新的对象。
-   * @return {Promise<Organization>}
+   * @return {Promise<Organization|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Organization`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -332,7 +332,7 @@ class OrganizationApi {
    *     `Organization`对象的ID。
    * @param {State|string} state
    *     要更新的`Organization`对象的状态，必须是`State`枚举类型或表示其值的字符串。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -355,7 +355,7 @@ class OrganizationApi {
    *     要更新的`Organization`对象的编码。
    * @param {State|string} state
    *     要更新的`Organization`对象的状态，必须是`State`枚举类型或表示其值的字符串。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -376,7 +376,7 @@ class OrganizationApi {
    *
    * @param {string} id
    *     要标记删除的`Organization`对象的ID。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -395,7 +395,7 @@ class OrganizationApi {
    *
    * @param {string} code
    *     要标记删除的`Organization`对象的编码。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -414,7 +414,7 @@ class OrganizationApi {
    *
    * @param {string} id
    *     要恢复的`Organization`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -431,7 +431,7 @@ class OrganizationApi {
    *
    * @param {string} code
    *     要恢复的`Organization`对象的编码，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -448,7 +448,7 @@ class OrganizationApi {
    *
    * @param {string} id
    *     要清除的`Organization`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -465,7 +465,7 @@ class OrganizationApi {
    *
    * @param {string} code
    *     要清除的`Organization`对象的编码，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -480,7 +480,7 @@ class OrganizationApi {
   /**
    * 根彻底清除全部已被标记删除的`Organization`对象。
    *
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */

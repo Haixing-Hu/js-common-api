@@ -47,7 +47,7 @@ class SocialNetworkAccountApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<SocialNetworkAccount>>}
+   * @return {Promise<Page<SocialNetworkAccount>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`SocialNetworkAccount`对象的分页数据；若操作失败，则解析失败并返回一个
    *     `ErrorInfo`对象。
@@ -79,7 +79,7 @@ class SocialNetworkAccountApi {
    *
    * @param {string|number|bigint} id
    *     `SocialNetworkAccount`对象的ID。
-   * @return {Promise<SocialNetworkAccount>}
+   * @return {Promise<SocialNetworkAccount|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`SocialNetworkAccount`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -104,7 +104,7 @@ class SocialNetworkAccountApi {
    *     指定的账号所属的社交网络内部的App ID。
    * @param {string} openId
    *     指定的账号在所属社交网络及其内部App ID下的Open ID。
-   * @return {Promise<SocialNetworkAccount>}
+   * @return {Promise<SocialNetworkAccount|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的
    *     `SocialNetworkAccount`对象；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -128,7 +128,7 @@ class SocialNetworkAccountApi {
    *
    * @param {SocialNetworkAccount} account
    *     要添加的`SocialNetworkAccount`对象。
-   * @return {Promise<SocialNetworkAccount>}
+   * @return {Promise<SocialNetworkAccount|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`SocialNetworkAccount`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -150,7 +150,7 @@ class SocialNetworkAccountApi {
    *
    * @param {SocialNetworkAccount} account
    *     要更新的`SocialNetworkAccount`对象的数据，根据其ID确定要更新的对象。
-   * @return {Promise<SocialNetworkAccount>}
+   * @return {Promise<SocialNetworkAccount|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`SocialNetworkAccount`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -173,7 +173,7 @@ class SocialNetworkAccountApi {
    *
    * @param {SocialNetworkAccount} account
    *     要更新的`SocialNetworkAccount`对象的数据，根据其编码确定要更新的对象。
-   * @return {Promise<SocialNetworkAccount>}
+   * @return {Promise<SocialNetworkAccount|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`SocialNetworkAccount`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -200,7 +200,7 @@ class SocialNetworkAccountApi {
    *
    * @param {string} id
    *     要标记删除的`SocialNetworkAccount`对象的ID。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -219,7 +219,7 @@ class SocialNetworkAccountApi {
    *
    * @param {string} id
    *     要恢复的`SocialNetworkAccount`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -236,7 +236,7 @@ class SocialNetworkAccountApi {
    *
    * @param {string} id
    *     要清除的`SocialNetworkAccount`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -251,7 +251,7 @@ class SocialNetworkAccountApi {
   /**
    * 根彻底清除全部已被标记删除的`SocialNetworkAccount`对象。
    *
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */

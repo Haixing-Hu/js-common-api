@@ -23,7 +23,7 @@ class SystemApi {
   /**
    * 获取系统信息。
    *
-   * @return {Promise<Software>}
+   * @return {Promise<Software|ErrorInfo>}
    *     一个`Promise`对象，若操作成功，解析成功并返回一个`Software`对象；否则，
    *     解析失败并返回一个`ErrorInfo`对象。
    */

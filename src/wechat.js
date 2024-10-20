@@ -91,7 +91,7 @@ class WechatApi {
   //  *
   //  * @param {string} openId
   //  *     指定的微信Open ID.
-  //  * @return {Promise<UserInfo>}
+  //  * @return {Promise<UserInfo|ErrorInfo>}
   //  *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`UserInfo`对象；
   //  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
   //  */

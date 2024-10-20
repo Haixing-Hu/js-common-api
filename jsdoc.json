@@ -22,6 +22,9 @@
   },
   "templates": {
     "cleverLinks": false,
-    "monospaceLinks": false
+    "monospaceLinks": false,
+    "jsdoc-minami": {
+      "outputSourceFiles": false
+    }
   }
 }

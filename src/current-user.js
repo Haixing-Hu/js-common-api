@@ -36,7 +36,7 @@ class CurrentUserApi {
   /**
    * 获取当前登录用户对应的用户的信息。
    *
-   * @return {Promise<User>}
+   * @return {Promise<User|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`User`对象，包含了当前登录
    *     用户的完整信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -53,7 +53,7 @@ class CurrentUserApi {
   /**
    * 获取当前登录用户对应的用户的基本信息。
    *
-   * @return {Promise<UserInfo>}
+   * @return {Promise<UserInfo|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`UserInfo`对象，包含了当前
    *     登录用户的基本信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -72,7 +72,7 @@ class CurrentUserApi {
    *
    * @param {User} user
    *     待更新的`User`对象。
-   * @return {Promise<User>}
+   * @return {Promise<User|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`UserInfo`对象，包含了当前登录用户的信息；
    *     若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -91,7 +91,7 @@ class CurrentUserApi {
   /**
    * 检测当前登录用户是否拥有个人信息。
    *
-   * @return {Promise<boolean>}
+   * @return {Promise<boolean|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`boolean`值，表示当前登录
    *     用户是否拥有个人信息，即是否对应到某个`Person`对象；若操作失败，解析失败并返回一个
    *     `ErrorInfo`对象。
@@ -105,7 +105,7 @@ class CurrentUserApi {
   /**
    * 获取当前登录用户的个人信息。
    *
-   * @return {Promise<Person>}
+   * @return {Promise<Person|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`Person`对象，表示当前登录
    *     用户的个人信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -122,7 +122,7 @@ class CurrentUserApi {
   /**
    * 获取当前登录用户的个人信息的基本信息。
    *
-   * @return {Promise<PersonInfo>}
+   * @return {Promise<PersonInfo|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`PersonInfo`对象，表示当前登录
    *     用户的个人信息的基本信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -141,7 +141,7 @@ class CurrentUserApi {
    *
    * @param {Person} person
    *     待新增的个人信息。
-   * @return {Promise<Person>}
+   * @return {Promise<Person|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`Person`对象，包含了为当前
    *     登录用户新增的个人信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -162,7 +162,7 @@ class CurrentUserApi {
    *
    * @param {Person} person
    *     待更新的个人信息。
-   * @return {Promise<Person>}
+   * @return {Promise<Person|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`Person`对象，包含了更新后
    *     的当前登录用户的个人信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -189,7 +189,7 @@ class CurrentUserApi {
    *     待绑定的个人的证件。
    * @param {string} verifyCode
    *     待绑定的个人收到的验证码。
-   * @return {Promise<PersonInfo>}
+   * @return {Promise<PersonInfo|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`PersonInfo`对象，包含了
    *     当前登录用户所绑定的个人的基本信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -219,7 +219,7 @@ class CurrentUserApi {
   /**
    * 检测当前登录用户是否绑定了某个员工。
    *
-   * @return {Promise<boolean>}
+   * @return {Promise<boolean|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`boolean`值，表示当前登录
    *     用户是否绑定了某个员工，即是否对应到某个`Employee`对象；若操作失败，解析失败并返回
    *     一个`ErrorInfo`对象。
@@ -233,7 +233,7 @@ class CurrentUserApi {
   /**
    * 获取当前登录用户所绑定的员工信息。
    *
-   * @return {Promise<Employee>}
+   * @return {Promise<Employee|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`Employee`对象，表示当前登录
    *     用户所绑定的员工信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -250,7 +250,7 @@ class CurrentUserApi {
   /**
    * 获取当前登录用户所绑定的员工的基本信息。
    *
-   * @return {Promise<EmployeeInfo>}
+   * @return {Promise<EmployeeInfo|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`EmployeeInfo`对象，表示
    *     当前登录用户所绑定的员工的基本信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -271,7 +271,7 @@ class CurrentUserApi {
    *
    * @param {Employee} employee
    *     待新增的员工信息。
-   * @return {Promise<Employee>}
+   * @return {Promise<Employee|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`Employee`对象，包含了为当前
    *     登录用户新增的员工信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -294,7 +294,7 @@ class CurrentUserApi {
    *
    * @param {Employee} employee
    *     待更新的员工信息。
-   * @return {Promise<Employee>}
+   * @return {Promise<Employee|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`Employee`对象，包含了更新后
    *     的当前登录用户的员工信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
@@ -321,7 +321,7 @@ class CurrentUserApi {
    *     待绑定的员工所属机构的信息。
    * @param {string} verifyCode
    *     待绑定的员工收到的验证码。
-   * @return {Promise<EmployeeInfo>}
+   * @return {Promise<EmployeeInfo|ErrorInfo>}
    *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回一个`EmployeeInfo`对象，包含了
    *     当前登录用户所绑定的员工的基本信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */

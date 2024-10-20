@@ -56,7 +56,7 @@ class FeedbackApi {
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
-   * @return {Promise<Page<Feedback>>}
+   * @return {Promise<Page<Feedback>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Feedback`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -91,7 +91,7 @@ class FeedbackApi {
    *     指定的`Feedback`对象的ID。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
-   * @return {Promise<Feedback>}
+   * @return {Promise<Feedback|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Feedback`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -118,7 +118,7 @@ class FeedbackApi {
    *     指定的`Feedback`对象的ID。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
-   * @return {Promise<Array<FeedbackTrack>>}
+   * @return {Promise<Array<FeedbackTrack>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Feedback`
    *     的所有`FeedbackTrack`对象列表；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -143,7 +143,7 @@ class FeedbackApi {
    *
    * @param {Feedback} feedback
    *     要添加的`Feedback`对象。
-   * @return {Promise<Feedback>}
+   * @return {Promise<Feedback|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Feedback`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -169,7 +169,7 @@ class FeedbackApi {
    *     待执行的操作。
    * @param {FeedbackTrack} track
    *     操作的跟踪记录。
-   * @return {Promise<FeedbackTrack>}
+   * @return {Promise<FeedbackTrack|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`FeedbackTrack`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */

@@ -81,7 +81,7 @@ class DeviceApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<Device>>}
+   * @return {Promise<Page<Device>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Device`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -158,7 +158,7 @@ class DeviceApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<DeviceInfo>>}
+   * @return {Promise<Page<DeviceInfo>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Device`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -189,7 +189,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     `Device`对象的ID。
-   * @return {Promise<Device>}
+   * @return {Promise<Device|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Device`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -210,7 +210,7 @@ class DeviceApi {
    *
    * @param {string} code
    *     `Device`对象的编码。
-   * @return {Promise<Device>}
+   * @return {Promise<Device|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Device`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -231,7 +231,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     `Device`对象的ID。
-   * @return {Promise<DeviceInfo>}
+   * @return {Promise<DeviceInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DeviceInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -252,7 +252,7 @@ class DeviceApi {
    *
    * @param {string} code
    *     `Device`对象的编码。
-   * @return {Promise<DeviceInfo>}
+   * @return {Promise<DeviceInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DeviceInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -273,7 +273,7 @@ class DeviceApi {
    *
    * @param {Device} device
    *     要添加的`Device`对象。
-   * @return {Promise<Device>}
+   * @return {Promise<Device|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Device`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -295,7 +295,7 @@ class DeviceApi {
    *
    * @param {Device} device
    *     要更新的`Device`对象的数据，根据其ID确定要更新的对象。
-   * @return {Promise<Device>}
+   * @return {Promise<Device|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Device`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -318,7 +318,7 @@ class DeviceApi {
    *
    * @param {Device} device
    *     要更新的`Device`对象的数据，根据其编码确定要更新的对象。
-   * @return {Promise<Device>}
+   * @return {Promise<Device|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Device`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -342,7 +342,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {Hardware} hardware
    *     待更新的`Device`对象的硬件信息。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -365,7 +365,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {Software} operatingSystem
    *     待更新的`Device`对象的操作系统信息。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -388,7 +388,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {Array<Software>} softwares
    *     待更新的`Device`对象的软件信息。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -411,7 +411,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {Address} deployAddress
    *     待更新的`Device`对象的部署地址。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -434,7 +434,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {Location} location
    *     待更新的`Device`对象的地理位置坐标。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -457,7 +457,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {string} ipAddress
    *     待更新的`Device`对象的IP地址。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -480,7 +480,7 @@ class DeviceApi {
    *     待更新的`Device`对象的ID。
    * @param {PersonInfo} owner
    *     待更新的`Device`对象的所有者。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -504,7 +504,7 @@ class DeviceApi {
    * @param {string} lastStartupTime
    *     待更新的`Device`对象的最后一次启动时间。该参数值为UTC时间戳，以ISO-8601时间戳的形
    *     式表示为字符串，其格式为`"uuuu-MM-dd[[' ']['T']HH:mm[':'ss[.SSS]]][' ']['Z'][Z][z]"`。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -528,7 +528,7 @@ class DeviceApi {
    * @param {string} lastHeartbeatTime
    *     待更新的`Device`对象的最后一次启动时间。该参数值为UTC时间戳，以ISO-8601时间戳的形
    *     式表示为字符串，其格式为`"uuuu-MM-dd[[' ']['T']HH:mm[':'ss[.SSS]]][' ']['Z'][Z][z]"`。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新的时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -551,7 +551,7 @@ class DeviceApi {
    *     `Device`对象的ID。
    * @param {State|string} state
    *     要更新的`Device`对象的状态，必须是`State`枚举类型或表示其值的字符串。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -574,7 +574,7 @@ class DeviceApi {
    *     要更新的`Device`对象的编码。
    * @param {State|string} state
    *     要更新的`Device`对象的状态，必须是`State`枚举类型或表示其值的字符串。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -595,7 +595,7 @@ class DeviceApi {
    *
    * @param {string} id
    *     要标记删除的`Device`对象的ID。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -614,7 +614,7 @@ class DeviceApi {
    *
    * @param {string} code
    *     要标记删除的`Device`对象的编码。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -633,7 +633,7 @@ class DeviceApi {
    *
    * @param {string} id
    *     要恢复的`Device`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -650,7 +650,7 @@ class DeviceApi {
    *
    * @param {string} code
    *     要恢复的`Device`对象的编码，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -667,7 +667,7 @@ class DeviceApi {
    *
    * @param {string} id
    *     要清除的`Device`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -684,7 +684,7 @@ class DeviceApi {
    *
    * @param {string} code
    *     要清除的`Device`对象的编码，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -699,7 +699,7 @@ class DeviceApi {
   /**
    * 根彻底清除全部已被标记删除的`Device`对象。
    *
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */

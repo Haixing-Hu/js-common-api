@@ -52,7 +52,7 @@ class DictEntryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<DictEntry>>}
+   * @return {Promise<Page<DictEntry>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`DictEntry`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -103,7 +103,7 @@ class DictEntryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
-   * @return {Promise<Page<DictEntryInfo>>}
+   * @return {Promise<Page<DictEntryInfo>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`DictEntry`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -134,7 +134,7 @@ class DictEntryApi {
    *
    * @param {string|number|bigint} id
    *     `DictEntry`对象的ID。
-   * @return {Promise<DictEntry>}
+   * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -155,7 +155,7 @@ class DictEntryApi {
    *
    * @param {string} code
    *     `DictEntry`对象的编码。
-   * @return {Promise<DictEntry>}
+   * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -176,7 +176,7 @@ class DictEntryApi {
    *
    * @param {string|number|bigint} id
    *     `DictEntry`对象的ID。
-   * @return {Promise<DictEntryInfo>}
+   * @return {Promise<DictEntryInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntryInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -197,7 +197,7 @@ class DictEntryApi {
    *
    * @param {string} code
    *     `DictEntry`对象的编码。
-   * @return {Promise<DictEntryInfo>}
+   * @return {Promise<DictEntryInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntryInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -218,7 +218,7 @@ class DictEntryApi {
    *
    * @param {DictEntry} entry
    *     要添加的`DictEntry`对象。
-   * @return {Promise<DictEntry>}
+   * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -240,7 +240,7 @@ class DictEntryApi {
    *
    * @param {DictEntry} entry
    *     要更新的`DictEntry`对象的数据，根据其ID确定要更新的对象。
-   * @return {Promise<DictEntry>}
+   * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -263,7 +263,7 @@ class DictEntryApi {
    *
    * @param {DictEntry} entry
    *     要更新的`DictEntry`对象的数据，根据其编码确定要更新的对象。
-   * @return {Promise<DictEntry>}
+   * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -285,7 +285,7 @@ class DictEntryApi {
    *
    * @param {string} id
    *     要标记删除的`DictEntry`对象的ID。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -304,7 +304,7 @@ class DictEntryApi {
    *
    * @param {string} code
    *     要标记删除的`DictEntry`对象的编码。
-   * @return {Promise<string>}
+   * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -323,7 +323,7 @@ class DictEntryApi {
    *
    * @param {string} id
    *     要恢复的`DictEntry`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -340,7 +340,7 @@ class DictEntryApi {
    *
    * @param {string} code
    *     要恢复的`DictEntry`对象的编码，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -357,7 +357,7 @@ class DictEntryApi {
    *
    * @param {string} id
    *     要清除的`DictEntry`对象的ID，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -374,7 +374,7 @@ class DictEntryApi {
    *
    * @param {string} code
    *     要清除的`DictEntry`对象的编码，该对象必须已经被标记删除。
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -389,7 +389,7 @@ class DictEntryApi {
   /**
    * 根彻底清除全部已被标记删除的`DictEntry`对象。
    *
-   * @return {Promise}
+   * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */

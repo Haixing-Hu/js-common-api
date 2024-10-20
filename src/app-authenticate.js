@@ -36,7 +36,7 @@ class AppAuthenticateApi {
    *     应用安全密钥。
    * @param {object|Environment} environment
    *     当前客户端的环境信息。
-   * @return {Promise<Token>}
+   * @return {Promise<Token|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Token`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -66,7 +66,7 @@ class AppAuthenticateApi {
    *     指定的应用的编码。
    * @param {Token} token
    *     待检查的指定应用的存取令牌。
-   * @return {Promise<Token>}
+   * @return {Promise<Token|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Token`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
@@ -99,7 +99,7 @@ class AppAuthenticateApi {
    *     指定的应用的编码。
    * @param {Token} token
    *     待检查的指定应用的存取令牌。
-   * @return {Promise<Token>}
+   * @return {Promise<Token|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Token`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */

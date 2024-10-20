@@ -26,7 +26,7 @@ class FileApi {
    *     待上传的文件对象。
    * @param contentType
    *     待上传文件的Content Type。可以为`null`或者`undefined`。
-   * @return {Promise<Upload>}
+   * @return {Promise<Upload|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回根据上传的文件所创建的
    *     `Upload`对象；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
