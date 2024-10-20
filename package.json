@@ -26,7 +26,8 @@
   },
   "sideEffects": false,
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "doc/**/*"
   ],
   "scripts": {
     "clean": "rm -rvf dist doc",

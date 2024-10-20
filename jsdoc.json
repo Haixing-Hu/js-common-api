@@ -23,7 +23,7 @@
   "templates": {
     "cleverLinks": false,
     "monospaceLinks": false,
-    "jsdoc-minami": {
+    "default": {
       "outputSourceFiles": false
     }
   }
