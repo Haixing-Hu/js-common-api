@@ -330,8 +330,8 @@ class OrganizationApi {
    *
    * @param {string|number|bigint} id
    *     `Organization`对象的ID。
-   * @param {State} state
-   *     要更新的`Organization`对象的状态，必须是`State`枚举类型。
+   * @param {State|string} state
+   *     要更新的`Organization`对象的状态，必须是`State`枚举类型或表示其值的字符串。
    * @return {Promise<string>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
@@ -339,7 +339,7 @@ class OrganizationApi {
   @Log
   updateState(id, state) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    checkArgumentType('state', state, State);
+    checkArgumentType('state', state, [State, String]);
     const data = { state: String(state) };
     loading.showUpdating();
     return http.put(`/organization/${stringifyId(id)}/state`, data).then((timestamp) => {
@@ -353,8 +353,8 @@ class OrganizationApi {
    *
    * @param {string} code
    *     要更新的`Organization`对象的编码。
-   * @param {State} state
-   *     要更新的`Organization`对象的状态，必须是`State`枚举类型。
+   * @param {State|string} state
+   *     要更新的`Organization`对象的状态，必须是`State`枚举类型或表示其值的字符串。
    * @return {Promise<string>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
@@ -362,7 +362,7 @@ class OrganizationApi {
   @Log
   updateStateByCode(code, state) {
     checkArgumentType('code', code, String);
-    checkArgumentType('state', state, State);
+    checkArgumentType('state', state, [State, String]);
     const data = { state: String(state) };
     loading.showUpdating();
     return http.put(`/organization/code/${code}/state`, data).then((timestamp) => {

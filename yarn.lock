@@ -1400,14 +1400,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@haixing_hu/clone@npm:^1.8.0":
-  version: 1.9.0
-  resolution: "@haixing_hu/clone@npm:1.9.0"
+"@haixing_hu/clone@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@haixing_hu/clone@npm:1.11.1"
   peerDependencies:
     "@babel/runtime": ^7.23.0
     "@haixing_hu/naming-style": ^1.3.0
     "@haixing_hu/typeinfo": ^3.0.0
-  checksum: 10c0/9cfbc4319b21df1470ca3b3d26898a8965e3c9b56aa1cdc65009d98c0b092d8894d93233cd32b8e5497f6de67f7075dfeea21ac8ec99eb620d28892b2a49fc6b
+  checksum: 10c0/c6f1db99d5d96e2d696dc7e957ef379aad0aed98c5110552ab573395a63033ee595d508fd1f383a2ecb5b87305c3b2fee3a9722f04572bcc3e5fdbf88cfb077f
   languageName: node
   linkType: hard
 
@@ -1421,25 +1421,25 @@ __metadata:
     "@babel/plugin-transform-runtime": "npm:^7.25.1"
     "@babel/preset-env": "npm:^7.25.1"
     "@babel/runtime": "npm:^7.25.1"
-    "@haixing_hu/clone": "npm:^1.8.0"
-    "@haixing_hu/common-app": "npm:^1.3.0"
-    "@haixing_hu/common-decorator": "npm:^3.3.0"
-    "@haixing_hu/common-model": "npm:^4.0.0"
-    "@haixing_hu/common-normalizer": "npm:^1.5.0"
+    "@haixing_hu/clone": "npm:^1.11.1"
+    "@haixing_hu/common-app": "npm:^1.4.0"
+    "@haixing_hu/common-decorator": "npm:^3.4.1"
+    "@haixing_hu/common-model": "npm:^4.1.0"
+    "@haixing_hu/common-normalizer": "npm:^1.5.1"
     "@haixing_hu/common-ui": "npm:^1.4.0"
     "@haixing_hu/common-util": "npm:^5.1.0"
     "@haixing_hu/common-validation-rule": "npm:^1.2.1"
-    "@haixing_hu/common-validator": "npm:^4.3.0"
+    "@haixing_hu/common-validator": "npm:^4.4.0"
     "@haixing_hu/eslint-config": "npm:^1.3.3"
     "@haixing_hu/jsdoc-minami": "npm:^1.5.1"
     "@haixing_hu/json": "npm:^1.0.3"
     "@haixing_hu/logging": "npm:^1.3.3"
     "@haixing_hu/naming-style": "npm:^1.3.0"
-    "@haixing_hu/pinia-decorator": "npm:^3.0.1"
+    "@haixing_hu/pinia-decorator": "npm:^3.1.0"
     "@haixing_hu/rollup-builder": "npm:^1.6.5"
     "@haixing_hu/type-detect": "npm:^1.1.0"
     "@haixing_hu/typeinfo": "npm:^3.0.0"
-    "@haixing_hu/vue3-class-component": "npm:^2.0.0"
+    "@haixing_hu/vue3-class-component": "npm:^2.1.0"
     "@jest/core": "npm:^29.7.0"
     "@rollup/plugin-alias": "npm:^5.0.1"
     "@rollup/plugin-babel": "npm:^6.0.4"
@@ -1468,74 +1468,74 @@ __metadata:
     vue: "npm:^3.5.12"
   peerDependencies:
     "@babel/runtime": ^7.25.1
-    "@haixing_hu/common-app": ^1.3.0
-    "@haixing_hu/common-decorator": ^3.3.0
-    "@haixing_hu/common-model": ^4.0.0
+    "@haixing_hu/common-app": ^1.4.0
+    "@haixing_hu/common-decorator": ^3.4.1
+    "@haixing_hu/common-model": ^4.1.0
     "@haixing_hu/common-ui": ^1.4.0
     "@haixing_hu/common-util": ^5.1.0
   languageName: unknown
   linkType: soft
 
-"@haixing_hu/common-app@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@haixing_hu/common-app@npm:1.3.0"
+"@haixing_hu/common-app@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@haixing_hu/common-app@npm:1.4.0"
   dependencies:
     js-cookie: "npm:^3.0.5"
   peerDependencies:
     "@babel/runtime": ^7.23.6
-    "@haixing_hu/clone": ^1.7.2
+    "@haixing_hu/clone": ^1.11.1
     "@haixing_hu/common-ui": ^1.4.0
-    "@haixing_hu/common-util": ^5.0.0
-    "@haixing_hu/common-validation-rule": ^1.1.0
+    "@haixing_hu/common-util": ^5.1.0
+    "@haixing_hu/common-validation-rule": ^1.2.1
     "@haixing_hu/json": ^1.0.3
     "@haixing_hu/logging": ^1.3.3
     "@haixing_hu/naming-style": ^1.3.0
-    "@haixing_hu/pinia-decorator": ^3.0.0
+    "@haixing_hu/pinia-decorator": ^3.1.0
     "@haixing_hu/type-detect": ^1.1.0
     axios: ^1.7.7
-  checksum: 10c0/72a59660e0de18c8f5b8735d42f1eb2effc736387c7d63a0ff95db38ef8e2ca6041c9e905174b2f891efb1b8ede6333eb51c6e506eaa84db15a7b68319657f44
+  checksum: 10c0/e30695aee975f7a8421198c681774e1842b7f4be5f4dd8ee8e08fd48daeee3c517f69e98aa14f83eb55c5466f26f5ab61813495814fe75223473f473ab2508ce
   languageName: node
   linkType: hard
 
-"@haixing_hu/common-decorator@npm:^3.3.0":
-  version: 3.3.0
-  resolution: "@haixing_hu/common-decorator@npm:3.3.0"
+"@haixing_hu/common-decorator@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "@haixing_hu/common-decorator@npm:3.4.1"
   peerDependencies:
     "@babel/runtime": ^7.24.0
-    "@haixing_hu/clone": ^1.8.0
+    "@haixing_hu/clone": ^1.11.1
     "@haixing_hu/common-util": ^5.1.0
-    "@haixing_hu/common-validation-rule": ^1.1.0
+    "@haixing_hu/common-validation-rule": ^1.2.1
     "@haixing_hu/json": ^1.0.3
     "@haixing_hu/naming-style": ^1.3.0
     "@haixing_hu/type-detect": ^1.1.0
     "@haixing_hu/typeinfo": ^3.0.0
-  checksum: 10c0/25539fa545ac811149d377b00ea62aa0b92fe8280516db6591e1fc66e816b4aafb101007e38ef3b31caf28285590665f61afccbdd99bdf2262dff9caa53855e7
+  checksum: 10c0/27340685fa481c7d4c9338f31aad4b85c7e9eb8d4528046f991ed81acc12a0ea7b753b342e103d0baf3aa25b7d0fe278b67e40561b0c48b68598d90c70440ed1
   languageName: node
   linkType: hard
 
-"@haixing_hu/common-model@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@haixing_hu/common-model@npm:4.0.0"
+"@haixing_hu/common-model@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "@haixing_hu/common-model@npm:4.1.0"
   peerDependencies:
     "@babel/runtime": ^7.25.1
-    "@haixing_hu/common-decorator": ^3.0.0
-    "@haixing_hu/common-normalizer": ^1.5.0
-    "@haixing_hu/common-util": ^5.0.0
-    "@haixing_hu/common-validator": ^4.3.0
+    "@haixing_hu/common-decorator": ^3.4.1
+    "@haixing_hu/common-normalizer": ^1.5.1
+    "@haixing_hu/common-util": ^5.1.0
+    "@haixing_hu/common-validator": ^4.4.0
     "@haixing_hu/logging": ^1.3.3
     dayjs: ^1.11.10
-  checksum: 10c0/b09a3b2bf258b5207baf304a79c832754774592c7dd147daf8d24a21bc72155d775659274f32afd104f4d553967471da38c271b6bd3ad7aa4b73282acf260fd4
+  checksum: 10c0/1bb75a5fda8d5a81deb9651952db72131cf8e5b86817559a9cc8e54264d2205075c1728e908dc34ce709b0c6a4ca220995d8f36f23da83ef7663d780b501a0fd
   languageName: node
   linkType: hard
 
-"@haixing_hu/common-normalizer@npm:^1.5.0":
-  version: 1.5.0
-  resolution: "@haixing_hu/common-normalizer@npm:1.5.0"
+"@haixing_hu/common-normalizer@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@haixing_hu/common-normalizer@npm:1.5.1"
   peerDependencies:
     "@babel/runtime": ^7.23.6
-    "@haixing_hu/common-util": ^5.0.0
+    "@haixing_hu/common-util": ^5.1.0
     dayjs: ^1.11.10
-  checksum: 10c0/8c6315c0ffaa354fac09fb4926a6c9d18956404c8d6ab5b264ac0f45473a5407ffab254335acfa381920bf123e5ee099f546d7c8ceb130c46beed785fed18cab
+  checksum: 10c0/7b696ee02089d6a4b866774b3a9249a2a2f9b41130dc5c01135ea0e6c3b242b07b653efc26f26104e0b344ad8231e962ab1ab663c0942bb59da4ccf04b24a341
   languageName: node
   linkType: hard
 
@@ -1575,14 +1575,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@haixing_hu/common-validator@npm:^4.3.0":
-  version: 4.3.0
-  resolution: "@haixing_hu/common-validator@npm:4.3.0"
+"@haixing_hu/common-validator@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "@haixing_hu/common-validator@npm:4.4.0"
   peerDependencies:
     "@babel/runtime": ^7.25.6
-    "@haixing_hu/common-decorator": ^3.0.0
+    "@haixing_hu/common-decorator": ^3.4.1
     "@haixing_hu/common-validation-rule": ^1.2.1
-  checksum: 10c0/d27f0c1d2863215f5da85b6e72453459b4ac4b849b228561c3452251fa0a0d5ff4badbee81e8494a93cf84339283928050e471d1f2c9ee59544be9cc03f5bfc7
+  checksum: 10c0/57cdeb7a41620f23d613c5dcb83dac87e9175a4b5fd0553bfb089f365434a885468e42491beefd5df6f1035976aea2330718b26e629b920b751dc1ccafbeb803
   languageName: node
   linkType: hard
 
@@ -1636,15 +1636,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@haixing_hu/pinia-decorator@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "@haixing_hu/pinia-decorator@npm:3.0.1"
+"@haixing_hu/pinia-decorator@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@haixing_hu/pinia-decorator@npm:3.1.0"
   peerDependencies:
     "@babel/runtime": ^7.24.0
-    "@haixing_hu/vue3-class-component": ^2.0.0
+    "@haixing_hu/vue3-class-component": ^2.1.0
     pinia: ^2.0.0
     vue: ^3.0.0
-  checksum: 10c0/9c2f125290ce90cf20b2cbee47fc30a0c5c22bbdb48b528f0c7d5018b791b70bfbd56a013b72ac7ba38fdad280bbfd0d2c6d0546283f232328ce4392cc7f594c
+  checksum: 10c0/16cf4073a8c679cb75468515ac8930e4ebe6e5ef979c95ad2b5c110e570c6edbd1d1ee3421fc67d528f1917ee86f48927f5933e2af7cb9db0a7143eee979b8fb
   languageName: node
   linkType: hard
 
@@ -1688,14 +1688,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@haixing_hu/vue3-class-component@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@haixing_hu/vue3-class-component@npm:2.0.0"
+"@haixing_hu/vue3-class-component@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "@haixing_hu/vue3-class-component@npm:2.1.0"
   peerDependencies:
     "@babel/runtime": ^7.24.0
-    "@haixing_hu/clone": ^1.4.1
+    "@haixing_hu/clone": ^1.11.1
     vue: ^3.3.4
-  checksum: 10c0/665f0b980ff35cb40e430ad85caf8f3dfab8e392c011cf394c67f6ddefb6cabcfd4ed5a5c060f29aa348c3e36b25713cb571798d6abe91c5ff6181a17f04bccd
+  checksum: 10c0/af71ebffbf56c7315b9f9620e84637778d412c768be57a560247c419a235040f8fd15db5f8ee3ba61bf5848de8c2fdc7c04cfc6ec5e5ef970d9ef85b77998d6d
   languageName: node
   linkType: hard
 
