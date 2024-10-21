@@ -1422,7 +1422,7 @@ __metadata:
     "@babel/preset-env": "npm:^7.25.1"
     "@babel/runtime": "npm:^7.25.1"
     "@haixing_hu/clone": "npm:^1.11.1"
-    "@haixing_hu/common-app": "npm:^1.4.0"
+    "@haixing_hu/common-app": "npm:^1.4.1"
     "@haixing_hu/common-decorator": "npm:^3.4.1"
     "@haixing_hu/common-model": "npm:^4.1.0"
     "@haixing_hu/common-normalizer": "npm:^1.5.1"
@@ -1468,7 +1468,7 @@ __metadata:
     vue: "npm:^3.5.12"
   peerDependencies:
     "@babel/runtime": ^7.25.1
-    "@haixing_hu/common-app": ^1.4.0
+    "@haixing_hu/common-app": ^1.4.1
     "@haixing_hu/common-decorator": ^3.4.1
     "@haixing_hu/common-model": ^4.1.0
     "@haixing_hu/common-ui": ^1.4.0
@@ -1476,9 +1476,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@haixing_hu/common-app@npm:^1.4.0":
-  version: 1.4.0
-  resolution: "@haixing_hu/common-app@npm:1.4.0"
+"@haixing_hu/common-app@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@haixing_hu/common-app@npm:1.4.1"
   dependencies:
     js-cookie: "npm:^3.0.5"
   peerDependencies:
@@ -1493,7 +1493,7 @@ __metadata:
     "@haixing_hu/pinia-decorator": ^3.1.0
     "@haixing_hu/type-detect": ^1.1.0
     axios: ^1.7.7
-  checksum: 10c0/e30695aee975f7a8421198c681774e1842b7f4be5f4dd8ee8e08fd48daeee3c517f69e98aa14f83eb55c5466f26f5ab61813495814fe75223473f473ab2508ce
+  checksum: 10c0/b5c227dc0fa4ff5627dbe1945344ba228cdd20b6050cb2a81897dee2334145e177254fb8ab8f04607bebf6b216c92f1acc580d4f091918014073fa5bd2361087
   languageName: node
   linkType: hard
 

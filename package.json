@@ -1,6 +1,6 @@
 {
   "name": "@haixing_hu/common-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A JavaScript library of encapsulation of common APIs",
   "author": "Haixing Hu (starfish.hu@gmail.com)",
   "license": "Apache-2.0",
@@ -45,7 +45,7 @@
   },
   "peerDependencies": {
     "@babel/runtime": "^7.25.1",
-    "@haixing_hu/common-app": "^1.4.0",
+    "@haixing_hu/common-app": "^1.4.1",
     "@haixing_hu/common-decorator": "^3.4.1",
     "@haixing_hu/common-model": "^4.1.0",
     "@haixing_hu/common-ui": "^1.4.0",
@@ -59,7 +59,7 @@
     "@babel/preset-env": "^7.25.1",
     "@babel/runtime": "^7.25.1",
     "@haixing_hu/clone": "^1.11.1",
-    "@haixing_hu/common-app": "^1.4.0",
+    "@haixing_hu/common-app": "^1.4.1",
     "@haixing_hu/common-decorator": "^3.4.1",
     "@haixing_hu/common-model": "^4.1.0",
     "@haixing_hu/common-normalizer": "^1.5.1",
