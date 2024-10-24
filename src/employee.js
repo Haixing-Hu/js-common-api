@@ -10,10 +10,9 @@ import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
   Employee,
-  Page,
+  EmployeeInfo,
   PageRequest,
   State,
-  EmployeeInfo,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
@@ -428,8 +427,8 @@ class EmployeeApi {
    *     要恢复的`Employee`对象的ID，该对象必须已经被标记删除。
    * @param {boolean} withUser
    *     是否同时恢复`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
-   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
-   *     此参数默认值为`false`。
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
@@ -451,8 +450,8 @@ class EmployeeApi {
    *     要恢复的`Employee`对象的编码，该对象必须已经被标记删除。
    * @param {boolean} withUser
    *     是否同时恢复`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
-   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
-   *     此参数默认值为`false`。
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
@@ -474,8 +473,8 @@ class EmployeeApi {
    *     要清除的`Employee`对象的ID，该对象必须已经被标记删除。
    * @param {boolean} withUser
    *     是否同时彻底清除`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
-   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
-   *     此参数默认值为`false`。
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
@@ -497,8 +496,8 @@ class EmployeeApi {
    *     要清除的`Employee`对象的编码，该对象必须已经被标记删除。
    * @param {boolean} withUser
    *     是否同时彻底清除`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
-   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
-   *     此参数默认值为`false`。
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
@@ -519,7 +518,7 @@ class EmployeeApi {
    * @param {boolean} withUser
    *     是否同时彻底清除所有已被标记删除的`Employee`对象所绑定的已被标记标记删除的用户对象`User`。
    *     若某个已被标记删除的`Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记
-   *     删除，则不对其做操作。此参数默认值为`false`。
+   *     删除，则不对该`User`对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
