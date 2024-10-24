@@ -9,6 +9,7 @@
 import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
+  Contact,
   PageRequest,
   Person,
   PersonInfo,
@@ -306,6 +307,60 @@ class PersonApi {
       logger.info('Successfully update the Person by ID %s at:', id, person.modifyTime);
       logger.debug('The updated Person is:', person);
       return person;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`Person`对象的联系方式。
+   *
+   * @param {string|number|bigint} id
+   *     `Person`对象的ID。
+   * @param {Contact} contact
+   *     要更新的`Person`对象的联系方式。
+   * @param {boolean} withUser
+   *     是否同时更新`Person`对象所绑定的`User`对象的联系方式。默认值为`false`。
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateContact(id, contact, withUser = false) {
+    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('contact', contact, Contact);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
+    const data = toJSON(contact, toJsonOptions);
+    loading.showUpdating();
+    return http.put(`/person/${stringifyId(id)}/contact`, data, { params }).then((timestamp) => {
+      logger.info('Successfully update the Contact of a Person by ID "%s" at:', id, timestamp);
+      return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`Person`对象的备注。
+   *
+   * @param {string|number|bigint} id
+   *     `Person`对象的ID。
+   * @param {string} comment
+   *     要更新的`Person`对象的备注。
+   * @param {boolean} withUser
+   *     是否同时更新`Person`对象所绑定的`User`对象的备注。默认值为`false`。
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateComment(id, comment, withUser = false) {
+    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('comment', contact, String);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
+    const data = toJSON(comment, toJsonOptions);
+    loading.showUpdating();
+    return http.put(`/person/${stringifyId(id)}/comment`, data, { params }).then((timestamp) => {
+      logger.info('Successfully update the comment of a Person by ID "%s" at:', id, timestamp);
+      return timestamp;
     });
   }
 
