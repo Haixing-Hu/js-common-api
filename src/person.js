@@ -9,10 +9,9 @@
 import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
+  PageRequest,
   Person,
   PersonInfo,
-  Page,
-  PageRequest,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
@@ -262,16 +261,20 @@ class PersonApi {
    *
    * @param {Person} person
    *     要添加的`Person`对象。
+   * @param {boolean} withUser
+   *     是否同时添加新`Person`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(person) {
+  add(person, withUser = false) {
     checkArgumentType('person', person, Person);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(person, toJsonOptions);
     loading.showAdding();
-    return http.post('/person', data).then((obj) => {
+    return http.post('/person', data, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully add the Person:', person.id);
       logger.debug('The added Person is:', person);
@@ -284,17 +287,21 @@ class PersonApi {
    *
    * @param {Person} person
    *     要更新的`Person`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} withUser
+   *     是否同时更新`Person`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(person) {
+  update(person, withUser = false) {
     checkArgumentType('person', person, Person);
+    checkArgumentType('withUser', withUser, Boolean);
     const id = stringifyId(person.id);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(person, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/person/${id}`, data).then((obj) => {
+    return http.put(`/person/${id}`, data, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully update the Person by ID %s at:', id, person.modifyTime);
       logger.debug('The updated Person is:', person);
@@ -307,15 +314,19 @@ class PersonApi {
    *
    * @param {string} id
    *     要标记删除的`Person`对象的ID。
+   * @param {boolean} withUser
+   *     是否同时标记删除`Person`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id) {
+  delete(id, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showDeleting();
-    return http.delete(`/person/${stringifyId(id)}`).then((timestamp) => {
+    return http.delete(`/person/${stringifyId(id)}`, { params }).then((timestamp) => {
       logger.info('Successfully delete the Person by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -326,15 +337,21 @@ class PersonApi {
    *
    * @param {string} id
    *     要恢复的`Person`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时恢复`Person`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id) {
+  restore(id, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showRestoring();
-    return http.patch(`/person/${stringifyId(id)}`)
+    return http.patch(`/person/${stringifyId(id)}`, undefined, { params })
       .then(() => logger.info('Successfully restore the Person by ID:', id));
   }
 
@@ -343,29 +360,41 @@ class PersonApi {
    *
    * @param {string} id
    *     要清除的`Person`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时彻底清除`Person`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id) {
+  purge(id, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showPurging();
-    return http.delete(`/person/${stringifyId(id)}/purge`)
+    return http.delete(`/person/${stringifyId(id)}/purge`, { params })
       .then(() => logger.info('Successfully purge the Person by ID:', id));
   }
 
   /**
    * 根彻底清除全部已被标记删除的`Person`对象。
    *
+   * @param {boolean} withUser
+   *     是否同时彻底清除所有已被标记删除的`Person`对象所绑定的已被标记标记删除的用户对象`User`。
+   *     若某个已被标记删除的`Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记
+   *     删除，则不对该`User`对象做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll() {
+  purgeAll(withUser = false) {
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showPurging();
-    return http.delete('/person/purge')
+    return http.delete('/person/purge', { params })
       .then(() => logger.info('Successfully purge all deleted Person.'));
   }
 }
