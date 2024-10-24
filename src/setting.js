@@ -60,8 +60,7 @@ class SettingApi {
     return http.get('/setting', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Setting.createArray(page.content, assignOptions);
+      const page = Setting.createPage(obj, assignOptions);
       logger.info('Successfully list the Setting.');
       logger.debug('The page of Setting is:', page);
       return page;

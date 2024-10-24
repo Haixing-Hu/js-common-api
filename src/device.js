@@ -99,8 +99,7 @@ class DeviceApi {
     return http.get('/device', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Device.createArray(page.content, assignOptions);
+      const page = Device.createPage(obj, assignOptions);
       logger.deviceInfo('Successfully list the Device.');
       logger.debug('The page of Device is:', page);
       return page;
@@ -176,8 +175,7 @@ class DeviceApi {
     return http.get('/device/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj);
-      page.content = DeviceInfo.createArray(page.content);
+      const page = DeviceInfo.createPage(obj);
       logger.deviceInfo('Successfully list the info of Device.');
       logger.debug('The page of info of Device is:', page);
       return page;

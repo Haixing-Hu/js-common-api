@@ -75,8 +75,7 @@ class DictApi {
     return http.get('/dict', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Dict.createArray(page.content, assignOptions);
+      const page = Dict.createPage(obj, assignOptions);
       logger.info('Successfully list the Dict.');
       logger.debug('The page of Dict is:', page);
       return page;
@@ -130,8 +129,7 @@ class DictApi {
     return http.get('/dict/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = StatefulInfo.createArray(page.content, assignOptions);
+      const page = StatefulInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Dict.');
       logger.debug('The page of infos of Dict is:', page);
       return page;

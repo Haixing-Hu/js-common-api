@@ -63,8 +63,7 @@ class UploadApi {
     return http.get('/upload', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Upload.createArray(page.content, assignOptions);
+      const page = Upload.createPage(obj, assignOptions);
       logger.info('Successfully list the Upload.');
       logger.debug('The page of Upload is:', page);
       return page;

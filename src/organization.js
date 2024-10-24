@@ -93,8 +93,7 @@ class OrganizationApi {
     return http.get('/organization', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Organization.createArray(page.content, assignOptions);
+      const page = Organization.createPage(obj, assignOptions);
       logger.info('Successfully list the Organization.');
       logger.debug('The page of Organization is:', page);
       return page;
@@ -166,8 +165,7 @@ class OrganizationApi {
     return http.get('/organization/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = StatefulInfo.createArray(page.content, assignOptions);
+      const page = StatefulInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Organization.');
       logger.debug('The page of infos of Organization is:', page);
       return page;

@@ -97,8 +97,7 @@ class DepartmentApi {
     return http.get('/department', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Department.createArray(page.content, assignOptions);
+      const page = Department.createPage(obj, assignOptions);
       logger.info('Successfully list the Department.');
       logger.debug('The page of Department is:', page);
       return page;
@@ -174,8 +173,7 @@ class DepartmentApi {
     return http.get('/department/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = StatefulInfo.createArray(page.content, assignOptions);
+      const page = StatefulInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Department.');
       logger.debug('The page of infos of Department is:', page);
       return page;

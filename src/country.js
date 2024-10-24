@@ -68,8 +68,7 @@ class CountryApi {
     return http.get('/country', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Country.createArray(page.content, assignOptions);
+      const page = Country.createPage(obj, assignOptions);
       logger.info('Successfully list the Country.');
       logger.debug('The page of Country is:', page);
       return page;
@@ -117,8 +116,7 @@ class CountryApi {
     return http.get('/country/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj);
-      page.content = Info.createArray(page.content);
+      const page = Info.createPage(obj);
       logger.info('Successfully list the infos of Country.');
       logger.debug('The page of infos of Country is:', page);
       return page;

@@ -71,8 +71,7 @@ class CityApi {
     return http.get('/city', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = City.createArray(page.content, assignOptions);
+      const page = City.createPage(obj, assignOptions);
       logger.info('Successfully list the City.');
       logger.debug('The page of City is:', page);
       return page;
@@ -123,8 +122,7 @@ class CityApi {
     return http.get('/city/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj);
-      page.content = Info.createArray(page.content);
+      const page = Info.createPage(obj);
       logger.info('Successfully list the infos of City.');
       logger.debug('The page of infos of City is:', page);
       return page;

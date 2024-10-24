@@ -73,8 +73,7 @@ class AttachmentApi {
     return http.get('/attachment', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Attachment.createArray(page.content, assignOptions);
+      const page = Attachment.createPage(obj, assignOptions);
       logger.info('Successfully list the Attachment.');
       logger.debug('The page of Attachment is:', page);
       return page;

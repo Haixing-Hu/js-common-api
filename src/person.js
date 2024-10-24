@@ -93,8 +93,7 @@ class PersonApi {
     return http.get('/person', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Person.createArray(page.content, assignOptions);
+      const page = Person.createPage(obj, assignOptions);
       logger.info('Successfully list the Person.');
       logger.debug('The page of Person is:', page);
       return page;
@@ -167,8 +166,7 @@ class PersonApi {
     return http.get('/person/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = PersonInfo.createArray(page.content, assignOptions);
+      const page = PersonInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Person.');
       logger.debug('The page of infos of Person is:', page);
       return page;

@@ -69,8 +69,7 @@ class CategoryApi {
     return http.get('/category', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Category.createArray(page.content, assignOptions);
+      const page = Category.createPage(obj, assignOptions);
       logger.info('Successfully list the Category.');
       logger.debug('The page of Category is:', page);
       return page;
@@ -119,8 +118,7 @@ class CategoryApi {
     return http.get('/category/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj);
-      page.content = InfoWithEntity.createArray(page.content);
+      const page = InfoWithEntity.createPage(obj);
       logger.info('Successfully list the infos of Category.');
       logger.debug('The page of infos of Category is:', page);
       return page;

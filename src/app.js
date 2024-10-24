@@ -74,8 +74,7 @@ class AppApi {
     return http.get('/app', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = App.createArray(page.content, assignOptions);
+      const page = App.createPage(obj, assignOptions);
       logger.info('Successfully list the App.');
       logger.debug('The page of App is:', page);
       return page;
@@ -128,8 +127,7 @@ class AppApi {
     return http.get('/app/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = StatefulInfo.createArray(page.content, assignOptions);
+      const page = StatefulInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of App.');
       logger.debug('The page of infos of App is:', page);
       return page;

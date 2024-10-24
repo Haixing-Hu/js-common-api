@@ -86,8 +86,7 @@ class EmployeeApi {
     return http.get('/employee', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Employee.createArray(page.content, assignOptions);
+      const page = Employee.createPage(obj, assignOptions);
       logger.info('Successfully list the Employee.');
       logger.debug('The page of Employee is:', page);
       return page;
@@ -152,8 +151,7 @@ class EmployeeApi {
     return http.get('/employee/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = EmployeeInfo.createArray(page.content, assignOptions);
+      const page = EmployeeInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Employee.');
       logger.debug('The page of infos of Employee is:', page);
       return page;
@@ -249,16 +247,20 @@ class EmployeeApi {
    *
    * @param {Employee} employee
    *     要添加的`Employee`对象。
+   * @param {boolean} withUser
+   *     是否同时添加新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<Employee|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Employee`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(employee) {
+  add(employee, withUser = false) {
     checkArgumentType('employee', employee, Employee);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(employee, toJsonOptions);
     loading.showAdding();
-    return http.post('/employee', data).then((obj) => {
+    return http.post(`/employee`, data, { params }).then((obj) => {
       const result = Employee.create(obj, assignOptions);
       logger.info('Successfully add the Employee:', result.id);
       logger.debug('The added Employee is:', result);
@@ -271,17 +273,21 @@ class EmployeeApi {
    *
    * @param {Employee} employee
    *     要更新的`Employee`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} withUser
+   *     是否同时更新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<Employee|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Employee`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(employee) {
+  update(employee, withUser = false) {
     checkArgumentType('employee', employee, Employee);
+    checkArgumentType('withUser', withUser, Boolean);
     const id = stringifyId(employee.id);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/employee/${id}`, data).then((obj) => {
+    return http.put(`/employee/${id}`, data, { params }).then((obj) => {
       const result = Employee.create(obj, assignOptions);
       logger.info('Successfully update the Employee by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Employee is:', result);
@@ -294,16 +300,20 @@ class EmployeeApi {
    *
    * @param {Employee} employee
    *     要更新的`Employee`对象的数据，根据其编码确定要更新的对象。
+   * @param {boolean} withUser
+   *     是否同时更新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<Employee|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Employee`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(employee) {
+  updateByCode(employee, withUser = false) {
     checkArgumentType('employee', employee, Employee);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(employee, toJsonOptions);
     loading.showUpdating();
-    return http.put(`/employee/code/${employee.code}`, data).then((obj) => {
+    return http.put(`/employee/code/${employee.code}`, data, { params }).then((obj) => {
       const result = Employee.create(obj, assignOptions);
       logger.info('Successfully update the Employee by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Employee is:', result);
@@ -318,17 +328,21 @@ class EmployeeApi {
    *     `Employee`对象的ID。
    * @param {State|string} state
    *     要更新的`Employee`对象的状态，必须是`State`枚举类型或表示其值的字符串。
+   * @param {boolean} withUser
+   *     是否同时更新`Employee`对象所绑定的用户对象`User`的状态。默认值为`false`。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateState(id, state) {
+  updateState(id, state, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('state', state, [State, String]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = { state: String(state) };
     loading.showUpdating();
-    return http.put(`/employee/${stringifyId(id)}/state`, data).then((timestamp) => {
+    return http.put(`/employee/${stringifyId(id)}/state`, data, { params }).then((timestamp) => {
       logger.info('Successfully update the state of the Employee by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -341,17 +355,21 @@ class EmployeeApi {
    *     要更新的`Employee`对象的编码。
    * @param {State|string} state
    *     要更新的`Employee`对象的状态，必须是`State`枚举类型或表示其值的字符串。
+   * @param {boolean} withUser
+   *     是否同时更新`Employee`对象所绑定的用户对象`User`的状态。默认值为`false`。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateStateByCode(code, state) {
+  updateStateByCode(code, state, withUser = false) {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, [State, String]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     const data = { state: String(state) };
     loading.showUpdating();
-    return http.put(`/employee/code/${code}/state`, data).then((timestamp) => {
+    return http.put(`/employee/code/${code}/state`, data, { params }).then((timestamp) => {
       logger.info('Successfully update the state of the Employee by code "%s" at:', code, timestamp);
       return timestamp;
     });
@@ -362,15 +380,19 @@ class EmployeeApi {
    *
    * @param {string} id
    *     要标记删除的`Employee`对象的ID。
+   * @param {boolean} withUser
+   *     是否同时标记删除`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id) {
+  delete(id, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showDeleting();
-    return http.delete(`/employee/${stringifyId(id)}`).then((timestamp) => {
+    return http.delete(`/employee/${stringifyId(id)}`, { params }).then((timestamp) => {
       logger.info('Successfully delete the Employee by ID %s at:', id, timestamp);
       return timestamp;
     });
@@ -381,15 +403,19 @@ class EmployeeApi {
    *
    * @param {string} code
    *     要标记删除的`Employee`对象的编码。
+   * @param {boolean} withUser
+   *     是否同时标记删除`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  deleteByCode(code) {
+  deleteByCode(code, withUser = false) {
     checkArgumentType('code', code, String);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showDeleting();
-    return http.delete(`/employee/code/${code}`).then((timestamp) => {
+    return http.delete(`/employee/code/${code}`, { params }).then((timestamp) => {
       logger.info('Successfully delete the Employee by code "%s" at:', code, timestamp);
       return timestamp;
     });
@@ -400,15 +426,21 @@ class EmployeeApi {
    *
    * @param {string} id
    *     要恢复的`Employee`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时恢复`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
+   *     此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id) {
+  restore(id, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showRestoring();
-    return http.patch(`/employee/${stringifyId(id)}`)
+    return http.patch(`/employee/${stringifyId(id)}`, undefined, { params })
       .then(() => logger.info('Successfully restore the Employee by ID:', id));
   }
 
@@ -417,15 +449,21 @@ class EmployeeApi {
    *
    * @param {string} code
    *     要恢复的`Employee`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时恢复`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
+   *     此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restoreByCode(code) {
+  restoreByCode(code, withUser = false) {
     checkArgumentType('code', code, String);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showRestoring();
-    return http.patch(`/employee/code/${code}`)
+    return http.patch(`/employee/code/${code}`, undefined, { params })
       .then(() => logger.info('Successfully restore the Employee by code:', code));
   }
 
@@ -434,15 +472,21 @@ class EmployeeApi {
    *
    * @param {string} id
    *     要清除的`Employee`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时彻底清除`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
+   *     此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id) {
+  purge(id, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showPurging();
-    return http.delete(`/employee/${stringifyId(id)}/purge`)
+    return http.delete(`/employee/${stringifyId(id)}/purge`, { params })
       .then(() => logger.info('Successfully purge the Employee by ID:', id));
   }
 
@@ -451,29 +495,41 @@ class EmployeeApi {
    *
    * @param {string} code
    *     要清除的`Employee`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时彻底清除`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对其做操作。
+   *     此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeByCode(code) {
+  purgeByCode(code, withUser = false) {
     checkArgumentType('code', code, String);
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showPurging();
-    return http.delete(`/employee/code/${code}/purge`)
+    return http.delete(`/employee/code/${code}/purge`, { params })
       .then(() => logger.info('Successfully purge the Employee by code:', code));
   }
 
   /**
    * 根彻底清除全部已被标记删除的`Employee`对象。
    *
+   * @param {boolean} withUser
+   *     是否同时彻底清除所有已被标记删除的`Employee`对象所绑定的已被标记标记删除的用户对象`User`。
+   *     若某个已被标记删除的`Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记
+   *     删除，则不对其做操作。此参数默认值为`false`。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll() {
+  purgeAll(withUser = false) {
+    checkArgumentType('withUser', withUser, Boolean);
+    const params = toJSON({ withUser }, toJsonOptions);
     loading.showPurging();
-    return http.delete('/employee/purge')
+    return http.delete('/employee/purge', { params })
       .then(() => logger.info('Successfully purge all deleted Employee.'));
   }
 }

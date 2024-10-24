@@ -66,8 +66,7 @@ class SocialNetworkAccountApi {
     return http.get('/social-network-account', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = SocialNetworkAccount.createArray(page.content, assignOptions);
+      const page = SocialNetworkAccount.createPage(obj, assignOptions);
       logger.info('Successfully list the SocialNetworkAccount.');
       logger.debug('The page of SocialNetworkAccount is:', page);
       return page;

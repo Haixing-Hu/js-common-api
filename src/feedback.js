@@ -76,8 +76,7 @@ class FeedbackApi {
     return http.get('/feedback', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = Feedback.createArray(page.content, assignOptions);
+      const page = Feedback.createPage(obj, assignOptions);
       logger.info('Successfully list the Feedback.');
       logger.debug('The page of Feedback is:', page);
       return page;

@@ -71,8 +71,7 @@ class DistrictApi {
     return http.get('/district', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = District.createArray(page.content, assignOptions);
+      const page = District.createPage(obj, assignOptions);
       logger.info('Successfully list the District.');
       logger.debug('The page of District is:', page);
       return page;
@@ -123,8 +122,7 @@ class DistrictApi {
     return http.get('/district/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj);
-      page.content = Info.createArray(page.content);
+      const page = Info.createPage(obj);
       logger.info('Successfully list the infos of District.');
       logger.debug('The page of infos of District is:', page);
       return page;

@@ -70,8 +70,7 @@ class DictEntryApi {
     return http.get('/dict/entry', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = DictEntry.createArray(page.content, assignOptions);
+      const page = DictEntry.createPage(obj, assignOptions);
       logger.info('Successfully list the DictEntry.');
       logger.debug('The page of DictEntry is:', page);
       return page;
@@ -121,8 +120,7 @@ class DictEntryApi {
     return http.get('/dict/entry/info', {
       params,
     }).then((obj) => {
-      const page = Page.create(obj, assignOptions);
-      page.content = DictEntryInfo.createArray(page.content, assignOptions);
+      const page = DictEntryInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of DictEntry.');
       logger.debug('The page of infos of DictEntry is:', page);
       return page;
