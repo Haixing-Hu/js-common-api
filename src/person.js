@@ -353,7 +353,7 @@ class PersonApi {
   @Log
   updateComment(id, comment, withUser = false) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    checkArgumentType('comment', contact, String);
+    checkArgumentType('comment', comment, String);
     checkArgumentType('withUser', withUser, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(comment, toJsonOptions);
