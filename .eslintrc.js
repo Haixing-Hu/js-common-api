@@ -15,9 +15,5 @@ module.exports = {
   ],
   globals: {
     'BigInt': true,
-  },
-  files: [
-    'src/**/*.js',
-    'test/**/*.js',
-  ],
+  }
 };

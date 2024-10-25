@@ -259,7 +259,7 @@ class EmployeeApi {
     const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(employee, toJsonOptions);
     loading.showAdding();
-    return http.post(`/employee`, data, { params }).then((obj) => {
+    return http.post('/employee', data, { params }).then((obj) => {
       const result = Employee.create(obj, assignOptions);
       logger.info('Successfully add the Employee:', result.id);
       logger.debug('The added Employee is:', result);
