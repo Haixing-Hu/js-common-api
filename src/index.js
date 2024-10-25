@@ -33,6 +33,7 @@ import uploadApi from './upload';
 import userAuthenticateApi from './user-authenticate';
 import verifyCodeApi from './verify-code';
 import wechatApi from './wechat';
+import { assignOptions, toJsonOptions } from './impl/options';
 
 export {
   appApi,
@@ -62,4 +63,6 @@ export {
   userAuthenticateApi,
   verifyCodeApi,
   wechatApi,
+  assignOptions,
+  toJsonOptions,
 };
