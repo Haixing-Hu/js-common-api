@@ -100,7 +100,7 @@ class DeviceApi {
       params,
     }).then((obj) => {
       const page = Device.createPage(obj, assignOptions);
-      logger.deviceInfo('Successfully list the Device.');
+      logger.info('Successfully list the Device.');
       logger.debug('The page of Device is:', page);
       return page;
     });
@@ -176,7 +176,7 @@ class DeviceApi {
       params,
     }).then((obj) => {
       const page = DeviceInfo.createPage(obj);
-      logger.deviceInfo('Successfully list the info of Device.');
+      logger.info('Successfully list the info of Device.');
       logger.debug('The page of info of Device is:', page);
       return page;
     });
@@ -197,7 +197,7 @@ class DeviceApi {
     loading.showGetting();
     return http.get(`/device/${stringifyId(id)}}`).then((obj) => {
       const result = Device.create(obj, assignOptions);
-      logger.deviceInfo('Successfully get the Device by ID:', id);
+      logger.info('Successfully get the Device by ID:', id);
       logger.debug('The Device is:', result);
       return result;
     });
@@ -218,7 +218,7 @@ class DeviceApi {
     loading.showGetting();
     return http.get(`/device/code/${code}`).then((obj) => {
       const result = Device.create(obj, assignOptions);
-      logger.deviceInfo('Successfully get the Device by code:', code);
+      logger.info('Successfully get the Device by code:', code);
       logger.debug('The Device is:', result);
       return result;
     });
@@ -239,8 +239,8 @@ class DeviceApi {
     loading.showGetting();
     return http.get(`/device/${stringifyId(id)}/info`).then((obj) => {
       const result = DeviceInfo.create(obj, assignOptions);
-      logger.deviceInfo('Successfully get the info of the Device by ID:', id);
-      logger.debug('The deviceInfo of the Device is:', result);
+      logger.info('Successfully get the info of the Device by ID:', id);
+      logger.debug('The info of the Device is:', result);
       return result;
     });
   }
@@ -260,8 +260,8 @@ class DeviceApi {
     loading.showGetting();
     return http.get(`/device/code/${code}/info`).then((obj) => {
       const result = DeviceInfo.create(obj, assignOptions);
-      logger.deviceInfo('Successfully get the info of the Device by code:', code);
-      logger.debug('The deviceInfo of the Device is:', result);
+      logger.info('Successfully get the info of the Device by code:', code);
+      logger.debug('The info of the Device is:', result);
       return result;
     });
   }
@@ -282,7 +282,7 @@ class DeviceApi {
     loading.showAdding();
     return http.post('/device', data).then((obj) => {
       const result = Device.create(obj, assignOptions);
-      logger.deviceInfo('Successfully add the Device:', result.id);
+      logger.info('Successfully add the Device:', result.id);
       logger.debug('The added Device is:', result);
       return result;
     });
@@ -305,7 +305,7 @@ class DeviceApi {
     loading.showUpdating();
     return http.put(`/device/${id}`, data).then((obj) => {
       const result = Device.create(obj, assignOptions);
-      logger.deviceInfo('Successfully update the Device by ID %s at:', id, result.modifyTime);
+      logger.info('Successfully update the Device by ID %s at:', id, result.modifyTime);
       logger.debug('The updated Device is:', result);
       return result;
     });
@@ -327,7 +327,7 @@ class DeviceApi {
     loading.showUpdating();
     return http.put(`/device/code/${device.code}`, data).then((obj) => {
       const result = Device.create(obj, assignOptions);
-      logger.deviceInfo('Successfully update the Device by code "%s" at:', result.code, result.modifyTime);
+      logger.info('Successfully update the Device by code "%s" at:', result.code, result.modifyTime);
       logger.debug('The updated Device is:', result);
       return result;
     });
@@ -351,7 +351,7 @@ class DeviceApi {
     const data = toJSON(hardware, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/hardware`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the hardware of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the hardware of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -374,7 +374,7 @@ class DeviceApi {
     const data = toJSON(operatingSystem, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/operating-system`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the operating system of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the operating system of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -397,7 +397,7 @@ class DeviceApi {
     const data = toJSON(softwares, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/softwares`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the softwares of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the softwares of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -420,7 +420,7 @@ class DeviceApi {
     const data = toJSON(deployAddress, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/deploy-address`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the deploy address of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the deploy address of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -443,7 +443,7 @@ class DeviceApi {
     const data = toJSON(location, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/location`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the location of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the location of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -466,7 +466,7 @@ class DeviceApi {
     const data = toJSON(ipAddress, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/ip-address`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the IP address of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the IP address of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -489,7 +489,7 @@ class DeviceApi {
     const data = toJSON(owner, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/owner`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the owner of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the owner of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -513,7 +513,7 @@ class DeviceApi {
     const data = toJSON(lastStartupTime, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/last-startup-time`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the last startup time of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the last startup time of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -537,7 +537,7 @@ class DeviceApi {
     const data = toJSON(lastHeartbeatTime, toJsonOptions);
     loading.showUpdating();
     return http.put(`/device/${stringifyId(id)}/last-heartbeat-time`, data).then((timestamp) => {
-      logger.deviceInfo('Successfully update the last heartbeat time of the Device %s at:', id, timestamp);
+      logger.info('Successfully update the last heartbeat time of the Device %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -602,7 +602,7 @@ class DeviceApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showDeleting();
     return http.delete(`/device/${stringifyId(id)}`).then((timestamp) => {
-      logger.deviceInfo('Successfully delete the Device by ID %s at:', id, timestamp);
+      logger.info('Successfully delete the Device by ID %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -621,7 +621,7 @@ class DeviceApi {
     checkArgumentType('code', code, String);
     loading.showDeleting();
     return http.delete(`/device/code/${code}`).then((timestamp) => {
-      logger.deviceInfo('Successfully delete the Device by code "%s" at:', code, timestamp);
+      logger.info('Successfully delete the Device by code "%s" at:', code, timestamp);
       return timestamp;
     });
   }
@@ -640,7 +640,7 @@ class DeviceApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showRestoring();
     return http.patch(`/device/${stringifyId(id)}`)
-      .then(() => logger.deviceInfo('Successfully restore the Device by ID:', id));
+      .then(() => logger.info('Successfully restore the Device by ID:', id));
   }
 
   /**
@@ -657,7 +657,7 @@ class DeviceApi {
     checkArgumentType('code', code, String);
     loading.showRestoring();
     return http.patch(`/device/code/${code}`)
-      .then(() => logger.deviceInfo('Successfully restore the Device by code:', code));
+      .then(() => logger.info('Successfully restore the Device by code:', code));
   }
 
   /**
@@ -674,7 +674,7 @@ class DeviceApi {
     checkArgumentType('id', id, [String, Number, BigInt]);
     loading.showPurging();
     return http.delete(`/device/${stringifyId(id)}/purge`)
-      .then(() => logger.deviceInfo('Successfully purge the Device by ID:', id));
+      .then(() => logger.info('Successfully purge the Device by ID:', id));
   }
 
   /**
@@ -691,7 +691,7 @@ class DeviceApi {
     checkArgumentType('code', code, String);
     loading.showPurging();
     return http.delete(`/device/code/${code}/purge`)
-      .then(() => logger.deviceInfo('Successfully purge the Device by code:', code));
+      .then(() => logger.info('Successfully purge the Device by code:', code));
   }
 
   /**
@@ -705,7 +705,7 @@ class DeviceApi {
   purgeAll() {
     loading.showPurging();
     return http.delete('/device/purge')
-      .then(() => logger.deviceInfo('Successfully purge all deleted Device.'));
+      .then(() => logger.info('Successfully purge all deleted Device.'));
   }
 }
 
