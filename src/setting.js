@@ -10,7 +10,6 @@ import { http } from '@haixing_hu/common-app';
 import { toJSON } from '@haixing_hu/common-decorator';
 import {
   Setting,
-  Page,
   PageRequest,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
@@ -33,6 +32,7 @@ class SettingApi {
    *     分页请求。
    * @param {string} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `name: string` 名称中应包含的字符串；
    *     - `readonly: boolean` 是否只读；
    *     - `nullable: boolean` 是否可以为空；
@@ -40,6 +40,7 @@ class SettingApi {
    *     - `encrypted: boolean` 是否加密；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Setting>|ErrorInfo>}

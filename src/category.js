@@ -11,7 +11,6 @@ import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
   Category,
   InfoWithEntity,
-  Page,
   PageRequest,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
@@ -34,6 +33,7 @@ class CategoryApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `entity: string` 所属实体名称；
    *     - `name: string` 名称中应包含的字符串；
    *     - `parentId: string|number|bigint` 所属父类别的ID；
@@ -49,6 +49,7 @@ class CategoryApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Category>|ErrorInfo>}
@@ -83,6 +84,7 @@ class CategoryApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `entity: string` 所属实体名称；
    *     - `name: string` 名称中应包含的字符串；
    *     - `parentId: string|number|bigint` 所属父类别的ID；
@@ -98,6 +100,7 @@ class CategoryApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<InfoWithEntity>|ErrorInfo>}

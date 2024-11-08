@@ -34,6 +34,7 @@ class PersonApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `name: string` 姓名中应包含的字符串；
    *     - `username: string` 对应的用户的用户名；
    *     - `gender: Gender|string` 性别；
@@ -73,6 +74,7 @@ class PersonApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Person>|ErrorInfo>}
@@ -107,6 +109,7 @@ class PersonApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `name: string` 姓名中应包含的字符串；
    *     - `username: string` 对应的用户的用户名；
    *     - `gender: Gender|string` 性别；
@@ -146,6 +149,7 @@ class PersonApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<PersonInfo>|ErrorInfo>}

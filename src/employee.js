@@ -34,6 +34,7 @@ class EmployeeApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `username: string` 对应的用户的用户名；
    *     - `personId: string|number|bigint` 对应的个人信息的ID；
    *     - `internalCode: string` 内部编码中应包含的字符串；
@@ -65,6 +66,7 @@ class EmployeeApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Employee>|ErrorInfo>}
@@ -99,6 +101,7 @@ class EmployeeApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `username: string` 对应的用户的用户名；
    *     - `personId: string|number|bigint` 对应的个人信息的ID；
    *     - `internalCode: string` 内部编码中应包含的字符串；
@@ -130,6 +133,7 @@ class EmployeeApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<EmployeeInfo>|ErrorInfo>}

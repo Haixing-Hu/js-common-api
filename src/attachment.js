@@ -10,8 +10,8 @@ import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
   Attachment,
-  Page,
-  PageRequest, State,
+  PageRequest,
+  State,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
@@ -33,6 +33,7 @@ class AttachmentApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `ownerType: string` 所属实体的类型；
    *     - `ownerId: string|number|bigint` 所属实体的ID；
    *     - `ownerProperty: string` 所属实体的属性的名称；
@@ -53,6 +54,7 @@ class AttachmentApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Attachment>|ErrorInfo>}

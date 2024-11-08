@@ -10,8 +10,8 @@ import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
   SocialNetworkAccount,
-  Page,
-  PageRequest, SocialNetwork,
+  PageRequest,
+  SocialNetwork,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
@@ -33,6 +33,7 @@ class SocialNetworkAccountApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `username: string` 所属的用户的用户名；
    *     - `socialNetwork: SocialNetwork|string` 所属的社交网络；
    *     - `appId: string` 所属的社交网络内部的App ID；
@@ -45,6 +46,7 @@ class SocialNetworkAccountApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<SocialNetworkAccount>|ErrorInfo>}

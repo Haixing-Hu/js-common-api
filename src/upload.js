@@ -10,7 +10,6 @@ import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
   Upload,
-  Page,
   PageRequest,
 } from '@haixing_hu/common-model';
 import { loading } from '@haixing_hu/common-ui';
@@ -33,6 +32,7 @@ class UploadApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *
    *     - `type: string` 附件类型；
    *     - `deleted: boolean` 是否已经被标记删除；
    *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -43,6 +43,7 @@ class UploadApi {
    *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Upload>|ErrorInfo>}
