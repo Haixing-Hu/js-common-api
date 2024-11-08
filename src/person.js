@@ -9,6 +9,7 @@
 import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
+  Attachment,
   Contact,
   PageRequest,
   Person,
@@ -82,7 +83,7 @@ class PersonApi {
    *     件的`Person`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria = {}, sort = {}) {
+  list(pageRequest, criteria = {}, sort = {}, transformUrls = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
@@ -182,15 +183,19 @@ class PersonApi {
    *
    * @param {string|number|bigint} id
    *     `Person`对象的ID。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id) {
+  get(id, transformUrls = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
     loading.showGetting();
-    return http.get(`/person/${stringifyId(id)}`).then((obj) => {
+    return http.get(`/person/${stringifyId(id)}`, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully get the Person by ID:', id);
       logger.debug('The Person is:', person);
@@ -203,15 +208,19 @@ class PersonApi {
    *
    * @param {string} username
    *     `Person`对象对应的用户的用户名。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByUsername(username) {
+  getByUsername(username, transformUrls = true) {
     checkArgumentType('username', username, String);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
     loading.showGetting();
-    return http.get(`/person/username/${username}`).then((obj) => {
+    return http.get(`/person/username/${username}`, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully get the Person by username:', username);
       logger.debug('The Person is:', person);
@@ -268,15 +277,18 @@ class PersonApi {
    *     要添加的`Person`对象。
    * @param {boolean} withUser
    *     是否同时添加新`Person`对象所绑定的用户对象`User`。默认值为`false`。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(person, withUser = false) {
+  add(person, withUser = false, transformUrls = true) {
     checkArgumentType('person', person, Person);
     checkArgumentType('withUser', withUser, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ withUser, transformUrls }, toJsonOptions);
     const data = toJSON(person, toJsonOptions);
     loading.showAdding();
     return http.post('/person', data, { params }).then((obj) => {
@@ -365,6 +377,36 @@ class PersonApi {
     return http.put(`/person/${stringifyId(id)}/comment`, data, { params }).then((timestamp) => {
       logger.info('Successfully update the comment of a Person by ID "%s" at:', id, timestamp);
       return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`Person`对象的照片。
+   *
+   * @param {string|number|bigint} id
+   *     `Person`对象的ID。
+   * @param {Attachment} photo
+   *     要更新的`Person`对象的照片，必须先调用`fileApi.update()` 上传文件，并利用返回
+   *     的`Upload`对象构造一个`Attachment`对象。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
+   * @return {Promise<Attachment|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`photo`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updatePhoto(id, photo, transformUrls = true) {
+    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('photo', photo, Attachment);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
+    const data = toJSON(photo, toJsonOptions);
+    loading.showUpdating();
+    return http.put(`/person/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
+      const result = Attachment.create(obj, assignOptions);
+      logger.info('Successfully update the photo of the Person by ID:', id);
+      logger.debug('The updated photo of the Person is:', result);
+      return result;
     });
   }
 

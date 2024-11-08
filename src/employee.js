@@ -404,19 +404,20 @@ class EmployeeApi {
    *     的`Upload`对象构造一个`Attachment`对象。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
-   * @return {Promise<string|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
-   *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   * @return {Promise<Attachment|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`photo`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
   updatePhoto(id, photo, transformUrls = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('photo', photo, Attachment);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     const params = toJSON({ transformUrls }, toJsonOptions);
     const data = toJSON(photo, toJsonOptions);
     loading.showUpdating();
     return http.put(`/employee/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
-      const result = Attachment.create(obj);
+      const result = Attachment.create(obj, assignOptions);
       logger.info('Successfully update the photo of the Employee by ID:', id);
       logger.debug('The updated photo of the Employee is:', result);
       return result;
