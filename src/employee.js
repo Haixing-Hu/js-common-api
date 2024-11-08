@@ -9,6 +9,7 @@
 import { http } from '@haixing_hu/common-app';
 import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
 import {
+  Attachment,
   Employee,
   EmployeeInfo,
   PageRequest,
@@ -69,19 +70,23 @@ class EmployeeApi {
    *
    *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *     - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Page<Employee>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Employee`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria = {}, sort = {}) {
+  list(pageRequest, criteria = {}, sort = {}, transformUrls = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
+      transformUrls,
     }, toJsonOptions);
     loading.showGetting();
     return http.get('/employee', {
@@ -166,15 +171,19 @@ class EmployeeApi {
    *
    * @param {string|number|bigint} id
    *     `Employee`对象的ID。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Employee|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Employee`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id) {
+  get(id, transformUrls = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
     loading.showGetting();
-    return http.get(`/employee/${stringifyId(id)}`).then((obj) => {
+    return http.get(`/employee/${stringifyId(id)}`, { params }).then((obj) => {
       const result = Employee.create(obj, assignOptions);
       logger.info('Successfully get the Employee by ID:', id);
       logger.debug('The Employee is:', result);
@@ -187,15 +196,19 @@ class EmployeeApi {
    *
    * @param {string} code
    *     `Employee`对象的编码。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Employee|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Employee`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByCode(code) {
+  getByCode(code, transformUrls = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
     loading.showGetting();
-    return http.get(`/employee/code/${code}`).then((obj) => {
+    return http.get(`/employee/code/${code}`, { params }).then((obj) => {
       const result = Employee.create(obj, assignOptions);
       logger.info('Successfully get the Employee by code:', code);
       logger.debug('The Employee is:', result);
@@ -252,15 +265,18 @@ class EmployeeApi {
    *     要添加的`Employee`对象。
    * @param {boolean} withUser
    *     是否同时添加新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Employee|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Employee`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(employee, withUser = false) {
+  add(employee, withUser = false, transformUrls = true) {
     checkArgumentType('employee', employee, Employee);
     checkArgumentType('withUser', withUser, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ withUser, transformUrls }, toJsonOptions);
     const data = toJSON(employee, toJsonOptions);
     loading.showAdding();
     return http.post('/employee', data, { params }).then((obj) => {
@@ -375,6 +391,35 @@ class EmployeeApi {
     return http.put(`/employee/code/${code}/state`, data, { params }).then((timestamp) => {
       logger.info('Successfully update the state of the Employee by code "%s" at:', code, timestamp);
       return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`Employee`对象的照片。
+   *
+   * @param {string|number|bigint} id
+   *     `Employee`对象的ID。
+   * @param {Attachment} photo
+   *     要更新的`Employee`对象的照片，必须先调用`fileApi.update()` 上传文件，并利用返回
+   *     的`Upload`对象构造一个`Attachment`对象。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据更新的UTC时间戳，
+   *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updatePhoto(id, photo, transformUrls = true) {
+    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
+    const data = toJSON(photo, toJsonOptions);
+    loading.showUpdating();
+    return http.put(`/employee/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
+      const result = Attachment.create(obj);
+      logger.info('Successfully update the photo of the Employee by ID:', id);
+      logger.debug('The updated photo of the Employee is:', result);
+      return result;
     });
   }
 
