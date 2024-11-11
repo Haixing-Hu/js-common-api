@@ -6,34 +6,35 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import appApi from './app';
-import appAuthenticateApi from './app-authenticate';
-import attachmentApi from './attachment';
-import categoryApi from './category';
-import cityApi from './city';
-import countryApi from './country';
-import currentUserApi from './current-user';
-import departmentApi from './department';
-import deviceApi from './device';
-import deviceInitApi from './device-init';
-import dictApi from './dict';
-import dictEntryApi from './dict-entry';
-import districtApi from './district';
-import employeeApi from './employee';
-import feedbackApi from './feedback';
-import fileApi from './file';
-import organizationApi from './organization';
-import personApi from './person';
-import provinceApi from './province';
-import settingApi from './setting';
-import socialNetworkAccountApi from './social-network-account';
-import streetApi from './street';
-import systemApi from './system';
-import uploadApi from './upload';
-import userAuthenticateApi from './user-authenticate';
-import verifyCodeApi from './verify-code';
-import wechatApi from './wechat';
-import { assignOptions, toJsonOptions } from './impl/options';
+import appApi from './api/app';
+import appAuthenticateApi from './api/app-authenticate';
+import attachmentApi from './api/attachment';
+import categoryApi from './api/category';
+import cityApi from './api/city';
+import countryApi from './api/country';
+import currentUserApi from './api/current-user';
+import departmentApi from './api/department';
+import deviceApi from './api/device';
+import deviceInitApi from './api/device-init';
+import dictApi from './api/dict';
+import dictEntryApi from './api/dict-entry';
+import districtApi from './api/district';
+import employeeApi from './api/employee';
+import feedbackApi from './api/feedback';
+import fileApi from './api/file';
+import organizationApi from './api/organization';
+import personApi from './api/person';
+import provinceApi from './api/province';
+import settingApi from './api/setting';
+import socialNetworkAccountApi from './api/social-network-account';
+import streetApi from './api/street';
+import systemApi from './api/system';
+import uploadApi from './api/upload';
+import userAuthenticateApi from './api/user-authenticate';
+import verifyCodeApi from './api/verify-code';
+import wechatApi from './api/wechat';
+import { assignOptions, toJsonOptions } from './api/impl/options';
+import wechat from './utils/wechat';
 
 export {
   appApi,
@@ -65,4 +66,5 @@ export {
   wechatApi,
   assignOptions,
   toJsonOptions,
+  wechat,
 };

@@ -1484,6 +1484,8 @@ __metadata:
     "@haixing_hu/common-model": ^4.8.0
     "@haixing_hu/common-ui": ^1.5.0
     "@haixing_hu/common-util": ^5.2.0
+    "@haixing_hu/config": ^1.1.0
+    "@haixing_hu/logging": ^1.4.1
   languageName: unknown
   linkType: soft
 
