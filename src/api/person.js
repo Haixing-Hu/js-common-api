@@ -35,49 +35,49 @@ class PersonApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *
-   *     - `name: string` 姓名中应包含的字符串；
-   *     - `username: string` 对应的用户的用户名；
-   *     - `gender: Gender|string` 性别；
-   *     - `birthdayStart: string` 生日范围的（闭区间）起始值；
-   *     - `birthdayEnd: string` 生日范围的（闭区间）结束值；
-   *     - `credentialType: CredentialType|string` 证件类型；
-   *     - `credentialNumber: string` 证件号码；
-   *     - `hasMedicare: boolean` 是否有医保；
-   *     - `medicareType: MedicareType|string` 医保类型；
-   *     - `medicareCityId: string|number|bigint` 医保所在城市的ID；
-   *     - `medicareCityCode: string` 医保所在城市的编码；
-   *     - `medicareCityName: string` 医保所在城市名称中应包含的字符串；
-   *     - `hasSocialSecurity: boolean` 是否有社保；
-   *     - `socialSecurityCityId: string|number|bigint` 社保所在城市的ID；
-   *     - `socialSecurityCityCode: string` 社保所在城市的编码；
-   *     - `socialSecurityCityName: string` 社保所在城市名称中应包含的字符串；
-   *     - `sourceId: string|number|bigint` 数据来源渠道的ID；
-   *     - `sourceCode: string` 数据来源渠道的编码；
-   *     - `sourceName: string` 数据来源渠道的名称中应包含的字符串；
-   *     - `categoryId: string|number|bigint` 所属类别的ID；
-   *     - `categoryCode: string` 所属类别的编码；
-   *     - `categoryName: string` 所属类别的名称包含的字符串；
-   *     - `phone: string` 座机号码；
-   *     - `mobile: string` 手机号码；
-   *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `guardianId: string|number|bigint` 监护人的ID；
-   *     - `organizationId: string|number|bigint` 所属机构的ID；
-   *     - `organizationCode: string` 所属机构的编码；
-   *     - `organizationName: string` 所属机构名称中应包含的字符串；
-   *     - `test: boolean` 是否是测试数据；
-   *     - `deleted: boolean` 是否已经被标记删除；
-   *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；
-   *     - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
-   *     - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
-   *     - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
-   *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
-   *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   *  - `name: string` 姓名中应包含的字符串；
+   *  - `username: string` 对应的用户的用户名；
+   *  - `gender: Gender|string` 性别；
+   *  - `birthdayStart: string` 生日范围的（闭区间）起始值；
+   *  - `birthdayEnd: string` 生日范围的（闭区间）结束值；
+   *  - `credentialType: CredentialType|string` 证件类型；
+   *  - `credentialNumber: string` 证件号码；
+   *  - `hasMedicare: boolean` 是否有医保；
+   *  - `medicareType: MedicareType|string` 医保类型；
+   *  - `medicareCityId: string|number|bigint` 医保所在城市的ID；
+   *  - `medicareCityCode: string` 医保所在城市的编码；
+   *  - `medicareCityName: string` 医保所在城市名称中应包含的字符串；
+   *  - `hasSocialSecurity: boolean` 是否有社保；
+   *  - `socialSecurityCityId: string|number|bigint` 社保所在城市的ID；
+   *  - `socialSecurityCityCode: string` 社保所在城市的编码；
+   *  - `socialSecurityCityName: string` 社保所在城市名称中应包含的字符串；
+   *  - `sourceId: string|number|bigint` 数据来源渠道的ID；
+   *  - `sourceCode: string` 数据来源渠道的编码；
+   *  - `sourceName: string` 数据来源渠道的名称中应包含的字符串；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `phone: string` 座机号码；
+   *  - `mobile: string` 手机号码；
+   *  - `email: string` 电子邮件地址中应包含的字符串；
+   *  - `guardianId: string|number|bigint` 监护人的ID；
+   *  - `organizationId: string|number|bigint` 所属机构的ID；
+   *  - `organizationCode: string` 所属机构的编码；
+   *  - `organizationName: string` 所属机构名称中应包含的字符串；
+   *  - `test: boolean` 是否是测试数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
-   *
-   *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
-   *     - `sortOrder: SortOrder` 指定是正序还是倒序。
+   *  - sortField: string 用于排序的属性名称（CamelCase形式）；
+   *  - sortOrder: SortOrder 指定是正序还是倒序。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @return {Promise<Page<Person>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Person`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
@@ -87,10 +87,12 @@ class PersonApi {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
+      transformUrls,
     }, toJsonOptions);
     loading.showGetting();
     return http.get('/person', {
@@ -110,49 +112,47 @@ class PersonApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *
-   *     - `name: string` 姓名中应包含的字符串；
-   *     - `username: string` 对应的用户的用户名；
-   *     - `gender: Gender|string` 性别；
-   *     - `birthdayStart: string` 生日范围的（闭区间）起始值；
-   *     - `birthdayEnd: string` 生日范围的（闭区间）结束值；
-   *     - `credentialType: CredentialType|string` 证件类型；
-   *     - `credentialNumber: string` 证件号码；
-   *     - `hasMedicare: boolean` 是否有医保；
-   *     - `medicareType: MedicareType|string` 医保类型；
-   *     - `medicareCityId: string|number|bigint` 医保所在城市的ID；
-   *     - `medicareCityCode: string` 医保所在城市的编码；
-   *     - `medicareCityName: string` 医保所在城市名称中应包含的字符串；
-   *     - `hasSocialSecurity: boolean` 是否有社保；
-   *     - `socialSecurityCityId: string|number|bigint` 社保所在城市的ID；
-   *     - `socialSecurityCityCode: string` 社保所在城市的编码；
-   *     - `socialSecurityCityName: string` 社保所在城市名称中应包含的字符串；
-   *     - `sourceId: string|number|bigint` 数据来源渠道的ID；
-   *     - `sourceCode: string` 数据来源渠道的编码；
-   *     - `sourceName: string` 数据来源渠道的名称中应包含的字符串；
-   *     - `categoryId: string|number|bigint` 所属类别的ID；
-   *     - `categoryCode: string` 所属类别的编码；
-   *     - `categoryName: string` 所属类别的名称包含的字符串；
-   *     - `phone: string` 座机号码；
-   *     - `mobile: string` 手机号码；
-   *     - `email: string` 电子邮件地址中应包含的字符串；
-   *     - `guardianId: string|number|bigint` 监护人的ID；
-   *     - `organizationId: string|number|bigint` 所属机构的ID；
-   *     - `organizationCode: string` 所属机构的编码；
-   *     - `organizationName: string` 所属机构名称中应包含的字符串；
-   *     - `test: boolean` 是否是测试数据；
-   *     - `deleted: boolean` 是否已经被标记删除；
-   *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；
-   *     - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
-   *     - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
-   *     - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
-   *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
-   *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   *  - `name: string` 姓名中应包含的字符串；
+   *  - `username: string` 对应的用户的用户名；
+   *  - `gender: Gender|string` 性别；
+   *  - `birthdayStart: string` 生日范围的（闭区间）起始值；
+   *  - `birthdayEnd: string` 生日范围的（闭区间）结束值；
+   *  - `credentialType: CredentialType|string` 证件类型；
+   *  - `credentialNumber: string` 证件号码；
+   *  - `hasMedicare: boolean` 是否有医保；
+   *  - `medicareType: MedicareType|string` 医保类型；
+   *  - `medicareCityId: string|number|bigint` 医保所在城市的ID；
+   *  - `medicareCityCode: string` 医保所在城市的编码；
+   *  - `medicareCityName: string` 医保所在城市名称中应包含的字符串；
+   *  - `hasSocialSecurity: boolean` 是否有社保；
+   *  - `socialSecurityCityId: string|number|bigint` 社保所在城市的ID；
+   *  - `socialSecurityCityCode: string` 社保所在城市的编码；
+   *  - `socialSecurityCityName: string` 社保所在城市名称中应包含的字符串；
+   *  - `sourceId: string|number|bigint` 数据来源渠道的ID；
+   *  - `sourceCode: string` 数据来源渠道的编码；
+   *  - `sourceName: string` 数据来源渠道的名称中应包含的字符串；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `phone: string` 座机号码；
+   *  - `mobile: string` 手机号码；
+   *  - `email: string` 电子邮件地址中应包含的字符串；
+   *  - `guardianId: string|number|bigint` 监护人的ID；
+   *  - `organizationId: string|number|bigint` 所属机构的ID；
+   *  - `organizationCode: string` 所属机构的编码；
+   *  - `organizationName: string` 所属机构名称中应包含的字符串；
+   *  - `test: boolean` 是否是测试数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
-   *
-   *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
-   *     - `sortOrder: SortOrder` 指定是正序还是倒序。
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<PersonInfo>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Person`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。

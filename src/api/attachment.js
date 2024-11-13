@@ -33,30 +33,28 @@ class AttachmentApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *
-   *     - `ownerType: string` 所属实体的类型；
-   *     - `ownerId: string|number|bigint` 所属实体的ID；
-   *     - `ownerProperty: string` 所属实体的属性的名称；
-   *     - `type: string` 附件类型；
-   *     - `categoryId: string|number|bigint` 所属类别的ID；
-   *     - `categoryCode: string` 所属类别的编码；
-   *     - `categoryName: string` 所属类别的名称包含的字符串；
-   *     - `title: string` 标题所包含的字符串；
-   *     - `attachmentId: string|number|bigint` 所对应的上传的文件的ID；
-   *     - `state: State|string` 状态；
-   *     - `visible: boolean` 是否可见；
-   *     - `deleted: boolean` 是否已经被标记删除；
-   *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；
-   *     - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
-   *     - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
-   *     - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
-   *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
-   *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   *  - `ownerType: string` 所属实体的类型；
+   *  - `ownerId: string|number|bigint` 所属实体的ID；
+   *  - `ownerProperty: string` 所属实体的属性的名称；
+   *  - `type: string` 附件类型；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `title: string` 标题所包含的字符串；
+   *  - `attachmentId: string|number|bigint` 所对应的上传的文件的ID；
+   *  - `state: State|string` 状态；
+   *  - `visible: boolean` 是否可见；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
-   *
-   *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
-   *     - `sortOrder: SortOrder` 指定是正序还是倒序。
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Attachment>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Attachment`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。

@@ -34,27 +34,25 @@ class FeedbackApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *
-   *     - `appId: string|number|bigint` 所属应用的ID；
-   *     - `appCode: string` 所属应用的编码；
-   *     - `appName: string` 所属应用的名称中应包含的字符串；
-   *     - `type: FeedbackType|string` 类型；
-   *     - `category: string` 具体类别；
-   *     - `submitterId: string|number|bigint` 提交用户的ID；
-   *     - `submitterUsername: string` 提交用户的用户名；
-   *     - `status: FeedbackStatus|string` 状态；
-   *     - `deleted: boolean` 是否已经被标记删除；
-   *     - `createTimeStart: string`创建时间范围的（闭区间）起始值；
-   *     - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
-   *     - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
-   *     - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
-   *     - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
-   *     - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   *  - `appId: string|number|bigint` 所属应用的ID；
+   *  - `appCode: string` 所属应用的编码；
+   *  - `appName: string` 所属应用的名称中应包含的字符串；
+   *  - `type: FeedbackType|string` 类型；
+   *  - `category: string` 具体类别；
+   *  - `submitterId: string|number|bigint` 提交用户的ID；
+   *  - `submitterUsername: string` 提交用户的用户名；
+   *  - `status: FeedbackStatus|string` 状态；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数。允许的参数包括：
-   *
-   *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
-   *     - `sortOrder: SortOrder` 指定是正序还是倒序。
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
    * @return {Promise<Page<Feedback>|ErrorInfo>}

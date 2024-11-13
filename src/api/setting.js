@@ -32,17 +32,15 @@ class SettingApi {
    *     分页请求。
    * @param {string} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *
-   *     - `name: string` 名称中应包含的字符串；
-   *     - `readonly: boolean` 是否只读；
-   *     - `nullable: boolean` 是否可以为空；
-   *     - `multiple: boolean` 是否可以取多个值；
-   *     - `encrypted: boolean` 是否加密；
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `readonly: boolean` 是否只读；
+   *  - `nullable: boolean` 是否可以为空；
+   *  - `multiple: boolean` 是否可以取多个值；
+   *  - `encrypted: boolean` 是否加密；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
-   *
-   *     - `sortField: string` 用于排序的属性名称（CamelCase形式）；
-   *     - `sortOrder: SortOrder` 指定是正序还是倒序。
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @return {Promise<Page<Setting>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Setting`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
