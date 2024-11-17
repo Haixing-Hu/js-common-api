@@ -151,12 +151,12 @@ class UserAuthenticateApi {
 
   /**
    * 获取当前已登录用户的登录信息。
-   * <p>
+   *
    * 当前已登录用户的Access Token必须包含在HTTP请求头中。
    *
-   * @returns {LoginResponse}
+   * @return {Promise<LoginResponse|ErrorInfo>}
    *     此 HTTP 请求的 Promise，若操作成功，解析成功并返回一个`LoginResponse`对象，包含
-   *     了当前用户的登录信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
+   *     了指定用户的登录信息；若操作失败，解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
   getLoginInfo() {

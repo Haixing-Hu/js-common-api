@@ -7,7 +7,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 import { http } from '@haixing_hu/common-app';
+import { toJSON } from '@haixing_hu/common-decorator';
+import { Upload } from '@haixing_hu/common-model';
 import { Log, Logger } from '@haixing_hu/logging';
+import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('FileApi');
 
@@ -20,9 +23,9 @@ class FileApi {
   /**
    * 上载一个文件。
    *
-   * @param filename
+   * @param {string} filename
    *     待上传的文件的原始文件名。
-   * @param file
+   * @param {Blob|File} file
    *     待上传的文件对象。
    * @param contentType
    *     待上传文件的 Content-Type。可以为`null`或者`undefined`。
@@ -32,16 +35,20 @@ class FileApi {
    */
   @Log
   upload(filename, file, contentType = undefined) {
+    const headers = {
+      'Content-Type': 'multipart/form-data',
+    }
     const formData = new FormData();
     formData.append('filename', filename);
     if (contentType) {
       formData.append('contentType', contentType);
     }
     formData.append('file', file);
-    return http.post('/file/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    return http.post('/file/upload', formData, { headers }).then((obj) => {
+      const result = Upload.create(obj, assignOptions);
+      logger.info('Successfully update the file.');
+      logger.debug('The upload file is:', result);
+      return result;
     });
   }
 
@@ -59,9 +66,9 @@ class FileApi {
   download(path) {
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数做 URI encoding，否则如果参数中也带有hash或query，就会出错。
-    const params = {
+    const params = toJSON({
       path,
-    };
+    }, toJsonOptions);
     return http.get('/file/download', { params });
   }
 
@@ -76,9 +83,9 @@ class FileApi {
    */
   @Log
   getDownloadUrl(path) {
-    const params = {
+    const params = toJSON({
       path,
-    };
+    }, toJsonOptions);
     return http.get('/file/download/url', { params }).then((response) => {
       const url = String(response);
       logger.info('Successfully get the download URL for file %s:', path, url);
