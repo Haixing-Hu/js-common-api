@@ -27,24 +27,29 @@ class FileApi {
    *     待上传的文件的原始文件名。
    * @param {Blob|File} file
    *     待上传的文件对象。
-   * @param contentType
+   * @param {string|null|undefined} contentType
    *     待上传文件的 Content-Type。可以为`null`或者`undefined`。
+   * @param {function|null|undefined} onUploadProgress
+   *     上传进度回调函数。可以为`null`或者`undefined`。如果非空，则必须是 axios
+   *     的`onUploadProgress`回调函数，该函数接收一个`progressEvent`参数，
+   *     用于监控上传进度，其中`progressEvent.loaded`表示已上传的字节数，
+   *     `progressEvent.total`表示总字节数。
    * @return {Promise<Upload|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回根据上传的文件所创建的
    *     `Upload`对象；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  upload(filename, file, contentType = undefined) {
+  upload(filename, file, contentType = undefined, onUploadProgress = undefined) {
     const headers = {
       'Content-Type': 'multipart/form-data',
-    }
+    };
     const formData = new FormData();
     formData.append('filename', filename);
     if (contentType) {
       formData.append('contentType', contentType);
     }
     formData.append('file', file);
-    return http.post('/file/upload', formData, { headers }).then((obj) => {
+    return http.post('/file/upload', formData, { headers, onUploadProgress }).then((obj) => {
       const result = Upload.create(obj, assignOptions);
       logger.info('Successfully update the file.');
       logger.debug('The upload file is:', result);
