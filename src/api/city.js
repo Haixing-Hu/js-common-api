@@ -57,7 +57,7 @@ class CityApi {
    *     件的`City`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria = {}, sort = {}) {
+  list(pageRequest = {}, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
@@ -108,7 +108,7 @@ class CityApi {
    *     件的`City`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria = {}, sort = {}) {
+  listInfo(pageRequest = {}, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);

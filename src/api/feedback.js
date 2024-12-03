@@ -60,7 +60,7 @@ class FeedbackApi {
    *     件的`Feedback`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria = {}, sort = {}, transformUrls = true) {
+  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);

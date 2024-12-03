@@ -53,7 +53,7 @@ class SocialNetworkAccountApi {
    *     `ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria = {}, sort = {}) {
+  list(pageRequest = {}, criteria = {}, sort = {}) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
