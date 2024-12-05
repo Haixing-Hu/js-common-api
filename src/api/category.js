@@ -50,21 +50,26 @@ class CategoryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Category>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Category`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}) {
+  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/category', {
       params,
     }).then((obj) => {
@@ -99,21 +104,26 @@ class CategoryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<InfoWithEntity>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Category`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest, criteria = {}, sort = {}) {
+  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/category/info', {
       params,
     }).then((obj) => {
@@ -129,14 +139,19 @@ class CategoryApi {
    *
    * @param {string|number|bigint} id
    *     `Category`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Category|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Category`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id) {
+  get(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/category/${stringifyId(id)}}`).then((obj) => {
       const result = Category.create(obj, assignOptions);
       logger.info('Successfully get the Category by ID:', id);
@@ -150,14 +165,19 @@ class CategoryApi {
    *
    * @param {string} code
    *     `Category`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Category|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Category`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByCode(code) {
+  getByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/category/code/${code}`).then((obj) => {
       const result = Category.create(obj, assignOptions);
       logger.info('Successfully get the Category by code:', code);
@@ -171,14 +191,19 @@ class CategoryApi {
    *
    * @param {string|number|bigint} id
    *     `Category`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<InfoWithEntity|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`InfoWithEntity`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfo(id) {
+  getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/category/${stringifyId(id)}/info`).then((obj) => {
       const result = InfoWithEntity.create(obj, assignOptions);
       logger.info('Successfully get the info of the Category by ID:', id);
@@ -192,14 +217,19 @@ class CategoryApi {
    *
    * @param {string} code
    *     `Category`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<InfoWithEntity|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`InfoWithEntity`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfoByCode(code) {
+  getInfoByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/category/code/${code}/info`).then((obj) => {
       const result = InfoWithEntity.create(obj, assignOptions);
       logger.info('Successfully get the info of the Category by code:', code);
@@ -211,17 +241,22 @@ class CategoryApi {
   /**
    * 添加一个`Category`对象。
    *
-   * @param {Category} category
+   * @param {Category|object} category
    *     要添加的`Category`对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Category|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Category`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(category) {
-    checkArgumentType('category', category, Category);
+  add(category, showLoading = true) {
+    checkArgumentType('category', category, [Category, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(category, toJsonOptions);
-    loading.showAdding();
+    if (showLoading) {
+      loading.showAdding();
+    }
     return http.post('/category', data).then((obj) => {
       const result = Category.create(obj, assignOptions);
       logger.info('Successfully add the Category:', result.id);
@@ -235,16 +270,22 @@ class CategoryApi {
    *
    * @param {Category} category
    *     要更新的`Category`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Category|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Category`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(category) {
-    checkArgumentType('category', category, Category);
+  update(category, showLoading = true) {
+    checkArgumentType('category', category, [Category, Object]);
+    checkArgumentType('category.id', category.id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(category.id);
     const data = toJSON(category, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/category/${id}`, data).then((obj) => {
       const result = Category.create(obj, assignOptions);
       logger.info('Successfully update the Category by ID %s at:', id, result.modifyTime);
@@ -258,15 +299,21 @@ class CategoryApi {
    *
    * @param {Category} category
    *     要更新的`Category`对象的数据，根据其编码确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Category|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Category`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(category) {
-    checkArgumentType('category', category, Category);
+  updateByCode(category, showLoading = true) {
+    checkArgumentType('category', category, [Category, Object]);
+    checkArgumentType('category.code', category.code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(category, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/category/code/${category.code}`, data).then((obj) => {
       const result = Category.create(obj, assignOptions);
       logger.info('Successfully update the Category by code "%s" at:', result.code, result.modifyTime);
@@ -280,14 +327,19 @@ class CategoryApi {
    *
    * @param {string} id
    *     要标记删除的`Category`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id) {
+  delete(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/category/${stringifyId(id)}`).then((timestamp) => {
       logger.info('Successfully delete the Category by ID %s at:', id, timestamp);
       return timestamp;
@@ -299,14 +351,19 @@ class CategoryApi {
    *
    * @param {string} code
    *     要标记删除的`Category`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  deleteByCode(code) {
+  deleteByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/category/code/${code}`).then((timestamp) => {
       logger.info('Successfully delete the Category by code "%s" at:', code, timestamp);
       return timestamp;
@@ -318,14 +375,19 @@ class CategoryApi {
    *
    * @param {string} id
    *     要恢复的`Category`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id) {
+  restore(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/category/${stringifyId(id)}`)
       .then(() => logger.info('Successfully restore the Category by ID:', id));
   }
@@ -335,14 +397,19 @@ class CategoryApi {
    *
    * @param {string} code
    *     要恢复的`Category`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restoreByCode(code) {
+  restoreByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/category/code/${code}`)
       .then(() => logger.info('Successfully restore the Category by code:', code));
   }
@@ -352,14 +419,19 @@ class CategoryApi {
    *
    * @param {string} id
    *     要清除的`Category`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id) {
+  purge(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/category/${stringifyId(id)}/purge`)
       .then(() => logger.info('Successfully purge the Category by ID:', id));
   }
@@ -369,14 +441,19 @@ class CategoryApi {
    *
    * @param {string} code
    *     要清除的`Category`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeByCode(code) {
+  purgeByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/category/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the Category by code:', code));
   }
@@ -384,13 +461,18 @@ class CategoryApi {
   /**
    * 根彻底清除全部已被标记删除的`Category`对象。
    *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll() {
-    loading.showPurging();
+  purgeAll(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete('/category/purge')
       .then(() => logger.info('Successfully purge all deleted Category.'));
   }
