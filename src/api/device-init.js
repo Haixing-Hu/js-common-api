@@ -27,15 +27,20 @@ class DeviceInitApi {
    *
    * @param {Device} device
    *     待注册的设备。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  register(device) {
+  register(device, showLoading = true) {
     checkArgumentType('device', device, Device);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(device, toJsonOptions);
-    loading.show('正在注册设备...');
+    if (showLoading) {
+      loading.show('正在注册设备...');
+    }
     return http.post('/device/register', data).then(() => {
       logger.info('Device registered successfully:', device.code);
     });
@@ -46,15 +51,20 @@ class DeviceInitApi {
    *
    * @param {string} code
    *     待注销的设备的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  unregister(code) {
+  unregister(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(code, toJsonOptions);
-    loading.show('正在注销设备...');
+    if (showLoading) {
+      loading.show('正在注销设备...');
+    }
     return http.put('/device/unregister', data).then(() => {
       logger.info('Device unregistered successfully:', code);
     });
@@ -65,15 +75,20 @@ class DeviceInitApi {
    *
    * @param {string} code
    *     待解绑的设备的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  unbound(code) {
+  unbound(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(code, toJsonOptions);
-    loading.show('正在解绑设备...');
+    if (showLoading) {
+      loading.show('正在解绑设备...');
+    }
     return http.put('/device/unbound', data).then(() => {
       logger.info('Device unbound successfully:', code);
     });

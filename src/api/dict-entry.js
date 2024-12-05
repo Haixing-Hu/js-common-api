@@ -51,21 +51,26 @@ class DictEntryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<DictEntry>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`DictEntry`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}) {
+  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/dict/entry', {
       params,
     }).then((obj) => {
@@ -101,21 +106,26 @@ class DictEntryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<DictEntryInfo>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`DictEntry`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest = {}, criteria = {}, sort = {}) {
+  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/dict/entry/info', {
       params,
     }).then((obj) => {
@@ -131,14 +141,19 @@ class DictEntryApi {
    *
    * @param {string|number|bigint} id
    *     `DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id) {
+  get(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/dict/entry/${stringifyId(id)}`).then((obj) => {
       const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully get the DictEntry by ID:', id);
@@ -152,14 +167,19 @@ class DictEntryApi {
    *
    * @param {string} code
    *     `DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByCode(code) {
+  getByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/dict/entry/code/${code}`).then((obj) => {
       const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully get the DictEntry by code:', code);
@@ -173,14 +193,19 @@ class DictEntryApi {
    *
    * @param {string|number|bigint} id
    *     `DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntryInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntryInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfo(id) {
+  getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/dict/entry/${stringifyId(id)}/info`).then((obj) => {
       const result = DictEntryInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the DictEntry by ID:', id);
@@ -194,14 +219,19 @@ class DictEntryApi {
    *
    * @param {string} code
    *     `DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntryInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntryInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfoByCode(code) {
+  getInfoByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/dict/entry/code/${code}/info`).then((obj) => {
       const result = DictEntryInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the DictEntry by code:', code);
@@ -215,15 +245,20 @@ class DictEntryApi {
    *
    * @param {DictEntry} entry
    *     要添加的`DictEntry`对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(entry) {
+  add(entry, showLoading = true) {
     checkArgumentType('entry', entry, DictEntry);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(entry, toJsonOptions);
-    loading.showAdding();
+    if (showLoading) {
+      loading.showAdding();
+    }
     return http.post('/dict/entry', data).then((obj) => {
       const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully add the DictEntry:', result.id);
@@ -237,16 +272,21 @@ class DictEntryApi {
    *
    * @param {DictEntry} entry
    *     要更新的`DictEntry`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(entry) {
+  update(entry, showLoading = true) {
     checkArgumentType('entry', entry, DictEntry);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(entry.id);
     const data = toJSON(entry, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/dict/entry/${id}`, data).then((obj) => {
       const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully update the DictEntry by ID %s at:', id, result.modifyTime);
@@ -260,15 +300,20 @@ class DictEntryApi {
    *
    * @param {DictEntry} entry
    *     要更新的`DictEntry`对象的数据，根据其编码确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<DictEntry|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(entry) {
+  updateByCode(entry, showLoading = true) {
     checkArgumentType('entry', entry, DictEntry);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(entry, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/dict/entry/code/${entry.code}`, data).then((obj) => {
       const result = DictEntry.create(obj, assignOptions);
       logger.info('Successfully update the DictEntry by code "%s" at:', result.code, result.modifyTime);
@@ -282,14 +327,19 @@ class DictEntryApi {
    *
    * @param {string} id
    *     要标记删除的`DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id) {
+  delete(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/dict/entry/${stringifyId(id)}`).then((timestamp) => {
       logger.info('Successfully delete the DictEntry by ID %s at:', id, timestamp);
       return timestamp;
@@ -301,14 +351,19 @@ class DictEntryApi {
    *
    * @param {string} code
    *     要标记删除的`DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  deleteByCode(code) {
+  deleteByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/dict/entry/code/${code}`).then((timestamp) => {
       logger.info('Successfully delete the DictEntry by code "%s" at:', code, timestamp);
       return timestamp;
@@ -320,14 +375,19 @@ class DictEntryApi {
    *
    * @param {string} id
    *     要恢复的`DictEntry`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id) {
+  restore(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/dict/entry/${stringifyId(id)}`)
       .then(() => logger.info('Successfully restore the DictEntry by ID:', id));
   }
@@ -337,14 +397,19 @@ class DictEntryApi {
    *
    * @param {string} code
    *     要恢复的`DictEntry`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restoreByCode(code) {
+  restoreByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/dict/entry/code/${code}`)
       .then(() => logger.info('Successfully restore the DictEntry by code:', code));
   }
@@ -354,14 +419,19 @@ class DictEntryApi {
    *
    * @param {string} id
    *     要清除的`DictEntry`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id) {
+  purge(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/dict/entry/${stringifyId(id)}/purge`)
       .then(() => logger.info('Successfully purge the DictEntry by ID:', id));
   }
@@ -371,14 +441,19 @@ class DictEntryApi {
    *
    * @param {string} code
    *     要清除的`DictEntry`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeByCode(code) {
+  purgeByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/dict/entry/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the DictEntry by code:', code));
   }
@@ -386,13 +461,18 @@ class DictEntryApi {
   /**
    * 根彻底清除全部已被标记删除的`DictEntry`对象。
    *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll() {
-    loading.showPurging();
+  purgeAll(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete('/dict/entry/purge')
       .then(() => logger.info('Successfully purge all deleted DictEntry.'));
   }

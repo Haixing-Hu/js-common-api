@@ -24,14 +24,19 @@ class WechatApi {
    *
    * @param {string} url
    *     请求网页的URL，注意可能带有查询参数。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @returns
    *     JS-SDK 用于获取授权的配置信息。
    */
   @Log
-  getJsConfig(url) {
+  getJsConfig(url, showLoading = true) {
     checkArgumentType('url', url, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     logger.info('Getting the WeChat JS-SDK configuration for URL:', url);
-    loading.show('正在获取微信JS-SDK配置信息...');
+    if (showLoading) {
+      loading.show('正在获取微信JS-SDK配置信息...');
+    }
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数url做 URI encoding，
     // 否则如果参数url中也带有hash或query，就会出错。
@@ -51,14 +56,19 @@ class WechatApi {
    * @param {string} url
    *     发起授权申请的网页的URL，授权成功此函数返回微信授权页面的URL，用户同意授权后页面会重
    *     新跳转回此URL并带上授权码参数(参数名为"code")。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @returns
    *     微信公众号授权页面URL，其中包含了所需的参数以及授权完毕回跳URL。
    */
   @Log
-  getAuthorizationPageUrl(url) {
+  getAuthorizationPageUrl(url, showLoading = true) {
     checkArgumentType('url', url, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     logger.info('Getting the WeChat authorization page URL for URL:', url);
-    loading.show('正在获取微信公众号授权页面URL...');
+    if (showLoading) {
+      loading.show('正在获取微信公众号授权页面URL...');
+    }
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数url做 URI encoding，
     // 否则如果参数url中也带有hash或query，就会出错。
@@ -74,14 +84,19 @@ class WechatApi {
    *
    * @param {string} code
    *     通过微信公众号授权获取的一次性授权码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return
    *     当前用户在指定公众号中的openId。
    */
   @Log
-  getOpenId(code) {
+  getOpenId(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     logger.info('Getting the WeChat open ID for code:', code);
-    loading.show('正在获取微信Open ID...');
+    if (showLoading) {
+      loading.show('正在获取微信Open ID...');
+    }
     return http.get(`/wechat/js/open-id/${code}`)
       .then(() => logger.info('Successfully get the WeChat open ID for code:', code));
   }

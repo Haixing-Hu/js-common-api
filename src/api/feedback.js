@@ -55,23 +55,28 @@ class FeedbackApi {
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Feedback>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Feedback`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true) {
+  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
       transformUrls,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/feedback', {
       params,
     }).then((obj) => {
@@ -89,18 +94,23 @@ class FeedbackApi {
    *     指定的`Feedback`对象的ID。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Feedback|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Feedback`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id, transformUrls = true) {
+  get(id, transformUrls = true, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       transformUrls,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/feedback/${stringifyId(id)}`, { params }).then((obj) => {
       const result = Feedback.create(obj, assignOptions);
       logger.info('Successfully get the Feedback by ID:', id);
@@ -116,18 +126,23 @@ class FeedbackApi {
    *     指定的`Feedback`对象的ID。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL为完整URL。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Array<FeedbackTrack>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Feedback`
    *     的所有`FeedbackTrack`对象列表；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getTracks(id, transformUrls = true) {
+  getTracks(id, transformUrls = true, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       transformUrls,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/feedback/${stringifyId(id)}/track`, { params }).then((obj) => {
       const result = FeedbackTrack.createArray(obj, assignOptions);
       logger.info('Successfully get all tracks of Feedback by ID:', id);
@@ -141,15 +156,20 @@ class FeedbackApi {
    *
    * @param {Feedback} feedback
    *     要添加的`Feedback`对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Feedback|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Feedback`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(feedback) {
+  add(feedback, showLoading = true) {
     checkArgumentType('feedback', feedback, Feedback);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(feedback, toJsonOptions);
-    loading.showAdding();
+    if (showLoading) {
+      loading.showAdding();
+    }
     return http.post('/feedback', data).then((obj) => {
       const result = Feedback.create(obj, assignOptions);
       logger.info('Successfully add the Feedback:', result.id);
@@ -167,18 +187,23 @@ class FeedbackApi {
    *     待执行的操作。
    * @param {FeedbackTrack} track
    *     操作的跟踪记录。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<FeedbackTrack|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`FeedbackTrack`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  performAction(id, action, track) {
+  performAction(id, action, track, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('action', action, [FeedbackAction, String]);
     checkArgumentType('track', track, FeedbackTrack);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(track, toJsonOptions);
     const url = `/feedback/${stringifyId(id)}/action/${action}`;
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(url, data).then((obj) => {
       const result = FeedbackTrack.create(obj, assignOptions);
       logger.info('Successfully perform the action %s to the Feedback:', action, id);

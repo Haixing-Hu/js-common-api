@@ -35,6 +35,7 @@ import verifyCodeApi from './api/verify-code';
 import wechatApi from './api/wechat';
 import { assignOptions, toJsonOptions } from './api/impl/options';
 import wechat from './utils/wechat';
+import extractContentDispositionFilename from './utils/extract-content-disposition-filename';
 
 export {
   appApi,
@@ -67,4 +68,5 @@ export {
   assignOptions,
   toJsonOptions,
   wechat,
+  extractContentDispositionFilename,
 };

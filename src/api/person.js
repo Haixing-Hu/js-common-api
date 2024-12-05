@@ -78,23 +78,28 @@ class PersonApi {
    *  - sortOrder: SortOrder 指定是正序还是倒序。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Person>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Person`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true) {
+  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
       transformUrls,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/person', {
       params,
     }).then((obj) => {
@@ -153,21 +158,26 @@ class PersonApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<PersonInfo>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Person`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest = {}, criteria = {}, sort = {}) {
+  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/person/info', {
       params,
     }).then((obj) => {
@@ -185,16 +195,21 @@ class PersonApi {
    *     `Person`对象的ID。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id, transformUrls = true) {
+  get(id, transformUrls = true, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ transformUrls }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/person/${stringifyId(id)}`, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully get the Person by ID:', id);
@@ -210,16 +225,21 @@ class PersonApi {
    *     `Person`对象对应的用户的用户名。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByUsername(username, transformUrls = true) {
+  getByUsername(username, transformUrls = true, showLoading = true) {
     checkArgumentType('username', username, String);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ transformUrls }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/person/username/${username}`, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully get the Person by username:', username);
@@ -233,14 +253,19 @@ class PersonApi {
    *
    * @param {string|number|bigint} id
    *     `Person`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<PersonInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`PersonInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfo(id) {
+  getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/person/${stringifyId(id)}/info`).then((obj) => {
       const info = PersonInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Person by ID:', id);
@@ -254,14 +279,19 @@ class PersonApi {
    *
    * @param {string} username
    *     `Person`对象对应的用户的用户名。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<PersonInfo|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`PersonInfo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfoByUsername(username) {
+  getInfoByUsername(username, showLoading = true) {
     checkArgumentType('username', username, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/person/username/${username}/info`).then((obj) => {
       const info = PersonInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Person by username:', username);
@@ -279,18 +309,23 @@ class PersonApi {
    *     是否同时添加新`Person`对象所绑定的用户对象`User`。默认值为`false`。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(person, withUser = false, transformUrls = true) {
+  add(person, withUser = false, transformUrls = true, showLoading = true) {
     checkArgumentType('person', person, Person);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser, transformUrls }, toJsonOptions);
     const data = toJSON(person, toJsonOptions);
-    loading.showAdding();
+    if (showLoading) {
+      loading.showAdding();
+    }
     return http.post('/person', data, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully add the Person:', person.id);
@@ -306,18 +341,23 @@ class PersonApi {
    *     要更新的`Person`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Person`对象所绑定的用户对象`User`。默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Person|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Person`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(person, withUser = false) {
+  update(person, withUser = false, showLoading = true) {
     checkArgumentType('person', person, Person);
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(person.id);
     const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(person, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/person/${id}`, data, { params }).then((obj) => {
       const person = Person.create(obj, assignOptions);
       logger.info('Successfully update the Person by ID %s at:', id, person.modifyTime);
@@ -335,18 +375,23 @@ class PersonApi {
    *     要更新的`Person`对象的联系方式。
    * @param {boolean} withUser
    *     是否同时更新`Person`对象所绑定的`User`对象的联系方式。默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<String|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateContact(id, contact, withUser = false) {
+  updateContact(id, contact, withUser = false, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('contact', contact, Contact);
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(contact, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/person/${stringifyId(id)}/contact`, data, { params }).then((timestamp) => {
       logger.info('Successfully update the Contact of a Person by ID "%s" at:', id, timestamp);
       return timestamp;
@@ -362,18 +407,23 @@ class PersonApi {
    *     要更新的`Person`对象的备注。
    * @param {boolean} withUser
    *     是否同时更新`Person`对象所绑定的`User`对象的备注。默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<String|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateComment(id, comment, withUser = false) {
+  updateComment(id, comment, withUser = false, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('comment', comment, String);
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(comment, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/person/${stringifyId(id)}/comment`, data, { params }).then((timestamp) => {
       logger.info('Successfully update the comment of a Person by ID "%s" at:', id, timestamp);
       return timestamp;
@@ -390,18 +440,23 @@ class PersonApi {
    *     的`Upload`对象构造一个`Attachment`对象。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Attachment|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`photo`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updatePhoto(id, photo, transformUrls = true) {
+  updatePhoto(id, photo, transformUrls = true, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('photo', photo, Attachment);
     checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ transformUrls }, toJsonOptions);
     const data = toJSON(photo, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/person/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
       const result = Attachment.create(obj, assignOptions);
       logger.info('Successfully update the photo of the Person by ID:', id);
@@ -417,16 +472,21 @@ class PersonApi {
    *     要标记删除的`Person`对象的ID。
    * @param {boolean} withUser
    *     是否同时标记删除`Person`对象所绑定的用户对象`User`。默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id, withUser = false) {
+  delete(id, withUser = false, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
-    loading.showDeleting();
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/person/${stringifyId(id)}`, { params }).then((timestamp) => {
       logger.info('Successfully delete the Person by ID %s at:', id, timestamp);
       return timestamp;
@@ -442,16 +502,21 @@ class PersonApi {
    *     是否同时恢复`Person`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
    *     `Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
    *     对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id, withUser = false) {
+  restore(id, withUser = false, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
-    loading.showRestoring();
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/person/${stringifyId(id)}`, undefined, { params })
       .then(() => logger.info('Successfully restore the Person by ID:', id));
   }
@@ -465,16 +530,21 @@ class PersonApi {
    *     是否同时彻底清除`Person`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
    *     `Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
    *     对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id, withUser = false) {
+  purge(id, withUser = false, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
-    loading.showPurging();
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/person/${stringifyId(id)}/purge`, { params })
       .then(() => logger.info('Successfully purge the Person by ID:', id));
   }
@@ -486,15 +556,20 @@ class PersonApi {
    *     是否同时彻底清除所有已被标记删除的`Person`对象所绑定的已被标记标记删除的用户对象`User`。
    *     若某个已被标记删除的`Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记
    *     删除，则不对该`User`对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll(withUser = false) {
+  purgeAll(withUser = false, showLoading = true) {
     checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
-    loading.showPurging();
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete('/person/purge', { params })
       .then(() => logger.info('Successfully purge all deleted Person.'));
   }

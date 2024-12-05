@@ -27,18 +27,23 @@ class VerifyCodeApi {
    *     指定的手机号码。
    * @param {VerifyScene|string} scene
    *     验证码使用场景的枚举值，此参数必须是个`VerifyScene`对象或字符串。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return
    *     此 HTTP 请求的 Promise。
    */
   @Log
-  sendBySms(mobile, scene) {
+  sendBySms(mobile, scene, showLoading = true) {
     checkArgumentType('mobile', mobile, String);
     checkArgumentType('scene', scene, [VerifyScene, String]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     logger.info('Sending verification code to the mobile:', mobile);
     const params = new URLSearchParams();
     params.append('mobile', mobile);
     params.append('scene', String(scene));
-    loading.show('正在发送手机验证码...');
+    if (showLoading) {
+      loading.show('正在发送手机验证码...');
+    }
     return http.post('/verify-code/sms', params, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -53,18 +58,23 @@ class VerifyCodeApi {
    *     指定的电子邮箱地址。
    * @param {VerifyScene|string} scene
    *     验证码使用场景的枚举值，此参数必须是个`VerifyScene`对象或字符串。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return
    *     此 HTTP 请求的 Promise。
    */
   @Log
-  sendByEmail(email, scene) {
+  sendByEmail(email, scene, showLoading = true) {
     checkArgumentType('mobile', email, String);
     checkArgumentType('scene', scene, [VerifyScene, String]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     logger.info('Sending verification code to the email:', email);
     const params = new URLSearchParams();
     params.append('email', email);
     params.append('scene', String(scene));
-    loading.show('正在发送邮箱验证码...');
+    if (showLoading) {
+      loading.show('正在发送邮箱验证码...');
+    }
     return http.post('/verify-code/email', params, {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

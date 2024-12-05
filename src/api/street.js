@@ -52,21 +52,26 @@ class StreetApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Street>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Street`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}) {
+  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/street', {
       params,
     }).then((obj) => {
@@ -84,7 +89,6 @@ class StreetApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *
    *  - `districtId: string|number|bigint` 所属区县的ID；
    *  - `districtCode: string` 所属区县的编码；
    *  - `districtName: string` 所属区县的名称中应包含的字符串；
@@ -102,24 +106,28 @@ class StreetApi {
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
    * @param {object} sort
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
-   *
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Info>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Street`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest = {}, criteria = {}, sort = {}) {
+  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/street/info', {
       params,
     }).then((obj) => {
@@ -135,14 +143,19 @@ class StreetApi {
    *
    * @param {string|number|bigint} id
    *     `Street`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Street|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Street`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id) {
+  get(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/street/${stringifyId(id)}}`).then((obj) => {
       const result = Street.create(obj, assignOptions);
       logger.info('Successfully get the Street by ID:', id);
@@ -156,14 +169,19 @@ class StreetApi {
    *
    * @param {string} code
    *     `Street`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Street|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Street`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByCode(code) {
+  getByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/street/code/${code}`).then((obj) => {
       const result = Street.create(obj, assignOptions);
       logger.info('Successfully get the Street by code:', code);
@@ -177,14 +195,19 @@ class StreetApi {
    *
    * @param {string|number|bigint} id
    *     `Street`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Info|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Info`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfo(id) {
+  getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/street/${stringifyId(id)}/info`).then((obj) => {
       const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Street by ID:', id);
@@ -198,14 +221,19 @@ class StreetApi {
    *
    * @param {string} code
    *     `Street`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Info|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Info`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfoByCode(code) {
+  getInfoByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/street/code/${code}/info`).then((obj) => {
       const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Street by code:', code);
@@ -219,15 +247,20 @@ class StreetApi {
    *
    * @param {Street} street
    *     要添加的`Street`对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Street|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Street`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(street) {
+  add(street, showLoading = true) {
     checkArgumentType('street', street, Street);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(street, toJsonOptions);
-    loading.showAdding();
+    if (showLoading) {
+      loading.showAdding();
+    }
     return http.post('/street', data).then((obj) => {
       const result = Street.create(obj, assignOptions);
       logger.info('Successfully add the Street:', result.id);
@@ -241,15 +274,20 @@ class StreetApi {
    *
    * @param {Street} street
    *     要更新的`Street`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Street|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Street`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(street) {
+  update(street, showLoading = true) {
     checkArgumentType('street', street, Street);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(street, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/street/${stringifyId(street.id)}`, data).then((obj) => {
       const result = Street.create(obj, assignOptions);
       logger.info('Successfully update the Street by ID %s at:', result.id, result.modifyTime);
@@ -263,15 +301,20 @@ class StreetApi {
    *
    * @param {Street} street
    *     要更新的`Street`对象的数据，根据其编码确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Street|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Street`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(street) {
+  updateByCode(street, showLoading = true) {
     checkArgumentType('street', street, Street);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(street, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/street/code/${street.code}`, data).then((obj) => {
       const result = Street.create(obj, assignOptions);
       logger.info('Successfully update the Street by code "%s" at:', result.code, result.modifyTime);
@@ -285,14 +328,19 @@ class StreetApi {
    *
    * @param {string} id
    *     要标记删除的`Street`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id) {
+  delete(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/street/${stringifyId(id)}`).then((timestamp) => {
       logger.info('Successfully delete the Street by ID %s at:', id, timestamp);
       return timestamp;
@@ -304,14 +352,19 @@ class StreetApi {
    *
    * @param {string} code
    *     要标记删除的`Street`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  deleteByCode(code) {
+  deleteByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/street/code/${code}`).then((timestamp) => {
       logger.info('Successfully delete the Street by code "%s" at:', code, timestamp);
       return timestamp;
@@ -323,14 +376,19 @@ class StreetApi {
    *
    * @param {string} id
    *     要恢复的`Street`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id) {
+  restore(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/street/${stringifyId(id)}`)
       .then(() => logger.info('Successfully restore the Street by ID:', id));
   }
@@ -340,14 +398,19 @@ class StreetApi {
    *
    * @param {string} code
    *     要恢复的`Street`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restoreByCode(code) {
+  restoreByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/street/code/${code}`)
       .then(() => logger.info('Successfully restore the Street by code:', code));
   }
@@ -357,14 +420,19 @@ class StreetApi {
    *
    * @param {string} id
    *     要清除的`Street`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id) {
+  purge(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/street/${stringifyId(id)}/purge`)
       .then(() => logger.info('Successfully purge the Street by ID:', id));
   }
@@ -374,14 +442,19 @@ class StreetApi {
    *
    * @param {string} code
    *     要清除的`Street`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeByCode(code) {
+  purgeByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/street/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the Street by code:', code));
   }
@@ -389,13 +462,18 @@ class StreetApi {
   /**
    * 根彻底清除全部已被标记删除的`Street`对象。
    *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll() {
-    loading.showPurging();
+  purgeAll(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete('/street/purge')
       .then(() => logger.info('Successfully purge all deleted Street.'));
   }
