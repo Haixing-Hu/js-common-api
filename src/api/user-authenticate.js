@@ -107,7 +107,7 @@ class UserAuthenticateApi {
   /**
    * 使用社交网络的Open ID登录。
    *
-   * @param {SocialNetwork} socialNetwork
+   * @param {SocialNetwork|string} socialNetwork
    *     指定的社交网络枚举名称。
    * @param {string} appId
    *     该社交网络下的APP（公众号）的ID。
@@ -119,7 +119,7 @@ class UserAuthenticateApi {
    */
   @Log
   loginByOpenId(socialNetwork, appId, openId) {
-    checkArgumentType('socialNetwork', socialNetwork, SocialNetwork);
+    checkArgumentType('socialNetwork', socialNetwork, [SocialNetwork, String]);
     checkArgumentType('appId', appId, String);
     checkArgumentType('openId', openId, String);
     const data = toJSON({
@@ -171,9 +171,9 @@ class UserAuthenticateApi {
   /**
    * 检查指定的用户ID和Access Token是否依旧有效。
    *
-   * @param {string} userId
+   * @param {string|number|bigint} userId
    *     用户ID。
-   * @param {Token} token
+   * @param {Token|object} token
    *     当前的存取令牌。
    * @return {Promise<Token|ErrorInfo>}
    *     此 HTTP 请求的 Promise；若指定的用户ID和存取令牌依旧有效，则解析成功并返回
@@ -181,8 +181,8 @@ class UserAuthenticateApi {
    */
   @Log
   checkToken(userId, token) {
-    checkArgumentType('userId', userId, String);
-    checkArgumentType('token', token, Token);
+    checkArgumentType('userId', userId, [String, Number, BigInt]);
+    checkArgumentType('token', token, [Token, Object]);
     const params = toJSON({
       id: userId,
       token: token.value,
@@ -201,7 +201,7 @@ class UserAuthenticateApi {
   /**
    * 将当前登录用户的账号绑定到指定的Open ID。
    *
-   * @param {SocialNetwork} socialNetwork
+   * @param {SocialNetwork|string} socialNetwork
    *     指定的社交网络枚举名称。
    * @param {string} appId
    *     该社交网络下的APP（公众号）的ID。
@@ -213,7 +213,7 @@ class UserAuthenticateApi {
    */
   @Log
   bindOpenId(socialNetwork, appId, openId) {
-    checkArgumentType('socialNetwork', socialNetwork, SocialNetwork);
+    checkArgumentType('socialNetwork', socialNetwork, [SocialNetwork, String]);
     checkArgumentType('appId', appId, String);
     checkArgumentType('openId', openId, String);
     const params = toJSON({
