@@ -29,7 +29,7 @@ class CountryApi {
   /**
    * 列出符合条件的`Country`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -49,21 +49,26 @@ class CountryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Country>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Country`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}) {
+  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/country', {
       params,
     }).then((obj) => {
@@ -77,7 +82,7 @@ class CountryApi {
   /**
    * 列出符合条件的`Country`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -97,21 +102,26 @@ class CountryApi {
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Page<Info>|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
    *     件的`Country`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest = {}, criteria = {}, sort = {}) {
+  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
       ...sort,
     }, toJsonOptions);
-    loading.showGetting();
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/country/info', {
       params,
     }).then((obj) => {
@@ -127,14 +137,19 @@ class CountryApi {
    *
    * @param {string|number|bigint} id
    *     `Country`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Country|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Country`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id) {
+  get(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/country/${stringifyId(id)}}`).then((obj) => {
       const result = Country.create(obj, assignOptions);
       logger.info('Successfully get the Country by ID:', id);
@@ -148,14 +163,19 @@ class CountryApi {
    *
    * @param {string} code
    *     `Country`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Country|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Country`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getByCode(code) {
+  getByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/country/code/${code}`).then((obj) => {
       const result = Country.create(obj, assignOptions);
       logger.info('Successfully get the Country by code:', code);
@@ -169,14 +189,19 @@ class CountryApi {
    *
    * @param {string|number|bigint} id
    *     `Country`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Info|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Info`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfo(id) {
+  getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/country/${stringifyId(id)}/info`).then((obj) => {
       const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Country by ID:', id);
@@ -190,14 +215,19 @@ class CountryApi {
    *
    * @param {string} code
    *     `Country`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Info|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Info`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getInfoByCode(code) {
+  getInfoByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showGetting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get(`/country/code/${code}/info`).then((obj) => {
       const result = Info.create(obj, assignOptions);
       logger.info('Successfully get the info of the Country by code:', code);
@@ -209,17 +239,22 @@ class CountryApi {
   /**
    * 添加一个`Country`对象。
    *
-   * @param {Country} country
+   * @param {Country|object} country
    *     要添加的`Country`对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Country|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`Country`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(country) {
-    checkArgumentType('country', country, Country);
+  add(country, showLoading = true) {
+    checkArgumentType('country', country, [Country, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(country, toJsonOptions);
-    loading.showAdding();
+    if (showLoading) {
+      loading.showAdding();
+    }
     return http.post('/country', data).then((obj) => {
       const result = Country.create(obj, assignOptions);
       logger.info('Successfully add the Country:', result.id);
@@ -231,18 +266,24 @@ class CountryApi {
   /**
    * 根据ID，更新一个`Country`对象。
    *
-   * @param {Country} country
+   * @param {Country|object} country
    *     要更新的`Country`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Country|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Country`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(country) {
-    checkArgumentType('country', country, Country);
+  update(country, showLoading = true) {
+    checkArgumentType('country', country, [Country, Object]);
+    checkArgumentType('country.id', country.id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(country.id);
     const data = toJSON(country, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/country/${id}`, data).then((obj) => {
       const result = Country.create(obj, assignOptions);
       logger.info('Successfully update the Country by ID %s at:', id, result.modifyTime);
@@ -254,17 +295,23 @@ class CountryApi {
   /**
    * 根据编码，更新一个`Country`对象。
    *
-   * @param {Country} country
+   * @param {Country|object} country
    *     要更新的`Country`对象的数据，根据其编码确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Country|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`Country`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(country) {
-    checkArgumentType('country', country, Country);
+  updateByCode(country, showLoading = true) {
+    checkArgumentType('country', country, [Country, Object]);
+    checkArgumentType('country.code', country.code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(country, toJsonOptions);
-    loading.showUpdating();
+    if (showLoading) {
+      loading.showUpdating();
+    }
     return http.put(`/country/code/${country.code}`, data).then((obj) => {
       const result = Country.create(obj, assignOptions);
       logger.info('Successfully update the Country by code "%s" at:', result.code, result.modifyTime);
@@ -276,16 +323,21 @@ class CountryApi {
   /**
    * 根据ID，标记删除一个`Country`对象。
    *
-   * @param {string} id
+   * @param {string|number|bigint} id
    *     要标记删除的`Country`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id) {
+  delete(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/country/${stringifyId(id)}`).then((timestamp) => {
       logger.info('Successfully delete the Country by ID %s at:', id, timestamp);
       return timestamp;
@@ -297,14 +349,19 @@ class CountryApi {
    *
    * @param {string} code
    *     要标记删除的`Country`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  deleteByCode(code) {
+  deleteByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showDeleting();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
     return http.delete(`/country/code/${code}`).then((timestamp) => {
       logger.info('Successfully delete the Country by code "%s" at:', code, timestamp);
       return timestamp;
@@ -314,16 +371,21 @@ class CountryApi {
   /**
    * 根据ID，恢复一个被标记删除的`Country`对象。
    *
-   * @param {string} id
+   * @param {string|number|bigint} id
    *     要恢复的`Country`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id) {
+  restore(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/country/${stringifyId(id)}`)
       .then(() => logger.info('Successfully restore the Country by ID:', id));
   }
@@ -333,14 +395,19 @@ class CountryApi {
    *
    * @param {string} code
    *     要恢复的`Country`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restoreByCode(code) {
+  restoreByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showRestoring();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
     return http.patch(`/country/code/${code}`)
       .then(() => logger.info('Successfully restore the Country by code:', code));
   }
@@ -348,16 +415,21 @@ class CountryApi {
   /**
    * 根据ID，清除一个被标记删除的`Country`对象。
    *
-   * @param {string} id
+   * @param {string|number|bigint} id
    *     要清除的`Country`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id) {
+  purge(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/country/${stringifyId(id)}/purge`)
       .then(() => logger.info('Successfully purge the Country by ID:', id));
   }
@@ -367,14 +439,19 @@ class CountryApi {
    *
    * @param {string} code
    *     要清除的`Country`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeByCode(code) {
+  purgeByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
-    loading.showPurging();
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete(`/country/code/${code}/purge`)
       .then(() => logger.info('Successfully purge the Country by code:', code));
   }
@@ -382,13 +459,18 @@ class CountryApi {
   /**
    * 根彻底清除全部已被标记删除的`Country`对象。
    *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll() {
-    loading.showPurging();
+  purgeAll(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
     return http.delete('/country/purge')
       .then(() => logger.info('Successfully purge all deleted Country.'));
   }
