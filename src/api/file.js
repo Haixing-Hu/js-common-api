@@ -10,7 +10,9 @@ import { http } from '@haixing_hu/common-app';
 import { toJSON } from '@haixing_hu/common-decorator';
 import { Upload } from '@haixing_hu/common-model';
 import { Log, Logger } from '@haixing_hu/logging';
+import { checkArgumentType } from '@haixing_hu/common-util';
 import { assignOptions, toJsonOptions } from './impl/options';
+import extractContentDispositionFilename from '../utils/extract-content-disposition-filename';
 
 const logger = Logger.getLogger('FileApi');
 
@@ -40,6 +42,10 @@ class FileApi {
    */
   @Log
   upload(filename, file, contentType = undefined, onUploadProgress = undefined) {
+    checkArgumentType('filename', filename, String);
+    checkArgumentType('file', file, [Blob, File]);
+    checkArgumentType('contentType', contentType, String, true);
+    checkArgumentType('onUploadProgress', onUploadProgress, Function, true);
     const headers = {
       'Content-Type': 'multipart/form-data',
     };
@@ -60,21 +66,46 @@ class FileApi {
   /**
    * 下载指定的文件。
    *
-   * FIXME: 该如何处理返回的文件？
-   *
-   * @param path
+   * @param {string} path
    *     待下载文件在服务器上的相对路径。
-   * @returns {Promise}
-   *     一个`Promise`对象。
+   * @returns {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，浏览器会自动开始下载文件；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
   download(path) {
+    checkArgumentType('path', path, String);
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数做 URI encoding，否则如果参数中也带有hash或query，就会出错。
     const params = toJSON({
       path,
     }, toJsonOptions);
-    return http.get('/file/download', { params });
+    return http.get('/file/download', {
+      params,
+      responseType: 'blob',  // 告诉 Axios 返回二进制 Blob 数据
+    }).then((response) => {
+      // 获取返回的 Content-Type 头，注意，response.headers 是一个 AxiosHeaders 对象，
+      // 必须用 get 方法获取值，不能直接用下标，否则大小写不同的键名会被认为是不同的键
+      const contentType = response.headers.get('Content-Type');
+      // 获取返回的 Blob 数据
+      const blob = new Blob([response.data], { type: contentType });
+      // 创建一个临时 URL
+      const url = window.URL.createObjectURL(blob);
+      // 创建一个隐藏的 <a> 元素触发下载
+      const a = window.document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      // 从响应头中解析文件名（可选，后端需提供文件名）
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filename = extractContentDispositionFilename(contentDisposition) ?? 'downloaded_file';
+      a.download = decodeURIComponent(filename);
+      // 将 <a> 元素添加到 DOM，触发点击事件，然后移除
+      window.document.body.appendChild(a);
+      a.click();
+      window.document.body.removeChild(a);
+      // 释放 URL
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   /**
