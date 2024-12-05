@@ -34,14 +34,16 @@ class AppAuthenticateApi {
    *     应用编码。
    * @param {string} securityKey
    *     应用安全密钥。
-   * @param {object|Environment} environment
+   * @param {Environment|object} environment
    *     当前客户端的环境信息。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Token|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Token`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  authenticate(code, securityKey, environment = {}) {
+  authenticate(code, securityKey, environment = {}, showLoading = true) {
     checkArgumentType('code', code, String);
     checkArgumentType('securityKey', securityKey, String);
     checkArgumentType('environment', environment, [Environment, Object]);
@@ -51,7 +53,9 @@ class AppAuthenticateApi {
       ...environment,
       platform: 'WEB',
     }, toJsonOptions);
-    loading.show('正在获取应用令牌...');
+    if (showLoading) {
+      loading.show('正在获取应用令牌...');
+    }
     return http.post('/authenticate/app', data).then((obj) => {
       const token = Token.create(obj, assignOptions);
       logger.info('Successfully authenticate the apps.');
@@ -64,21 +68,25 @@ class AppAuthenticateApi {
    *
    * @param {string} code
    *     指定的应用的编码。
-   * @param {Token} token
+   * @param {Token|object} token
    *     待检查的指定应用的存取令牌。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Token|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Token`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  checkToken(code, token) {
+  checkToken(code, token, showLoading = true) {
     checkArgumentType('code', code, String);
-    checkArgumentType('token', token, Token);
+    checkArgumentType('token', token, [Token, Object]);
     const params = toJSON({
       code,
       token: token.value,
     }, toJsonOptions);
-    loading.show('正在检查应用令牌...');
+    if (showLoading) {
+      loading.show('正在检查应用令牌...');
+    }
     return http.get('/authenticate/app/check', { params }).then((obj) => {
       const token = Token.create(obj, assignOptions);
       logger.info('The token is valid.');
@@ -97,21 +105,25 @@ class AppAuthenticateApi {
    *
    * @param {string} code
    *     指定的应用的编码。
-   * @param {Token} token
+   * @param {Token|object} token
    *     待检查的指定应用的存取令牌。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Token|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Token`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  refreshToken(code, token) {
+  refreshToken(code, token, showLoading = true) {
     checkArgumentType('code', code, String);
-    checkArgumentType('token', token, Token);
+    checkArgumentType('token', token, [Token, Object]);
     const params = toJSON({
       code,
       token: token.value,
     }, toJsonOptions);
-    loading.show('正在刷新应用令牌...');
+    if (showLoading) {
+      loading.show('正在刷新应用令牌...');
+    }
     return http.get('/authenticate/app/refresh', { params }).then((obj) => {
       const token = Token.create(obj, assignOptions);
       logger.info('The token was successfully refreshed.');
