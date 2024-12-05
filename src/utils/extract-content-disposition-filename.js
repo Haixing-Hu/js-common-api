@@ -19,13 +19,17 @@ function extractContentDispositionFilename(contentDisposition) {
   if (!contentDisposition) {
     return null;
   }
-  const match = contentDisposition.match(/filename\*=(?:UTF-8'')?([^;]+)|filename="([^"]+)"/);
-  if (match) {
-    // 判断是哪种格式，选择对应的捕获组
-    return match[1] ? decodeURIComponent(match[1]) : match[2];
-  } else {
-    return null;
+  // 优先匹配 filename*=
+  const filenameStarMatch = contentDisposition.match(/filename\*=(?:UTF-8'')?([^;]+)/);
+  if (filenameStarMatch) {
+    return decodeURIComponent(filenameStarMatch[1]);
   }
+  // 如果 filename* 不存在，匹配 filename=
+  const filenameMatch = contentDisposition.match(/filename="([^"]+)"/);
+  if (filenameMatch) {
+    return filenameMatch[1];
+  }
+  return null;
 }
 
 export default extractContentDispositionFilename;
