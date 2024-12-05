@@ -35,6 +35,10 @@ import verifyCodeApi from './api/verify-code';
 import wechatApi from './api/wechat';
 import { assignOptions, toJsonOptions } from './api/impl/options';
 import wechat from './utils/wechat';
+import checkCriteriaArgument from './utils/check-criteria-argument';
+import checkIdArgumentType from './utils/check-id-argument-type';
+import checkPageRequestArgument from './utils/check-page-request-argument';
+import checkSortRequestArgument from './utils/check-sort-request-argument';
 import extractContentDispositionFilename from './utils/extract-content-disposition-filename';
 
 export {
@@ -68,5 +72,9 @@ export {
   assignOptions,
   toJsonOptions,
   wechat,
+  checkCriteriaArgument,
+  checkIdArgumentType,
+  checkPageRequestArgument,
+  checkSortRequestArgument,
   extractContentDispositionFilename,
 };

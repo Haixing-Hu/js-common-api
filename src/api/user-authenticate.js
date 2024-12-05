@@ -17,6 +17,7 @@ import {
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
+import checkIdArgumentType from '../utils/check-id-argument-type';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('UserAuthenticateApi');
@@ -213,7 +214,7 @@ class UserAuthenticateApi {
    */
   @Log
   checkToken(userId, token, showLoading = true) {
-    checkArgumentType('userId', userId, [String, Number, BigInt]);
+    checkIdArgumentType(userId, 'userId');
     checkArgumentType('token', token, [Token, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

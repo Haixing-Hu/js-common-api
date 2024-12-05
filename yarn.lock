@@ -1403,7 +1403,7 @@ __metadata:
     "@haixing_hu/clone": "npm:^1.12.0"
     "@haixing_hu/common-app": "npm:^1.9.2"
     "@haixing_hu/common-decorator": "npm:^3.8.7"
-    "@haixing_hu/common-model": "npm:^4.8.3"
+    "@haixing_hu/common-model": "npm:^4.8.4"
     "@haixing_hu/common-normalizer": "npm:^1.7.0"
     "@haixing_hu/common-ui": "npm:^1.6.0"
     "@haixing_hu/common-util": "npm:^5.3.0"
@@ -1451,7 +1451,7 @@ __metadata:
     "@babel/runtime": ^7.26.0
     "@haixing_hu/common-app": ^1.9.2
     "@haixing_hu/common-decorator": ^3.8.7
-    "@haixing_hu/common-model": ^4.8.3
+    "@haixing_hu/common-model": ^4.8.4
     "@haixing_hu/common-normalizer": ^1.7.0
     "@haixing_hu/common-ui": ^1.6.0
     "@haixing_hu/common-util": ^5.3.0
@@ -1493,9 +1493,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@haixing_hu/common-model@npm:^4.8.3":
-  version: 4.8.3
-  resolution: "@haixing_hu/common-model@npm:4.8.3"
+"@haixing_hu/common-model@npm:^4.8.4":
+  version: 4.8.4
+  resolution: "@haixing_hu/common-model@npm:4.8.4"
   peerDependencies:
     "@babel/runtime": ^7.25.1
     "@haixing_hu/common-decorator": ^3.8.0
@@ -1504,7 +1504,7 @@ __metadata:
     "@haixing_hu/common-validator": ^4.7.1
     "@haixing_hu/logging": ^1.4.1
     dayjs: ^1.11.10
-  checksum: 10c0/a9ae4fde3800e7b284876c5a56740b49c116c2c847f12fcedb8fca9019d286714d967396abe2191f2cd2ab9d0801d7386f6cc202d0d26e5164a01304497269fd
+  checksum: 10c0/a1f87e1b0449fb8e9e1c6401690bf923284fd6e75983d69765e4a3e5ad772d031516de9b74fb78acfa37a5b7ed0b9b598f7c494fd52d560ee34f99c5c0266b5f
   languageName: node
   linkType: hard
 

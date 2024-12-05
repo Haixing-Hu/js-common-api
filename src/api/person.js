@@ -18,6 +18,10 @@ import {
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
+import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkIdArgumentType from '../utils/check-id-argument-type';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('PersonApi');
@@ -72,7 +76,7 @@ class PersonApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - sortField: string 用于排序的属性名称（CamelCase形式）；
    *  - sortOrder: SortOrder 指定是正序还是倒序。
@@ -85,16 +89,16 @@ class PersonApi {
    *     件的`Person`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, Person);
+    checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
       transformUrls,
     }, toJsonOptions);
     if (showLoading) {
@@ -154,7 +158,7 @@ class PersonApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -165,15 +169,15 @@ class PersonApi {
    *     件的`Person`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, Person);
+    checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
     }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();
@@ -203,7 +207,7 @@ class PersonApi {
    */
   @Log
   get(id, transformUrls = true, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ transformUrls }, toJsonOptions);
@@ -261,7 +265,7 @@ class PersonApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
@@ -350,7 +354,7 @@ class PersonApi {
   @Log
   update(person, withUser = false, showLoading = true) {
     checkArgumentType('person', person, [Person, Object]);
-    checkArgumentType('person.id', person.id, [String, Number, BigInt]);
+    checkIdArgumentType(person.id, 'person.id');
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(person.id);
@@ -384,7 +388,7 @@ class PersonApi {
    */
   @Log
   updateContact(id, contact, withUser = false, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('contact', contact, [Contact, Object]);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -416,7 +420,7 @@ class PersonApi {
    */
   @Log
   updateComment(id, comment, withUser = false, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('comment', comment, String);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -449,7 +453,7 @@ class PersonApi {
    */
   @Log
   updatePhoto(id, photo, transformUrls = true, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('photo', photo, [Attachment, Object]);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -481,7 +485,7 @@ class PersonApi {
    */
   @Log
   delete(id, withUser = false, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
@@ -511,7 +515,7 @@ class PersonApi {
    */
   @Log
   restore(id, withUser = false, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
@@ -539,7 +543,7 @@ class PersonApi {
    */
   @Log
   purge(id, withUser = false, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);

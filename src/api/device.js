@@ -22,6 +22,10 @@ import {
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
+import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkIdArgumentType from '../utils/check-id-argument-type';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('DeviceApi');
@@ -79,7 +83,7 @@ class DeviceApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -90,15 +94,15 @@ class DeviceApi {
    *     件的`Device`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, Device);
+    checkSortRequestArgument(sortRequest, Device);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
     }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();
@@ -160,7 +164,7 @@ class DeviceApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -171,15 +175,15 @@ class DeviceApi {
    *     件的`Device`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  listInfo(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, Device);
+    checkSortRequestArgument(sortRequest, Device);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
     }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();
@@ -207,7 +211,7 @@ class DeviceApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
@@ -259,7 +263,7 @@ class DeviceApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
@@ -339,7 +343,7 @@ class DeviceApi {
   @Log
   update(device, showLoading = true) {
     checkArgumentType('device', device, [Device, Object]);
-    checkArgumentType('device.id', device.id, [String, Number, BigInt]);
+    checkIdArgumentType(device.id, 'device.id');
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(device.id);
     const data = toJSON(device, toJsonOptions);
@@ -397,7 +401,7 @@ class DeviceApi {
    */
   @Log
   updateHardware(id, hardware, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('hardware', hardware, [Hardware, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(hardware, toJsonOptions);
@@ -425,7 +429,7 @@ class DeviceApi {
    */
   @Log
   updateOperatingSystem(id, operatingSystem, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('operatingSystem', operatingSystem, [Software, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(operatingSystem, toJsonOptions);
@@ -453,7 +457,7 @@ class DeviceApi {
    */
   @Log
   updateSoftwares(id, softwares, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('softwares', softwares, Array); // FIXME: 使用更合适的函数检查Array元素类型
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(softwares, toJsonOptions);
@@ -481,7 +485,7 @@ class DeviceApi {
    */
   @Log
   updateDeployAddress(id, deployAddress, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('deployAddress', deployAddress, [Address, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(deployAddress, toJsonOptions);
@@ -509,7 +513,7 @@ class DeviceApi {
    */
   @Log
   updateLocation(id, location, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('location', location, [Location, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(location, toJsonOptions);
@@ -537,7 +541,7 @@ class DeviceApi {
    */
   @Log
   updateIpAddress(id, ipAddress, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('ipAddress', ipAddress, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(ipAddress, toJsonOptions);
@@ -565,7 +569,7 @@ class DeviceApi {
    */
   @Log
   updateOwner(id, owner, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('owner', owner, [PersonInfo, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(owner, toJsonOptions);
@@ -594,7 +598,7 @@ class DeviceApi {
    */
   @Log
   updateLastStartupTime(id, lastStartupTime, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('lastStartupTime', lastStartupTime, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(lastStartupTime, toJsonOptions);
@@ -623,7 +627,7 @@ class DeviceApi {
    */
   @Log
   updateLastHeartbeatTime(id, lastHeartbeatTime, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('lastHeartbeatTime', lastHeartbeatTime, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(lastHeartbeatTime, toJsonOptions);
@@ -651,7 +655,7 @@ class DeviceApi {
    */
   @Log
   updateState(id, state, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('state', state, [State, String]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = { state: String(state) };
@@ -705,7 +709,7 @@ class DeviceApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showDeleting();
@@ -753,7 +757,7 @@ class DeviceApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showRestoring();
@@ -797,7 +801,7 @@ class DeviceApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showPurging();

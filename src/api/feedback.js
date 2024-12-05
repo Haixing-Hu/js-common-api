@@ -17,6 +17,10 @@ import {
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
+import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkIdArgumentType from '../utils/check-id-argument-type';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('FeedbackApi');
@@ -49,7 +53,7 @@ class FeedbackApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数。允许的参数包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -62,16 +66,16 @@ class FeedbackApi {
    *     件的`Feedback`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, transformUrls = true, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, Feedback);
+    checkSortRequestArgument(sortRequest, Feedback);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
       transformUrls,
     }, toJsonOptions);
     if (showLoading) {
@@ -102,7 +106,7 @@ class FeedbackApi {
    */
   @Log
   get(id, transformUrls = true, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -134,7 +138,7 @@ class FeedbackApi {
    */
   @Log
   getTracks(id, transformUrls = true, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -195,7 +199,7 @@ class FeedbackApi {
    */
   @Log
   performAction(id, action, track, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('action', action, [FeedbackAction, String]);
     checkArgumentType('track', track, FeedbackTrack);
     checkArgumentType('showLoading', showLoading, Boolean);

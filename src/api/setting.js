@@ -15,6 +15,9 @@ import {
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
+import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('SettingApi');
@@ -37,7 +40,7 @@ class SettingApi {
    *  - `nullable: boolean` 是否可以为空；
    *  - `multiple: boolean` 是否可以取多个值；
    *  - `encrypted: boolean` 是否加密；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -48,15 +51,15 @@ class SettingApi {
    *     件的`Setting`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, Setting);
+    checkSortRequestArgument(sortRequest, Setting);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
     }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();

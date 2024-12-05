@@ -16,6 +16,10 @@ import {
 import { loading } from '@haixing_hu/common-ui';
 import { checkArgumentType } from '@haixing_hu/common-util';
 import { Log, Logger } from '@haixing_hu/logging';
+import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkIdArgumentType from '../utils/check-id-argument-type';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('SocialNetworkAccountApi');
@@ -43,7 +47,7 @@ class SocialNetworkAccountApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -55,15 +59,15 @@ class SocialNetworkAccountApi {
    *     `ErrorInfo`对象。
    */
   @Log
-  list(pageRequest = {}, criteria = {}, sort = {}, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, SocialNetworkAccount);
+    checkSortRequestArgument(sortRequest, SocialNetworkAccount);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
     }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();
@@ -91,7 +95,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
@@ -178,7 +182,7 @@ class SocialNetworkAccountApi {
   @Log
   update(account, showLoading = true) {
     checkArgumentType('account', account, [SocialNetworkAccount, Object]);
-    checkArgumentType('account.id', account.id, [String, Number, BigInt]);
+    checkIdArgumentType(account.id, 'account.id');
     checkArgumentType('showLoading', showLoading, Boolean);
     const url = `/social-network-account/${stringifyId(account.id)}`;
     const data = toJSON(account, toJsonOptions);
@@ -241,7 +245,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showDeleting();
@@ -265,7 +269,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showRestoring();
@@ -287,7 +291,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showPurging();
