@@ -47,6 +47,7 @@ class AppAuthenticateApi {
     checkArgumentType('code', code, String);
     checkArgumentType('securityKey', securityKey, String);
     checkArgumentType('environment', environment, [Environment, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON({
       code,
       securityKey,
@@ -80,6 +81,7 @@ class AppAuthenticateApi {
   checkToken(code, token, showLoading = true) {
     checkArgumentType('code', code, String);
     checkArgumentType('token', token, [Token, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       code,
       token: token.value,
@@ -117,6 +119,7 @@ class AppAuthenticateApi {
   refreshToken(code, token, showLoading = true) {
     checkArgumentType('code', code, String);
     checkArgumentType('token', token, [Token, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       code,
       token: token.value,

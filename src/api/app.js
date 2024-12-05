@@ -66,6 +66,7 @@ class AppApi {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -123,6 +124,7 @@ class AppApi {
     checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
     checkArgumentType('criteria', criteria, Object);
     checkArgumentType('sort', sort, Object);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
@@ -155,6 +157,7 @@ class AppApi {
   @Log
   get(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
     }
@@ -180,6 +183,7 @@ class AppApi {
   @Log
   getByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
     }
@@ -205,6 +209,7 @@ class AppApi {
   @Log
   getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
     }
@@ -230,6 +235,7 @@ class AppApi {
   @Log
   getInfoByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
     }
@@ -255,6 +261,7 @@ class AppApi {
   @Log
   add(app, showLoading = true) {
     checkArgumentType('app', app, [App, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(app, toJsonOptions);
     if (showLoading) {
       loading.showAdding();
@@ -282,6 +289,7 @@ class AppApi {
   update(app, showLoading = true) {
     checkArgumentType('app', app, [App, Object]);
     checkArgumentType('app.id', app.id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(app.id);
     const data = toJSON(app, toJsonOptions);
     if (showLoading) {
@@ -310,6 +318,7 @@ class AppApi {
   updateByCode(app, showLoading = true) {
     checkArgumentType('app', app, App);
     checkArgumentType('app.code', app.code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(app, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
@@ -339,6 +348,7 @@ class AppApi {
   updateState(id, state, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('state', state, [State, String]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = { state: String(state) };
     if (showLoading) {
       loading.showUpdating();
@@ -366,6 +376,7 @@ class AppApi {
   updateStateByCode(code, state, showLoading = true) {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, [State, String]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     const data = { state: String(state) };
     if (showLoading) {
       loading.showUpdating();
@@ -390,6 +401,7 @@ class AppApi {
   @Log
   delete(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showDeleting();
     }
@@ -413,6 +425,7 @@ class AppApi {
   @Log
   deleteByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showDeleting();
     }
@@ -436,6 +449,7 @@ class AppApi {
   @Log
   restore(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showRestoring();
     }
@@ -457,6 +471,7 @@ class AppApi {
   @Log
   restoreByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showRestoring();
     }
@@ -478,6 +493,7 @@ class AppApi {
   @Log
   purge(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showPurging();
     }
@@ -499,6 +515,7 @@ class AppApi {
   @Log
   purgeByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showPurging();
     }
@@ -517,6 +534,7 @@ class AppApi {
    */
   @Log
   purgeAll(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showPurging();
     }
