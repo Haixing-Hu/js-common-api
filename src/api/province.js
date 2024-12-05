@@ -85,7 +85,7 @@ class ProvinceApi {
   /**
    * 列出符合条件的`Province`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -245,7 +245,7 @@ class ProvinceApi {
   /**
    * 添加一个`Province`对象。
    *
-   * @param {Province} province
+   * @param {Province|object} province
    *     要添加的`Province`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -255,7 +255,7 @@ class ProvinceApi {
    */
   @Log
   add(province, showLoading = true) {
-    checkArgumentType('province', province, Province);
+    checkArgumentType('province', province, [Province, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(province, toJsonOptions);
     if (showLoading) {
@@ -272,7 +272,7 @@ class ProvinceApi {
   /**
    * 根据ID，更新一个`Province`对象。
    *
-   * @param {Province} province
+   * @param {Province|object} province
    *     要更新的`Province`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -282,7 +282,8 @@ class ProvinceApi {
    */
   @Log
   update(province, showLoading = true) {
-    checkArgumentType('province', province, Province);
+    checkArgumentType('province', province, [Province, Object]);
+    checkArgumentType('province.id', province.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(province.id);
     const data = toJSON(province, toJsonOptions);
@@ -300,7 +301,7 @@ class ProvinceApi {
   /**
    * 根据编码，更新一个`Province`对象。
    *
-   * @param {Province} province
+   * @param {Province|object} province
    *     要更新的`Province`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -310,7 +311,8 @@ class ProvinceApi {
    */
   @Log
   updateByCode(province, showLoading = true) {
-    checkArgumentType('province', province, Province);
+    checkArgumentType('province', province, [Province, Object]);
+    checkArgumentType('province.code', province.code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(province, toJsonOptions);
     if (showLoading) {

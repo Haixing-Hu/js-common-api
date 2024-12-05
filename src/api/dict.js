@@ -30,7 +30,7 @@ class DictApi {
   /**
    * 列出符合条件的`Dict`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -89,7 +89,7 @@ class DictApi {
   /**
    * 列出符合条件的`Dict`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -252,7 +252,7 @@ class DictApi {
   /**
    * 添加一个`Dict`对象。
    *
-   * @param {Dict} dict
+   * @param {Dict|object} dict
    *     要添加的`Dict`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -262,7 +262,7 @@ class DictApi {
    */
   @Log
   add(dict, showLoading = true) {
-    checkArgumentType('dict', dict, Dict);
+    checkArgumentType('dict', dict, [Dict, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(dict, toJsonOptions);
     if (showLoading) {
@@ -279,7 +279,7 @@ class DictApi {
   /**
    * 根据ID，更新一个`Dict`对象。
    *
-   * @param {Dict} dict
+   * @param {Dict|object} dict
    *     要更新的`Dict`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -289,7 +289,8 @@ class DictApi {
    */
   @Log
   update(dict, showLoading = true) {
-    checkArgumentType('dict', dict, Dict);
+    checkArgumentType('dict', dict, [Dict, Object]);
+    checkArgumentType('dict.id', dict.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(dict.id);
     const data = toJSON(dict, toJsonOptions);
@@ -307,7 +308,7 @@ class DictApi {
   /**
    * 根据编码，更新一个`Dict`对象。
    *
-   * @param {Dict} dict
+   * @param {Dict|object} dict
    *     要更新的`Dict`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -317,7 +318,8 @@ class DictApi {
    */
   @Log
   updateByCode(dict, showLoading = true) {
-    checkArgumentType('dict', dict, Dict);
+    checkArgumentType('dict', dict, [Dict, Object]);
+    checkArgumentType('dict.code', dict.code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(dict, toJsonOptions);
     if (showLoading) {

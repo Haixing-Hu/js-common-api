@@ -30,7 +30,7 @@ class FeedbackApi {
   /**
    * 列出符合条件的`Feedback`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -154,7 +154,7 @@ class FeedbackApi {
   /**
    * 添加一个`Feedback`对象。
    *
-   * @param {Feedback} feedback
+   * @param {Feedback|object} feedback
    *     要添加的`Feedback`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -164,7 +164,7 @@ class FeedbackApi {
    */
   @Log
   add(feedback, showLoading = true) {
-    checkArgumentType('feedback', feedback, Feedback);
+    checkArgumentType('feedback', feedback, [Feedback, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(feedback, toJsonOptions);
     if (showLoading) {

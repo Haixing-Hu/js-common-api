@@ -35,7 +35,7 @@ class DeviceApi {
   /**
    * 列出符合条件的`Device`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -116,7 +116,7 @@ class DeviceApi {
   /**
    * 列出符合条件的`Device`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|objec} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -258,7 +258,7 @@ class DeviceApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getDeviceInfo(id, showLoading = true) {
+  getInfo(id, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
@@ -284,7 +284,7 @@ class DeviceApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getDeviceInfoByCode(code, showLoading = true) {
+  getInfoByCode(code, showLoading = true) {
     checkArgumentType('code', code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
@@ -301,7 +301,7 @@ class DeviceApi {
   /**
    * 添加一个`Device`对象。
    *
-   * @param {Device} device
+   * @param {Device|objec} device
    *     要添加的`Device`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -311,7 +311,7 @@ class DeviceApi {
    */
   @Log
   add(device, showLoading = true) {
-    checkArgumentType('device', device, Device);
+    checkArgumentType('device', device, [Device, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(device, toJsonOptions);
     if (showLoading) {
@@ -328,7 +328,7 @@ class DeviceApi {
   /**
    * 根据ID，更新一个`Device`对象。
    *
-   * @param {Device} device
+   * @param {Device|objec} device
    *     要更新的`Device`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -338,7 +338,8 @@ class DeviceApi {
    */
   @Log
   update(device, showLoading = true) {
-    checkArgumentType('device', device, Device);
+    checkArgumentType('device', device, [Device, Object]);
+    checkArgumentType('device.id', device.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(device.id);
     const data = toJSON(device, toJsonOptions);
@@ -356,7 +357,7 @@ class DeviceApi {
   /**
    * 根据编码，更新一个`Device`对象。
    *
-   * @param {Device} device
+   * @param {Device|object} device
    *     要更新的`Device`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -366,7 +367,8 @@ class DeviceApi {
    */
   @Log
   updateByCode(device, showLoading = true) {
-    checkArgumentType('device', device, Device);
+    checkArgumentType('device', device, [Device, Object]);
+    checkArgumentType('device.code', device.code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(device, toJsonOptions);
     if (showLoading) {
@@ -385,7 +387,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     待更新的`Device`对象的ID。
-   * @param {Hardware} hardware
+   * @param {Hardware|object} hardware
    *     待更新的`Device`对象的硬件信息。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -396,8 +398,8 @@ class DeviceApi {
   @Log
   updateHardware(id, hardware, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('hardware', hardware, [Hardware, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    checkArgumentType('hardware', hardware, Hardware);
     const data = toJSON(hardware, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
@@ -413,7 +415,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     待更新的`Device`对象的ID。
-   * @param {Software} operatingSystem
+   * @param {Software|object} operatingSystem
    *     待更新的`Device`对象的操作系统信息。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -424,8 +426,8 @@ class DeviceApi {
   @Log
   updateOperatingSystem(id, operatingSystem, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('operatingSystem', operatingSystem, [Software, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    checkArgumentType('operatingSystem', operatingSystem, Software);
     const data = toJSON(operatingSystem, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
@@ -441,7 +443,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     待更新的`Device`对象的ID。
-   * @param {Array<Software>} softwares
+   * @param {Array<Software|object>} softwares
    *     待更新的`Device`对象的软件信息。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -452,8 +454,8 @@ class DeviceApi {
   @Log
   updateSoftwares(id, softwares, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('softwares', softwares, Array); // FIXME: 使用更合适的函数检查Array元素类型
     checkArgumentType('showLoading', showLoading, Boolean);
-    checkArgumentType('softwares', softwares, Array);
     const data = toJSON(softwares, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
@@ -469,7 +471,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     待更新的`Device`对象的ID。
-   * @param {Address} deployAddress
+   * @param {Address|object} deployAddress
    *     待更新的`Device`对象的部署地址。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -480,8 +482,8 @@ class DeviceApi {
   @Log
   updateDeployAddress(id, deployAddress, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('deployAddress', deployAddress, [Address, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    checkArgumentType('deployAddress', deployAddress, Address);
     const data = toJSON(deployAddress, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
@@ -497,7 +499,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     待更新的`Device`对象的ID。
-   * @param {Location} location
+   * @param {Location|object} location
    *     待更新的`Device`对象的地理位置坐标。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -508,8 +510,8 @@ class DeviceApi {
   @Log
   updateLocation(id, location, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('location', location, [Location, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    checkArgumentType('location', location, Location);
     const data = toJSON(location, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
@@ -553,7 +555,7 @@ class DeviceApi {
    *
    * @param {string|number|bigint} id
    *     待更新的`Device`对象的ID。
-   * @param {PersonInfo} owner
+   * @param {PersonInfo|object} owner
    *     待更新的`Device`对象的所有者。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -564,7 +566,7 @@ class DeviceApi {
   @Log
   updateOwner(id, owner, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    checkArgumentType('owner', owner, PersonInfo);
+    checkArgumentType('owner', owner, [PersonInfo, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(owner, toJsonOptions);
     if (showLoading) {

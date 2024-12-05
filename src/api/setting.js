@@ -28,7 +28,7 @@ class SettingApi {
   /**
    * 列出符合条件的`Setting`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {string} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -100,7 +100,7 @@ class SettingApi {
   /**
    * 添加一个`Setting`对象。
    *
-   * @param {Setting} setting
+   * @param {Setting|object} setting
    *     要添加的`Setting`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -110,7 +110,7 @@ class SettingApi {
    */
   @Log
   add(setting, showLoading = true) {
-    checkArgumentType('setting', setting, Setting);
+    checkArgumentType('setting', setting, [Setting, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(setting, toJsonOptions);
     if (showLoading) {

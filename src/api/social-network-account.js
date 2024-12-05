@@ -29,7 +29,7 @@ class SocialNetworkAccountApi {
   /**
    * 列出符合条件的`SocialNetworkAccount`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -140,7 +140,7 @@ class SocialNetworkAccountApi {
   /**
    * 添加一个`SocialNetworkAccount`对象。
    *
-   * @param {SocialNetworkAccount} account
+   * @param {SocialNetworkAccount|object} account
    *     要添加的`SocialNetworkAccount`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -150,7 +150,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   add(account, showLoading = true) {
-    checkArgumentType('account', account, SocialNetworkAccount);
+    checkArgumentType('account', account, [SocialNetworkAccount, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(account, toJsonOptions);
     if (showLoading) {
@@ -167,7 +167,7 @@ class SocialNetworkAccountApi {
   /**
    * 根据ID，更新一个`SocialNetworkAccount`对象。
    *
-   * @param {SocialNetworkAccount} account
+   * @param {SocialNetworkAccount|object} account
    *     要更新的`SocialNetworkAccount`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -177,7 +177,8 @@ class SocialNetworkAccountApi {
    */
   @Log
   update(account, showLoading = true) {
-    checkArgumentType('account', account, SocialNetworkAccount);
+    checkArgumentType('account', account, [SocialNetworkAccount, Object]);
+    checkArgumentType('account.id', account.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const url = `/social-network-account/${stringifyId(account.id)}`;
     const data = toJSON(account, toJsonOptions);
@@ -195,7 +196,7 @@ class SocialNetworkAccountApi {
   /**
    * 根据编码，更新一个`SocialNetworkAccount`对象。
    *
-   * @param {SocialNetworkAccount} account
+   * @param {SocialNetworkAccount|object} account
    *     要更新的`SocialNetworkAccount`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -205,7 +206,10 @@ class SocialNetworkAccountApi {
    */
   @Log
   updateByOpenId(account, showLoading = true) {
-    checkArgumentType('account', account, SocialNetworkAccount);
+    checkArgumentType('account', account, [SocialNetworkAccount, Object]);
+    checkArgumentType('account.socialNetwork', account, [SocialNetwork, String]);
+    checkArgumentType('account.appId', account.appId, String);
+    checkArgumentType('account.openId', account.openId, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(account, toJsonOptions);
     const url = `/social-network-account/open-id/${data.socialNetwork}/${data.appId}/${data.openId}`;

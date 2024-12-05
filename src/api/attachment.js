@@ -211,7 +211,7 @@ class AttachmentApi {
   @Log
   updateVisible(id, visible, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    checkArgumentType('visible', visible, [Boolean, String]);
+    checkArgumentType('visible', visible, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = { visible };
     if (showLoading) {

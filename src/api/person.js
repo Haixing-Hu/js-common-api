@@ -31,7 +31,7 @@ class PersonApi {
   /**
    * 列出符合条件的`Person`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -113,7 +113,7 @@ class PersonApi {
   /**
    * 列出符合条件的`Person`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -303,7 +303,7 @@ class PersonApi {
   /**
    * 添加一个`Person`对象。
    *
-   * @param {Person} person
+   * @param {Person|object} person
    *     要添加的`Person`对象。
    * @param {boolean} withUser
    *     是否同时添加新`Person`对象所绑定的用户对象`User`。默认值为`false`。
@@ -317,7 +317,7 @@ class PersonApi {
    */
   @Log
   add(person, withUser = false, transformUrls = true, showLoading = true) {
-    checkArgumentType('person', person, Person);
+    checkArgumentType('person', person, [Person, Object]);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -337,7 +337,7 @@ class PersonApi {
   /**
    * 根据ID，更新一个`Person`对象。
    *
-   * @param {Person} person
+   * @param {Person|object} person
    *     要更新的`Person`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Person`对象所绑定的用户对象`User`。默认值为`false`。
@@ -349,7 +349,8 @@ class PersonApi {
    */
   @Log
   update(person, withUser = false, showLoading = true) {
-    checkArgumentType('person', person, Person);
+    checkArgumentType('person', person, [Person, Object]);
+    checkArgumentType('person.id', person.id, [String, Number, BigInt]);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(person.id);
@@ -371,7 +372,7 @@ class PersonApi {
    *
    * @param {string|number|bigint} id
    *     `Person`对象的ID。
-   * @param {Contact} contact
+   * @param {Contact|object} contact
    *     要更新的`Person`对象的联系方式。
    * @param {boolean} withUser
    *     是否同时更新`Person`对象所绑定的`User`对象的联系方式。默认值为`false`。
@@ -384,7 +385,7 @@ class PersonApi {
   @Log
   updateContact(id, contact, withUser = false, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    checkArgumentType('contact', contact, Contact);
+    checkArgumentType('contact', contact, [Contact, Object]);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
@@ -435,7 +436,7 @@ class PersonApi {
    *
    * @param {string|number|bigint} id
    *     `Person`对象的ID。
-   * @param {Attachment} photo
+   * @param {Attachment|object} photo
    *     要更新的`Person`对象的照片，必须先调用`fileApi.update()` 上传文件，并利用返回
    *     的`Upload`对象构造一个`Attachment`对象。
    * @param {boolean} transformUrls
@@ -449,7 +450,7 @@ class PersonApi {
   @Log
   updatePhoto(id, photo, transformUrls = true, showLoading = true) {
     checkArgumentType('id', id, [String, Number, BigInt]);
-    checkArgumentType('photo', photo, Attachment);
+    checkArgumentType('photo', photo, [Attachment, Object]);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ transformUrls }, toJsonOptions);

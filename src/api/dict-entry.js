@@ -29,7 +29,7 @@ class DictEntryApi {
   /**
    * 列出符合条件的`DictEntry`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -84,7 +84,7 @@ class DictEntryApi {
   /**
    * 列出符合条件的`DictEntry`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -243,7 +243,7 @@ class DictEntryApi {
   /**
    * 添加一个`DictEntry`对象。
    *
-   * @param {DictEntry} entry
+   * @param {DictEntry|object} entry
    *     要添加的`DictEntry`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -253,7 +253,7 @@ class DictEntryApi {
    */
   @Log
   add(entry, showLoading = true) {
-    checkArgumentType('entry', entry, DictEntry);
+    checkArgumentType('entry', entry, [DictEntry, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(entry, toJsonOptions);
     if (showLoading) {
@@ -270,7 +270,7 @@ class DictEntryApi {
   /**
    * 根据ID，更新一个`DictEntry`对象。
    *
-   * @param {DictEntry} entry
+   * @param {DictEntry|object} entry
    *     要更新的`DictEntry`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -280,7 +280,8 @@ class DictEntryApi {
    */
   @Log
   update(entry, showLoading = true) {
-    checkArgumentType('entry', entry, DictEntry);
+    checkArgumentType('entry', entry, [DictEntry, Object]);
+    checkArgumentType('entry.id', entry.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(entry.id);
     const data = toJSON(entry, toJsonOptions);
@@ -298,7 +299,7 @@ class DictEntryApi {
   /**
    * 根据编码，更新一个`DictEntry`对象。
    *
-   * @param {DictEntry} entry
+   * @param {DictEntry|object} entry
    *     要更新的`DictEntry`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -308,7 +309,8 @@ class DictEntryApi {
    */
   @Log
   updateByCode(entry, showLoading = true) {
-    checkArgumentType('entry', entry, DictEntry);
+    checkArgumentType('entry', entry, [DictEntry, Object]);
+    checkArgumentType('entry.code', entry.code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(entry, toJsonOptions);
     if (showLoading) {

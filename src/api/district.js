@@ -29,7 +29,7 @@ class DistrictApi {
   /**
    * 列出符合条件的`District`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -85,7 +85,7 @@ class DistrictApi {
   /**
    * 列出符合条件的`District`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -245,7 +245,7 @@ class DistrictApi {
   /**
    * 添加一个`District`对象。
    *
-   * @param {District} district
+   * @param {District|object} district
    *     要添加的`District`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -255,7 +255,7 @@ class DistrictApi {
    */
   @Log
   add(district, showLoading = true) {
-    checkArgumentType('district', district, District);
+    checkArgumentType('district', district, [District, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(district, toJsonOptions);
     if (showLoading) {
@@ -272,7 +272,7 @@ class DistrictApi {
   /**
    * 根据ID，更新一个`District`对象。
    *
-   * @param {District} district
+   * @param {District|object} district
    *     要更新的`District`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -282,7 +282,8 @@ class DistrictApi {
    */
   @Log
   update(district, showLoading = true) {
-    checkArgumentType('district', district, District);
+    checkArgumentType('district', district, [District, Object]);
+    checkArgumentType('district.id', district.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(district.id);
     const data = toJSON(district, toJsonOptions);
@@ -300,7 +301,7 @@ class DistrictApi {
   /**
    * 根据编码，更新一个`District`对象。
    *
-   * @param {District} district
+   * @param {District|object} district
    *     要更新的`District`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -310,7 +311,8 @@ class DistrictApi {
    */
   @Log
   updateByCode(district, showLoading = true) {
-    checkArgumentType('district', district, District);
+    checkArgumentType('district', district, [District, Object]);
+    checkArgumentType('district.code', district.code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(district, toJsonOptions);
     if (showLoading) {

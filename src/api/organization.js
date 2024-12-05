@@ -30,7 +30,7 @@ class OrganizationApi {
   /**
    * 列出符合条件的`Organization`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -107,7 +107,7 @@ class OrganizationApi {
   /**
    * 列出符合条件的`Organization`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -288,7 +288,7 @@ class OrganizationApi {
   /**
    * 添加一个`Organization`对象。
    *
-   * @param {Organization} organization
+   * @param {Organization|object} organization
    *     要添加的`Organization`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -298,7 +298,7 @@ class OrganizationApi {
    */
   @Log
   add(organization, showLoading = true) {
-    checkArgumentType('organization', organization, Organization);
+    checkArgumentType('organization', organization, [Organization, Object]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(organization, toJsonOptions);
     if (showLoading) {
@@ -315,7 +315,7 @@ class OrganizationApi {
   /**
    * 根据ID，更新一个`Organization`对象。
    *
-   * @param {Organization} organization
+   * @param {Organization|object} organization
    *     要更新的`Organization`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -325,7 +325,8 @@ class OrganizationApi {
    */
   @Log
   update(organization, showLoading = true) {
-    checkArgumentType('organization', organization, Organization);
+    checkArgumentType('organization', organization, [Organization, Object]);
+    checkArgumentType('organization.id', organization.id, [String, Number, BigInt]);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(organization.id);
     const data = toJSON(organization, toJsonOptions);
@@ -343,7 +344,7 @@ class OrganizationApi {
   /**
    * 根据编码，更新一个`Organization`对象。
    *
-   * @param {Organization} organization
+   * @param {Organization|object} organization
    *     要更新的`Organization`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -353,7 +354,8 @@ class OrganizationApi {
    */
   @Log
   updateByCode(organization, showLoading = true) {
-    checkArgumentType('organization', organization, Organization);
+    checkArgumentType('organization', organization, [Organization, Object]);
+    checkArgumentType('organization.code', organization.code, String);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(organization, toJsonOptions);
     if (showLoading) {

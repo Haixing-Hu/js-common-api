@@ -31,7 +31,7 @@ class EmployeeApi {
   /**
    * 列出符合条件的`Employee`对象。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -105,7 +105,7 @@ class EmployeeApi {
   /**
    * 列出符合条件的`Employee`对象的基本信息。
    *
-   * @param {PageRequest} pageRequest
+   * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
@@ -287,7 +287,7 @@ class EmployeeApi {
   /**
    * 添加一个`Employee`对象。
    *
-   * @param {Employee} employee
+   * @param {Employee|object} employee
    *     要添加的`Employee`对象。
    * @param {boolean} withUser
    *     是否同时添加新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
@@ -301,7 +301,7 @@ class EmployeeApi {
    */
   @Log
   add(employee, withUser = false, transformUrls = true, showLoading = true) {
-    checkArgumentType('employee', employee, Employee);
+    checkArgumentType('employee', employee, [Employee, Object]);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -321,7 +321,7 @@ class EmployeeApi {
   /**
    * 根据ID，更新一个`Employee`对象。
    *
-   * @param {Employee} employee
+   * @param {Employee|object} employee
    *     要更新的`Employee`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
@@ -333,7 +333,8 @@ class EmployeeApi {
    */
   @Log
   update(employee, withUser = false, showLoading = true) {
-    checkArgumentType('employee', employee, Employee);
+    checkArgumentType('employee', employee, [Employee, Object]);
+    checkArgumentType('employee.id', employee.id, [String, Number, BigInt]);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const id = stringifyId(employee.id);
@@ -353,7 +354,7 @@ class EmployeeApi {
   /**
    * 根据编码，更新一个`Employee`对象。
    *
-   * @param {Employee} employee
+   * @param {Employee|object} employee
    *     要更新的`Employee`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
@@ -365,7 +366,8 @@ class EmployeeApi {
    */
   @Log
   updateByCode(employee, withUser = false, showLoading = true) {
-    checkArgumentType('employee', employee, Employee);
+    checkArgumentType('employee', employee, [Employee, Object]);
+    checkArgumentType('employee.code', employee.code, String);
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
