@@ -11,8 +11,8 @@ import { toJSON } from '@haixing_hu/common-decorator';
 import { Upload } from '@haixing_hu/common-model';
 import { Log, Logger } from '@haixing_hu/logging';
 import { checkArgumentType } from '@haixing_hu/common-util';
+import { loading } from '@haixing_hu/common-ui';
 import { assignOptions, toJsonOptions } from './impl/options';
-import extractContentDispositionFilename from '../utils/extract-content-disposition-filename';
 
 const logger = Logger.getLogger('FileApi');
 
@@ -67,45 +67,37 @@ class FileApi {
    * 下载指定的文件。
    *
    * @param {string} path
-   *     待下载文件在服务器上的相对路径。
-   * @returns {Promise<void|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，浏览器会自动开始下载文件；
-   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   *    待下载文件在服务器上的相对路径。
+   * @param {string|null} mimeType
+   *    文件的MIME类型，若为`null`或`undefined`则从响应头中自动解析。默认值为`null`。
+   * @param {boolean} autoDownload
+   *    是否自动下载文件。默认值为`true`。如此参数为`false`，则返回一个包含下载的文件的信息
+   *    的对象，详见返回值说明。
+   * @param {boolean} showLoading
+   *    是否显示加载提示。默认值为`true`。
+   * @return {Promise<object|ErrorInfo>}
+   *    此HTTP请求的`Promise`对象。若操作成功，则解析成功，并返回一个包含下载的文件的信息的
+   *    对象，其中包含以下属性：
+   *    - `blob: Blob` 下载的文件的二进制数据；
+   *    - `filename: string` 下载的文件的名称；
+   *    - `mimeType: string` 下载的文件的MIME类型；
+   *
+   *    如果操作失败，则解析失败并返回一个`ErrorInfo`对象。如果操作成功且`autoDownload`
+   *    设置为`true`，浏览器会自动开始下载文件。
    */
   @Log
-  download(path) {
+  download(path, mimeType = null, autoDownload = true, showLoading = true) {
     checkArgumentType('path', path, String);
+    checkArgumentType('mimeType', mimeType, String, true);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数做 URI encoding，否则如果参数中也带有hash或query，就会出错。
-    const params = toJSON({
-      path,
-    }, toJsonOptions);
-    return http.get('/file/download', {
-      params,
-      responseType: 'blob',  // 告诉 Axios 返回二进制 Blob 数据
-    }).then((response) => {
-      // 获取返回的 Content-Type 头，注意，response.headers 是一个 AxiosHeaders 对象，
-      // 必须用 get 方法获取值，不能直接用下标，否则大小写不同的键名会被认为是不同的键
-      const contentType = response.headers.get('Content-Type');
-      // 获取返回的 Blob 数据
-      const blob = new Blob([response.data], { type: contentType });
-      // 创建一个临时 URL
-      const url = window.URL.createObjectURL(blob);
-      // 创建一个隐藏的 <a> 元素触发下载
-      const a = window.document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      // 从响应头中解析文件名（可选，后端需提供文件名）
-      const contentDisposition = response.headers.get('Content-Disposition');
-      const filename = extractContentDispositionFilename(contentDisposition) ?? 'downloaded_file';
-      a.download = decodeURIComponent(filename);
-      // 将 <a> 元素添加到 DOM，触发点击事件，然后移除
-      window.document.body.appendChild(a);
-      a.click();
-      window.document.body.removeChild(a);
-      // 释放 URL
-      window.URL.revokeObjectURL(url);
-    });
+    const params = toJSON({ path }, toJsonOptions);
+    if (showLoading) {
+      loading.showDownloading();
+    }
+    return http.download('/file/download', params, mimeType, autoDownload);
   }
 
   /**
