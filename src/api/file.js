@@ -97,7 +97,10 @@ class FileApi {
     if (showLoading) {
       loading.showDownloading();
     }
-    return http.download('/file/download', params, mimeType, autoDownload);
+    return http.download('/file/download', params, mimeType, autoDownload).then((result) => {
+      logger.info('Successfully download the file \'%s\':', path, result);
+      return result;
+    });
   }
 
   /**
