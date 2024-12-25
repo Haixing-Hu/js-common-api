@@ -1,6 +1,6 @@
 {
   "name": "@haixing_hu/common-api",
-  "version": "1.7.4",
+  "version": "1.7.5",
   "description": "A JavaScript library of encapsulation of common APIs",
   "author": "Haixing Hu (starfish.hu@gmail.com)",
   "license": "Apache-2.0",
@@ -49,7 +49,7 @@
     "@haixing_hu/common-decorator": "^3.8.9",
     "@haixing_hu/common-model": "^4.8.9",
     "@haixing_hu/common-normalizer": "^1.7.4",
-    "@haixing_hu/common-ui": "^1.6.2",
+    "@haixing_hu/common-ui": "^1.6.3",
     "@haixing_hu/common-util": "^5.3.3",
     "@haixing_hu/config": "^1.1.1",
     "@haixing_hu/logging": "^1.4.3"
@@ -66,7 +66,7 @@
     "@haixing_hu/common-decorator": "^3.8.9",
     "@haixing_hu/common-model": "^4.8.9",
     "@haixing_hu/common-normalizer": "^1.7.4",
-    "@haixing_hu/common-ui": "^1.6.2",
+    "@haixing_hu/common-ui": "^1.6.3",
     "@haixing_hu/common-util": "^5.3.3",
     "@haixing_hu/common-validation-rule": "^1.4.3",
     "@haixing_hu/common-validator": "^4.7.4",

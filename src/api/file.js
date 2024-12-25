@@ -36,12 +36,14 @@ class FileApi {
    *     的`onUploadProgress`回调函数，该函数接收一个`progressEvent`参数，
    *     用于监控上传进度，其中`progressEvent.loaded`表示已上传的字节数，
    *     `progressEvent.total`表示总字节数。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
    * @return {Promise<Upload|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回根据上传的文件所创建的
    *     `Upload`对象；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  upload(filename, file, contentType = undefined, onUploadProgress = undefined) {
+  upload(filename, file, contentType = undefined, onUploadProgress = undefined, showLoading = true) {
     checkArgumentType('filename', filename, String);
     checkArgumentType('file', file, [Blob, File]);
     checkArgumentType('contentType', contentType, String, true);
@@ -55,6 +57,9 @@ class FileApi {
       formData.append('contentType', contentType);
     }
     formData.append('file', file);
+    if (showLoading) {
+      loading.showUploading();
+    }
     return http.post('/file/upload', formData, { headers, onUploadProgress }).then((obj) => {
       const result = Upload.create(obj, assignOptions);
       logger.info('Successfully update the file.');
@@ -108,15 +113,20 @@ class FileApi {
    *
    * @param path
    *     待下载文件在服务器上的相对路径。
+   * @param {boolean} showLoading
+   *    是否显示加载提示。默认值为`true`。
    * @returns {Promise<String>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回待下载文件在服务器上相对路径
    *     的绝对下载URL；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getDownloadUrl(path) {
+  getDownloadUrl(path, showLoading = true) {
     const params = toJSON({
       path,
     }, toJsonOptions);
+    if (showLoading) {
+      loading.showGetting();
+    }
     return http.get('/file/download/url', { params }).then((response) => {
       const url = String(response);
       logger.info('Successfully get the download URL for file %s:', path, url);
