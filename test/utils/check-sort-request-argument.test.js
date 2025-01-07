@@ -6,7 +6,7 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { SortRequest, SortOrder } from '@haixing_hu/common-model';
+import { SortRequest, SortOrder } from '@qubit-ltd/common-model';
 import { checkSortRequestArgument } from '../../src';
 
 describe('checkArgumentSortRequest', () => {

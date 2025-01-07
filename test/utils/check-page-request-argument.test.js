@@ -6,7 +6,7 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { PageRequest } from '@haixing_hu/common-model';
+import { PageRequest } from '@qubit-ltd/common-model';
 import { checkPageRequestArgument } from '../../src';
 
 describe('checkArgumentPageRequest', () => {

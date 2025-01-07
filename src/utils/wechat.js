@@ -6,10 +6,10 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { getSearchParam, removeSearchParam, redirect, isWechat } from '@haixing_hu/common-util';
-import { Log, Logger } from '@haixing_hu/logging';
-import { alert, loading } from '@haixing_hu/common-ui';
-import config from '@haixing_hu/config';
+import { getSearchParam, removeSearchParam, redirect, isWechat } from '@qubit-ltd/common-util';
+import { Log, Logger } from '@qubit-ltd/logging';
+import { alert, loading } from '@qubit-ltd/common-ui';
+import config from '@qubit-ltd/config';
 import wechatApi from '../api/wechat';
 
 /**

@@ -6,18 +6,18 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@haixing_hu/common-app';
-import { stringifyId, toJSON } from '@haixing_hu/common-decorator';
+import { http } from '@qubit-ltd/common-app';
+import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   Attachment,
   Employee,
   EmployeeInfo,
   PageRequest,
   State,
-} from '@haixing_hu/common-model';
-import { loading } from '@haixing_hu/common-ui';
-import { checkArgumentType } from '@haixing_hu/common-util';
-import { Log, Logger } from '@haixing_hu/logging';
+} from '@qubit-ltd/common-model';
+import { loading } from '@qubit-ltd/common-ui';
+import { checkArgumentType } from '@qubit-ltd/common-util';
+import { Log, Logger } from '@qubit-ltd/logging';
 import checkCriteriaArgument from '../utils/check-criteria-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';

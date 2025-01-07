@@ -6,8 +6,8 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { checkArgumentType } from '@haixing_hu/common-util';
-import { SortRequest, SortOrder } from '@haixing_hu/common-model';
+import { checkArgumentType } from '@qubit-ltd/common-util';
+import { SortRequest, SortOrder } from '@qubit-ltd/common-model';
 
 /**
  * 检查指定的排序请求参数是否合法。

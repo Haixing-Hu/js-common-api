@@ -6,7 +6,7 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { checkArgumentType } from '@haixing_hu/common-util';
+import { checkArgumentType } from '@qubit-ltd/common-util';
 
 /**
  * 检查指定的查询条件参数是否合法。

@@ -6,12 +6,12 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@haixing_hu/common-app';
-import { toJSON } from '@haixing_hu/common-decorator';
-import { Device } from '@haixing_hu/common-model';
-import { loading } from '@haixing_hu/common-ui';
-import { checkArgumentType } from '@haixing_hu/common-util';
-import { Log, Logger } from '@haixing_hu/logging';
+import { http } from '@qubit-ltd/common-app';
+import { toJSON } from '@qubit-ltd/common-decorator';
+import { Device } from '@qubit-ltd/common-model';
+import { loading } from '@qubit-ltd/common-ui';
+import { checkArgumentType } from '@qubit-ltd/common-util';
+import { Log, Logger } from '@qubit-ltd/logging';
 import { toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('DeviceInitApi');

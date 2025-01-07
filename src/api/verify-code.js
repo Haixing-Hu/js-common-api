@@ -6,11 +6,11 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@haixing_hu/common-app';
-import { VerifyScene } from '@haixing_hu/common-model';
-import { loading } from '@haixing_hu/common-ui';
-import { checkArgumentType } from '@haixing_hu/common-util';
-import { Log, Logger } from '@haixing_hu/logging';
+import { http } from '@qubit-ltd/common-app';
+import { VerifyScene } from '@qubit-ltd/common-model';
+import { loading } from '@qubit-ltd/common-ui';
+import { checkArgumentType } from '@qubit-ltd/common-util';
+import { Log, Logger } from '@qubit-ltd/logging';
 
 const logger = Logger.getLogger('VerifyCodeApi');
 
