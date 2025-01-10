@@ -43,6 +43,20 @@ class SystemApi {
       return system;
     });
   }
+
+  /**
+   * 获取服务器系统时间。
+   *
+   * @return {string}
+   *     系统当前的UTC时间戳，以字符串形式表示。
+   */
+  @Log
+  getTime() {
+    return http.get('/system/time').then((timestamp) => {
+      logger.debug('The system time is:', timestamp);
+      return timestamp;
+    });
+  }
 }
 
 const systemApi = new SystemApi();
