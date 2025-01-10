@@ -12,7 +12,7 @@ import {
   Attachment,
   Employee,
   EmployeeInfo,
-  PageRequest,
+  CommonMimeType,
   State,
 } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
@@ -677,6 +677,76 @@ class EmployeeApi {
     }
     return http.delete('/employee/purge', { params })
       .then(() => logger.info('Successfully purge all deleted Employee.'));
+  }
+
+  /**
+   * 导出符合条件的`Employee`对象为XML文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `username: string` 对应的用户的用户名；
+   *  - `personId: string|number|bigint` 对应的个人信息的ID；
+   *  - `internalCode: string` 内部编码中应包含的字符串；
+   *  - `name: string` 姓名中应包含的字符串；
+   *  - `gender: Gender|string` 性别；
+   *  - `credentialType: CredentialType|string` 证件类型；
+   *  - `credentialNumber: string` 证件号码；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `organizationId: string|number|bigint` 所属机构的ID；
+   *  - `organizationCode: string` 所属机构的编码；
+   *  - `organizationName: string` 所属机构名称中应包含的字符串；
+   *  - `departmentId: string|number|bigint` 所属部门的ID；
+   *  - `departmentCode: string` 所属部门的编码；
+   *  - `departmentName: string` 所属部门名称中应包含的字符串；
+   *  - `phone: string` 座机号码；
+   *  - `mobile: string` 手机号码；
+   *  - `email: string` 电子邮件地址中应包含的字符串；
+   *  - `jobTitle: string` 职称中应包含的字符串；
+   *  - `state: State|string` 状态；
+   *  - `test: boolean` 是否是测试数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    checkCriteriaArgument(criteria, Employee);
+    checkSortRequestArgument(sortRequest, Employee);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    if (showLoading) {
+      loading.showDownloading();
+    }
+    const mimeType = CommonMimeType.XML;
+    return http.download('/employee/export/xml', params, mimeType, autoDownload).then((result) => {
+      logger.info('Successfully export the Employee to XML:', result);
+      return result;
+    });
   }
 }
 

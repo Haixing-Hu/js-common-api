@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 import { http } from '@qubit-ltd/common-app';
 import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
-import { Category, InfoWithEntity } from '@qubit-ltd/common-model';
+import { Category, InfoWithEntity, CommonMimeType } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
@@ -475,6 +475,60 @@ class CategoryApi {
     }
     return http.delete('/category/purge')
       .then(() => logger.info('Successfully purge all deleted Category.'));
+  }
+
+  /**
+   * 导出符合条件的`Category`对象为XML文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `entity: string` 所属实体名称；
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父类别的ID；
+   *  - `parentCode: string` 所属父类别的编码；
+   *  - `parentName: string` 所属父类别名称中应包含的字符串；
+   *  - `predefined: boolean` 是否是预定义数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    checkCriteriaArgument(criteria, Category);
+    checkSortRequestArgument(sortRequest, Category);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    if (showLoading) {
+      loading.showDownloading();
+    }
+    const mimeType = CommonMimeType.XML;
+    return http.download('/category/export/xml', params, mimeType, autoDownload).then((result) => {
+      logger.info('Successfully export the Category to XML:', result);
+      return result;
+    });
   }
 }
 
