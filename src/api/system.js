@@ -53,7 +53,7 @@ class SystemApi {
   @Log
   getTime() {
     return http.get('/system/time').then((timestamp) => {
-      logger.debug('The system time is:', timestamp);
+      logger.info('Successfully get the system time:', timestamp);
       return timestamp;
     });
   }
