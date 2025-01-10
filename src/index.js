@@ -30,6 +30,7 @@ import socialNetworkAccountApi from './api/social-network-account';
 import streetApi from './api/street';
 import systemApi from './api/system';
 import uploadApi from './api/upload';
+import userApi from './api/user';
 import userAuthenticateApi from './api/user-authenticate';
 import verifyCodeApi from './api/verify-code';
 import wechatApi from './api/wechat';
@@ -65,6 +66,7 @@ export {
   streetApi,
   systemApi,
   uploadApi,
+  userApi,
   userAuthenticateApi,
   verifyCodeApi,
   wechatApi,
