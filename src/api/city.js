@@ -135,7 +135,7 @@ class CityApi {
     return http.get('/city/info', {
       params,
     }).then((obj) => {
-      const page = Info.createPage(obj);
+      const page = Info.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of City.');
       logger.debug('The page of infos of City is:', page);
       return page;

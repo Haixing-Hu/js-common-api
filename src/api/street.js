@@ -135,7 +135,7 @@ class StreetApi {
     return http.get('/street/info', {
       params,
     }).then((obj) => {
-      const page = Info.createPage(obj);
+      const page = Info.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Street.');
       logger.debug('The page of infos of Street is:', page);
       return page;

@@ -135,7 +135,7 @@ class ProvinceApi {
     return http.get('/province/info', {
       params,
     }).then((obj) => {
-      const page = Info.createPage(obj);
+      const page = Info.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Province.');
       logger.debug('The page of infos of Province is:', page);
       return page;

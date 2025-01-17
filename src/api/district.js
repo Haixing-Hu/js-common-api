@@ -135,7 +135,7 @@ class DistrictApi {
     return http.get('/district/info', {
       params,
     }).then((obj) => {
-      const page = Info.createPage(obj);
+      const page = Info.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of District.');
       logger.debug('The page of infos of District is:', page);
       return page;

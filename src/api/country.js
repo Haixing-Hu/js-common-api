@@ -125,7 +125,7 @@ class CountryApi {
     return http.get('/country/info', {
       params,
     }).then((obj) => {
-      const page = Info.createPage(obj);
+      const page = Info.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Country.');
       logger.debug('The page of infos of Country is:', page);
       return page;

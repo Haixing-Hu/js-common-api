@@ -127,7 +127,7 @@ class CategoryApi {
     return http.get('/category/info', {
       params,
     }).then((obj) => {
-      const page = InfoWithEntity.createPage(obj);
+      const page = InfoWithEntity.createPage(obj, assignOptions);
       logger.info('Successfully list the infos of Category.');
       logger.debug('The page of infos of Category is:', page);
       return page;

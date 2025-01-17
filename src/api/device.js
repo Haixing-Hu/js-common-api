@@ -191,7 +191,7 @@ class DeviceApi {
     return http.get('/device/info', {
       params,
     }).then((obj) => {
-      const page = DeviceInfo.createPage(obj);
+      const page = DeviceInfo.createPage(obj, assignOptions);
       logger.info('Successfully list the info of Device.');
       logger.debug('The page of info of Device is:', page);
       return page;
