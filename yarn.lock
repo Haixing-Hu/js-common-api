@@ -1828,7 +1828,7 @@ __metadata:
     "@qubit-ltd/clone": "npm:^1.12.3"
     "@qubit-ltd/common-app": "npm:^1.10.5"
     "@qubit-ltd/common-decorator": "npm:^3.8.10"
-    "@qubit-ltd/common-model": "npm:^4.9.1"
+    "@qubit-ltd/common-model": "npm:^4.10.0"
     "@qubit-ltd/common-normalizer": "npm:^1.7.6"
     "@qubit-ltd/common-ui": "npm:^1.6.4"
     "@qubit-ltd/common-util": "npm:^5.3.4"
@@ -1873,14 +1873,13 @@ __metadata:
     vue: "npm:^3.5.13"
   peerDependencies:
     "@babel/runtime": ^7.26.0
-    "@qubit-ltd/common-app": ^1.10.3
-    "@qubit-ltd/common-decorator": ^3.8.9
-    "@qubit-ltd/common-model": ^4.8.9
-    "@qubit-ltd/common-normalizer": ^1.7.4
-    "@qubit-ltd/common-ui": ^1.6.3
-    "@qubit-ltd/common-util": ^5.3.3
-    "@qubit-ltd/config": ^1.1.1
-    "@qubit-ltd/logging": ^1.4.3
+    "@qubit-ltd/common-app": ^1.10.5
+    "@qubit-ltd/common-decorator": ^3.8.10
+    "@qubit-ltd/common-model": ^4.10.0
+    "@qubit-ltd/common-ui": ^1.6.4
+    "@qubit-ltd/common-util": ^5.3.4
+    "@qubit-ltd/config": ^1.1.2
+    "@qubit-ltd/logging": ^1.4.5
   languageName: unknown
   linkType: soft
 
@@ -1917,9 +1916,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@qubit-ltd/common-model@npm:^4.9.1":
-  version: 4.9.1
-  resolution: "@qubit-ltd/common-model@npm:4.9.1::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40qubit-ltd%2Fcommon-model%2F-%2Fcommon-model-4.9.1.tgz"
+"@qubit-ltd/common-model@npm:^4.10.0":
+  version: 4.10.0
+  resolution: "@qubit-ltd/common-model@npm:4.10.0::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40qubit-ltd%2Fcommon-model%2F-%2Fcommon-model-4.10.0.tgz"
   peerDependencies:
     "@babel/runtime": ^7.26.0
     "@qubit-ltd/common-decorator": ^3.8.10
@@ -1928,7 +1927,7 @@ __metadata:
     "@qubit-ltd/common-validator": ^4.7.6
     "@qubit-ltd/logging": ^1.4.5
     dayjs: ^1.11.13
-  checksum: 10c0/3d3885a9d38b414a063da0662734bd9727f9a8f706939a421af946e5fc41466440b38a75c625144dac571f7301ad1f1111db37541d201978976b3d5c532dbcee
+  checksum: 10c0/6d67c4c75d867c59f4485f499a38680bea1cb9ea8ea67f39617620dcb68f8dc1ac960588058d7b9e983aa6bd1a25601144993cb839539892c152e1a92f99a611
   languageName: node
   linkType: hard
 

@@ -29,6 +29,7 @@ import settingApi from './api/setting';
 import socialNetworkAccountApi from './api/social-network-account';
 import streetApi from './api/street';
 import systemApi from './api/system';
+import taskApi from './api/task';
 import uploadApi from './api/upload';
 import userApi from './api/user';
 import userAuthenticateApi from './api/user-authenticate';
@@ -65,6 +66,7 @@ export {
   socialNetworkAccountApi,
   streetApi,
   systemApi,
+  taskApi,
   uploadApi,
   userApi,
   userAuthenticateApi,
