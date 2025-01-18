@@ -9,10 +9,10 @@
 import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import { http } from '@qubit-ltd/common-app';
 import { PageRequest, TaskInfo } from '@qubit-ltd/common-model';
-import { assignOptions, toJsonOptions } from '@qubit-ltd/common-api';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
+import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('TaskApi');
 
