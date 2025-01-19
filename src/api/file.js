@@ -78,6 +78,8 @@ class FileApi {
    * @param {boolean} autoDownload
    *    是否自动下载文件。默认值为`true`。如此参数为`false`，则返回一个包含下载的文件的信息
    *    的对象，详见返回值说明。
+   * @param {string} filename
+   *    下载的文件的名称。如不提供则自动从响应头中解析获取，或者使用默认值`downloaded_file`。
    * @param {boolean} showLoading
    *    是否显示加载提示。默认值为`true`。
    * @return {Promise<object|ErrorInfo>}
@@ -91,10 +93,11 @@ class FileApi {
    *    设置为`true`，浏览器会自动开始下载文件。
    */
   @Log
-  download(path, mimeType = null, autoDownload = true, showLoading = true) {
+  download(path, mimeType = null, autoDownload = true, filename = null, showLoading = true) {
     checkArgumentType('path', path, String);
     checkArgumentType('mimeType', mimeType, String, true);
     checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('filename', filename, String, true);
     checkArgumentType('showLoading', showLoading, Boolean);
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数做 URI encoding，否则如果参数中也带有hash或query，就会出错。
@@ -102,7 +105,7 @@ class FileApi {
     if (showLoading) {
       loading.showDownloading();
     }
-    return http.download('/file/download', params, mimeType, autoDownload).then((result) => {
+    return http.download('/file/download', params, mimeType, autoDownload, filename).then((result) => {
       logger.info('Successfully download the file \'%s\':', path, result);
       return result;
     });
