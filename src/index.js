@@ -41,6 +41,7 @@ import checkCriteriaArgument from './utils/check-criteria-argument';
 import checkIdArgumentType from './utils/check-id-argument-type';
 import checkPageRequestArgument from './utils/check-page-request-argument';
 import checkSortRequestArgument from './utils/check-sort-request-argument';
+import TaskFilter from './params/TaskFilter';
 
 export {
   appApi,
@@ -79,4 +80,5 @@ export {
   checkIdArgumentType,
   checkPageRequestArgument,
   checkSortRequestArgument,
+  TaskFilter,
 };
