@@ -309,6 +309,8 @@ class PersonApi {
    *
    * @param {string|number|bigint} id
    *     `Person`对象的ID。
+   * @param {boolean} transformUrls
+   *     是否转换附件中的URL地址。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<Attachment|ErrorInfo>}
@@ -316,13 +318,15 @@ class PersonApi {
    *     注意若没有照片会返回`null`；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getPhoto(id, showLoading = true) {
+  getPhoto(id, transformUrls = true, showLoading = true) {
     checkIdArgumentType(id);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({ transformUrls }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/person/${stringifyId(id)}/photo`).then((obj) => {
+    return http.get(`/person/${stringifyId(id)}/photo`, { params }).then((obj) => {
       const result = Attachment.create(obj, assignOptions);
       logger.info('Successfully get the photo of the Person by ID:', id);
       logger.debug('The photo of the Person is:', result);
