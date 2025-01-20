@@ -289,6 +289,32 @@ class EmployeeApi {
   }
 
   /**
+   * 获取指定的`Employee`对象的照片。
+   *
+   * @param {string|number|bigint} id
+   *     `Employee`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Attachment|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Employee`对象的照片，
+   *     注意若没有照片会返回`null`；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getPhoto(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/employee/${stringifyId(id)}/photo`).then((obj) => {
+      const result = Attachment.create(obj, assignOptions);
+      logger.info('Successfully get the photo of the Employee by ID:', id);
+      logger.debug('The photo of the Employee is:', result);
+      return result;
+    });
+  }
+
+  /**
    * 添加一个`Employee`对象。
    *
    * @param {Employee|object} employee
