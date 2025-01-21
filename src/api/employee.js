@@ -439,7 +439,7 @@ class EmployeeApi {
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
-    const data = { state: String(state) };
+    const data = toJSON(state, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
@@ -471,7 +471,7 @@ class EmployeeApi {
     checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({ withUser }, toJsonOptions);
-    const data = { state: String(state) };
+    const data = toJSON(state, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }

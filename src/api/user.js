@@ -9,9 +9,8 @@
 import { http } from '@qubit-ltd/common-app';
 import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
-  Attachment,
-  Contact,
   CommonMimeType,
+  State,
   User,
   UserInfo,
 } from '@qubit-ltd/common-model';
@@ -340,14 +339,12 @@ class UserApi {
   }
 
   /**
-   * 根据ID，更新一个`User`对象的联系方式。
+   * 根据ID，更新一个`User`对象的用户名。
    *
    * @param {string|number|bigint} id
    *     `User`对象的ID。
-   * @param {Contact|object} contact
-   *     要更新的`User`对象的联系方式。
-   * @param {boolean} withUser
-   *     是否同时更新`User`对象所绑定的`User`对象的联系方式。默认值为`false`。
+   * @param {string} username
+   *     要更新的`User`对象的用户名。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<String|ErrorInfo>}
@@ -355,18 +352,100 @@ class UserApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateContact(id, contact, withUser = false, showLoading = true) {
+  updateUsername(id, username, showLoading = true) {
     checkIdArgumentType(id);
-    checkArgumentType('contact', contact, [Contact, Object]);
-    checkArgumentType('withUser', withUser, Boolean);
+    checkArgumentType('username', username, String);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(contact, toJsonOptions);
+    const data = toJSON(username, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
-    return http.put(`/user/${stringifyId(id)}/contact`, data, { params }).then((timestamp) => {
-      logger.info('Successfully update the Contact of a User by ID "%s" at:', id, timestamp);
+    return http.put(`/user/${stringifyId(id)}/username`, data).then((timestamp) => {
+      logger.info('Successfully update the username of a User by ID "%s" at:', id, timestamp);
+      return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`User`对象的密码。
+   *
+   * @param {string|number|bigint} id
+   *     `User`对象的ID。
+   * @param {string} password
+   *     要更新的`User`对象的密码的明文。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updatePassword(id, password, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('password', password, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(password, toJsonOptions);
+    if (showLoading) {
+      loading.showUpdating();
+    }
+    return http.put(`/user/${stringifyId(id)}/password`, data).then((timestamp) => {
+      logger.info('Successfully update the password of a User by ID "%s" at:', id, timestamp);
+      return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`User`对象的电子邮件地址。
+   *
+   * @param {string|number|bigint} id
+   *     `User`对象的ID。
+   * @param {string} email
+   *     要更新的`User`对象的电子邮件地址。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateEmail(id, email, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('email', email, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(email, toJsonOptions);
+    if (showLoading) {
+      loading.showUpdating();
+    }
+    return http.put(`/user/${stringifyId(id)}/email`, data).then((timestamp) => {
+      logger.info('Successfully update the email of a User by ID "%s" at:', id, timestamp);
+      return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`User`对象的手机号码。
+   *
+   * @param {string|number|bigint} id
+   *     `User`对象的ID。
+   * @param {string} mobile
+   *     要更新的`User`对象的手机号码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateMobile(id, mobile, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('mobile', mobile, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(mobile, toJsonOptions);
+    if (showLoading) {
+      loading.showUpdating();
+    }
+    return http.put(`/user/${stringifyId(id)}/mobile`, data).then((timestamp) => {
+      logger.info('Successfully update the mobile of a User by ID "%s" at:', id, timestamp);
       return timestamp;
     });
   }
@@ -378,8 +457,6 @@ class UserApi {
    *     `User`对象的ID。
    * @param {string} comment
    *     要更新的`User`对象的备注。
-   * @param {boolean} withUser
-   *     是否同时更新`User`对象所绑定的`User`对象的备注。默认值为`false`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<String|ErrorInfo>}
@@ -387,54 +464,45 @@ class UserApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateComment(id, comment, withUser = false, showLoading = true) {
+  updateComment(id, comment, showLoading = true) {
     checkIdArgumentType(id);
     checkArgumentType('comment', comment, String);
-    checkArgumentType('withUser', withUser, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
     const data = toJSON(comment, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
-    return http.put(`/user/${stringifyId(id)}/comment`, data, { params }).then((timestamp) => {
+    return http.put(`/user/${stringifyId(id)}/comment`, data).then((timestamp) => {
       logger.info('Successfully update the comment of a User by ID "%s" at:', id, timestamp);
       return timestamp;
     });
   }
 
   /**
-   * 根据ID，更新一个`User`对象的照片。
+   * 根据ID，更新一个`User`对象的状态。
    *
    * @param {string|number|bigint} id
    *     `User`对象的ID。
-   * @param {Attachment|object} photo
-   *     要更新的`User`对象的照片，必须先调用`fileApi.update()` 上传文件，并利用返回
-   *     的`Upload`对象构造一个`Attachment`对象。
-   * @param {boolean} transformUrls
-   *     是否转换附件中的URL地址。默认值为`true`。
+   * @param {State|string} state
+   *     要更新的`User`对象的状态。
    * @param {boolean} showLoading
    *     是否显示加载提示。
-   * @return {Promise<Attachment|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`photo`对象；
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updatePhoto(id, photo, transformUrls = true, showLoading = true) {
+  updateState(id, state, showLoading = true) {
     checkIdArgumentType(id);
-    checkArgumentType('photo', photo, [Attachment, Object]);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
+    checkArgumentType('state', state, [String, State]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    const data = toJSON(photo, toJsonOptions);
+    const data = toJSON(state, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
-    return http.put(`/user/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully update the photo of the User by ID:', id);
-      logger.debug('The updated photo of the User is:', result);
-      return result;
+    return http.put(`/user/${stringifyId(id)}/state`, data).then((timestamp) => {
+      logger.info('Successfully update the state of a User by ID "%s" at:', id, timestamp);
+      return timestamp;
     });
   }
 

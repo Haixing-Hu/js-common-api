@@ -658,7 +658,7 @@ class DeviceApi {
     checkIdArgumentType(id);
     checkArgumentType('state', state, [State, String]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const data = { state: String(state) };
+    const data = toJSON(state, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
@@ -686,7 +686,7 @@ class DeviceApi {
     checkArgumentType('code', code, String);
     checkArgumentType('state', state, [State, String]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const data = { state: String(state) };
+    const data = toJSON(state, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
