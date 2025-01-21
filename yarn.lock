@@ -1828,6 +1828,7 @@ __metadata:
     "@qubit-ltd/clone": "npm:^1.12.3"
     "@qubit-ltd/common-app": "npm:^1.11.0"
     "@qubit-ltd/common-decorator": "npm:^3.8.10"
+    "@qubit-ltd/common-filter": "npm:^1.8.5"
     "@qubit-ltd/common-model": "npm:^4.10.0"
     "@qubit-ltd/common-normalizer": "npm:^1.7.6"
     "@qubit-ltd/common-ui": "npm:^1.6.4"
@@ -1913,6 +1914,18 @@ __metadata:
     "@qubit-ltd/type-detect": ^1.2.3
     "@qubit-ltd/typeinfo": ^3.1.4
   checksum: 10c0/b18a16e3071a1fc2bcfe173907a8cc7350871603116cf81377ff8815a2b481b2c1a7a90784c0a253c2565bd7211842ad326c046fb4a27f6c12e2e5bb6528f9bf
+  languageName: node
+  linkType: hard
+
+"@qubit-ltd/common-filter@npm:^1.8.5":
+  version: 1.8.5
+  resolution: "@qubit-ltd/common-filter@npm:1.8.5::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40qubit-ltd%2Fcommon-filter%2F-%2Fcommon-filter-1.8.5.tgz"
+  peerDependencies:
+    "@babel/runtime": ^7.26.0
+    "@qubit-ltd/common-util": ^5.3.4
+    "@qubit-ltd/common-validation-rule": ^1.4.4
+    dayjs: ^1.11.13
+  checksum: 10c0/b7c84be79ae0d46df908e04c5880d81c360e7651c3bcc144c9d36ce1c8d6caefd2043f86b815eeb16c44a3156693ec8ff48310a47514c32949a96f0168d800f1
   languageName: node
   linkType: hard
 
