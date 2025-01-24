@@ -1829,7 +1829,7 @@ __metadata:
     "@qubit-ltd/common-app": "npm:^1.11.6"
     "@qubit-ltd/common-decorator": "npm:^3.8.10"
     "@qubit-ltd/common-filter": "npm:^1.8.5"
-    "@qubit-ltd/common-model": "npm:^4.11.0"
+    "@qubit-ltd/common-model": "npm:^4.12.0"
     "@qubit-ltd/common-normalizer": "npm:^1.7.6"
     "@qubit-ltd/common-ui": "npm:^1.12.0"
     "@qubit-ltd/common-util": "npm:^5.3.4"
@@ -1874,11 +1874,11 @@ __metadata:
     vue: "npm:^3.5.13"
   peerDependencies:
     "@babel/runtime": ^7.26.0
-    "@qubit-ltd/common-app": ^1.11.0
+    "@qubit-ltd/common-app": ^1.11.6
     "@qubit-ltd/common-decorator": ^3.8.10
     "@qubit-ltd/common-filter": ^1.8.5
-    "@qubit-ltd/common-model": ^4.10.0
-    "@qubit-ltd/common-ui": ^1.6.4
+    "@qubit-ltd/common-model": ^4.11.0
+    "@qubit-ltd/common-ui": ^1.12.0
     "@qubit-ltd/common-util": ^5.3.4
     "@qubit-ltd/config": ^1.1.2
     "@qubit-ltd/logging": ^1.4.5
@@ -1930,9 +1930,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@qubit-ltd/common-model@npm:^4.11.0":
-  version: 4.11.0
-  resolution: "@qubit-ltd/common-model@npm:4.11.0::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40qubit-ltd%2Fcommon-model%2F-%2Fcommon-model-4.11.0.tgz"
+"@qubit-ltd/common-model@npm:^4.12.0":
+  version: 4.12.0
+  resolution: "@qubit-ltd/common-model@npm:4.12.0::__archiveUrl=https%3A%2F%2Fregistry.npmjs.org%2F%40qubit-ltd%2Fcommon-model%2F-%2Fcommon-model-4.12.0.tgz"
   peerDependencies:
     "@babel/runtime": ^7.26.0
     "@qubit-ltd/common-decorator": ^3.8.10
@@ -1942,7 +1942,7 @@ __metadata:
     "@qubit-ltd/common-validator": ^4.7.6
     "@qubit-ltd/logging": ^1.4.5
     dayjs: ^1.11.13
-  checksum: 10c0/890b841c152b98ab06f8fc7a854a6a816c7f835ee49e9e869e40ce0ac8ae534a4b0ec24a2a60dd4836a68d96ef6fc4527a07f80df5e6f57d80663a62b0f19600
+  checksum: 10c0/8642f93755a1e910e0a9a0fa9479b6ccc898e82a897a30cdcea2cc32bc6f46acff8cb380fff56d19a9ce8a022871778d6bdaf9dd1a51f59648c3f8ad146ffd43
   languageName: node
   linkType: hard
 
