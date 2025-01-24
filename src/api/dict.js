@@ -10,6 +10,7 @@ import { http } from '@qubit-ltd/common-app';
 import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   Dict,
+  DictEntryInfo,
   CommonMimeType,
   State,
   StatefulInfo,
@@ -249,6 +250,58 @@ class DictApi {
       const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Dict by code:', code);
       logger.debug('The info of the Dict is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Dict`对象的所有字典项的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `Dict`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntryInfo|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的字典的所有字典项的基本信息；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getEntries(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/dict/${stringifyId(id)}/entry`).then((obj) => {
+      const result = DictEntryInfo.createArray(obj, assignOptions);
+      logger.info('Successfully get the info of all entries of the Dict by ID:', id);
+      logger.debug('The info of all entries of the Dict is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Dict`对象的所有字典项的基本信息。
+   *
+   * @param {string} code
+   *     `Dict`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntryInfo|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的字典的所有字典项的基本信息；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getEntriesByCode(code, showLoading = true) {
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/dict/code/${code}/entry`).then((obj) => {
+      const result = DictEntryInfo.createArray(obj, assignOptions);
+      logger.info('Successfully get the info of all entries of the Dict by code:', code);
+      logger.debug('The info of all entries of the Dict is:', result);
       return result;
     });
   }
