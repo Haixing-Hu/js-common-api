@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import { http } from '@qubit-ltd/common-app';
-import { PageRequest, TaskInfo } from '@qubit-ltd/common-model';
+import { PageRequest, TaskInfo, TaskStatus } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
@@ -105,6 +105,32 @@ class TaskApi {
       const result = TaskInfo.create(obj, assignOptions);
       logger.info('Successfully get the TaskInfo by ID:', id);
       logger.debug('The TaskInfo is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`TaskInfo`的状态。
+   *
+   * @param {string|number|bigint} id
+   *     `TaskInfo`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<TaskStatus|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`TaskInfo`对象的状态；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getStatus(id, showLoading = true) {
+    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/task/${stringifyId(id)}/status`).then((obj) => {
+      const result = TaskStatus.of(obj);
+      logger.info('Successfully get the status of the TaskInfo:', id);
+      logger.debug('The status of the TaskInfo is:', result);
       return result;
     });
   }
