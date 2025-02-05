@@ -14,6 +14,7 @@ import {
   Employee,
   EmployeeInfo,
   Info,
+  Organization,
   Person,
   PersonInfo,
   StatefulInfo,
@@ -50,7 +51,8 @@ class CurrentUserApi {
     }
     return http.get('/me/user').then((obj) => {
       const result = User.create(obj, assignOptions);
-      logger.info('Successfully get the current user:', result);
+      logger.info('Successfully get the current user.');
+      logger.debug('The current user is:', result);
       return result;
     });
   }
@@ -72,7 +74,56 @@ class CurrentUserApi {
     }
     return http.get('/me/user/info').then((obj) => {
       const result = UserInfo.create(obj, assignOptions);
-      logger.info('Successfully get the current user:', result);
+      logger.info('Successfully get the info of the current user.');
+      logger.debug('The info of the current user is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取当前登录用户对应的用户所属机构的完整信息。
+   *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Organization|ErrorInfo>}
+   *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回当前登录用户所属机构的完整信息，
+   *     注意若当前登录用户没有所属机构，返回值可以是`null`；若操作失败，解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getUserOrganization(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get('/me/user/organization').then((obj) => {
+      const result = Organization.create(obj, assignOptions);
+      logger.info('Successfully get the organization of the current user.');
+      logger.debug('The organization of the current User is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取当前登录用户对应的用户所属机构的基本信息。
+   *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<StatefulInfo|ErrorInfo>}
+   *     此 HTTP 请求的 Promise。若操作成功，解析成功并返回当前登录用户所属机构的基本信息,
+   *     注意若当前登录用户没有所属机构，返回值可以是`null`；若操作失败，解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getUserOrganizationInfo(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get('/me/user/organization/info').then((obj) => {
+      const result = StatefulInfo.create(obj, assignOptions);
+      logger.info('Successfully get the organization info current user.');
+      logger.debug('The organization info of the current User is:', result);
       return result;
     });
   }
