@@ -1,6 +1,6 @@
 {
   "name": "@qubit-ltd/common-api",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "A JavaScript library of encapsulation of common APIs",
   "author": "Haixing Hu (starfish.hu@gmail.com)",
   "license": "Apache-2.0",

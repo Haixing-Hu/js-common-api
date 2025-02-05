@@ -12,6 +12,7 @@ import {
   Attachment,
   Contact,
   CommonMimeType,
+  InfoWithEntity,
   Person,
   PersonInfo,
 } from '@qubit-ltd/common-model';
@@ -301,6 +302,33 @@ class PersonApi {
       logger.info('Successfully get the info of the Person by username:', username);
       logger.debug('The info of the Person is:', info);
       return info;
+    });
+  }
+
+  /**
+   * 获取指定的`Person`对象所属分类的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `Person`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Person`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategory(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/person/${stringifyId(id)}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the Person by ID:', id);
+      logger.debug('The category of the Person is:', result);
+      return result;
     });
   }
 

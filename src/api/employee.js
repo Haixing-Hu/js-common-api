@@ -13,6 +13,7 @@ import {
   Employee,
   EmployeeInfo,
   CommonMimeType,
+  InfoWithEntity,
   State,
 } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
@@ -284,6 +285,60 @@ class EmployeeApi {
       const result = EmployeeInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Employee by code:', code);
       logger.debug('The info of the Employee is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Employee`对象所属分类的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `Employee`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Employee`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategory(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/employee/${stringifyId(id)}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the Employee by ID:', id);
+      logger.debug('The category of the Employee is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Employee`对象所属分类的基本信息。
+   *
+   * @param {string} code
+   *     `Employee`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Employee`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategoryByCode(code, showLoading = true) {
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/employee/code/${code}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the Employee by code:', code);
+      logger.debug('The category of the Employee is:', result);
       return result;
     });
   }

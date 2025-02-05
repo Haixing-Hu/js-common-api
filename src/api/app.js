@@ -11,6 +11,7 @@ import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   App,
   CommonMimeType,
+  InfoWithEntity,
   State,
   StatefulInfo,
 } from '@qubit-ltd/common-model';
@@ -247,6 +248,60 @@ class AppApi {
       const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the App by code:', code);
       logger.debug('The info of the App is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`App`对象所属分类的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `App`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`App`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategory(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/app/${stringifyId(id)}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the App by ID:', id);
+      logger.debug('The category of the App is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`App`对象所属分类的基本信息。
+   *
+   * @param {string} code
+   *     `App`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`App`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategoryByCode(code, showLoading = true) {
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/app/code/${code}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the App by code:', code);
+      logger.debug('The category of the App is:', result);
       return result;
     });
   }
