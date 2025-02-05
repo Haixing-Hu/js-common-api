@@ -11,6 +11,8 @@ import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   Organization,
   CommonMimeType,
+  Contact,
+  InfoWithEntity,
   State,
   StatefulInfo,
 } from '@qubit-ltd/common-model';
@@ -40,27 +42,27 @@ class OrganizationApi {
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *  - `name: string` 名称中应包含的字符串；
    *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryCode: string` 所属类别的代码；
    *  - `categoryName: string` 所属类别的名称包含的字符串；
    *  - `parentId: string|number|bigint` 所属父机构的ID；
-   *  - `parentCode: string` 所属父机构的编码；
+   *  - `parentCode: string` 所属父机构的代码；
    *  - `parentName: string` 所属父机构名称中应包含的字符串；
    *  - `countryId: string|number|bigint` 所在国家的ID；
-   *  - `countryCode: string` 所在国家的编码；
+   *  - `countryCode: string` 所在国家的代码；
    *  - `countryName: string` 所在国家的名称中应包含的字符串；
    *  - `provinceId: string|number|bigint` 所在省份的ID；
-   *  - `provinceCode: string` 所在省份的编码；
+   *  - `provinceCode: string` 所在省份的代码；
    *  - `provinceName: string` 所在省份的名称中应包含的字符串；
    *  - `cityId: string|number|bigint` 所在城市的ID；
-   *  - `cityCode: string` 所在城市的编码；
+   *  - `cityCode: string` 所在城市的代码；
    *  - `cityName: string` 所在城市的名称中应包含的字符串；
    *  - `districtId: string|number|bigint` 所在区县的ID；
-   *  - `districtCode: string` 所在区县的编码；
+   *  - `districtCode: string` 所在区县的代码；
    *  - `districtName: string` 所在区县的名称中应包含的字符串；
    *  - `streetId: string|number|bigint` 所在街道的ID；
-   *  - `streetCode: string` 所在街道的编码；
+   *  - `streetCode: string` 所在街道的代码；
    *  - `streetName: string` 所在街道的名称中应包含的字符串；
-   *  - `postalcode: string` 邮政编码；
+   *  - `postalcode: string` 邮政代码；
    *  - `phone: string` 座机号码；
    *  - `mobile: string` 手机号码；
    *  - `email: string` 电子邮件地址中应包含的字符串；
@@ -117,27 +119,27 @@ class OrganizationApi {
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *  - `name: string` 名称中应包含的字符串；
    *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryCode: string` 所属类别的代码；
    *  - `categoryName: string` 所属类别的名称包含的字符串；
    *  - `parentId: string|number|bigint` 所属父机构的ID；
-   *  - `parentCode: string` 所属父机构的编码；
+   *  - `parentCode: string` 所属父机构的代码；
    *  - `parentName: string` 所属父机构名称中应包含的字符串；
    *  - `countryId: string|number|bigint` 所在国家的ID；
-   *  - `countryCode: string` 所在国家的编码；
+   *  - `countryCode: string` 所在国家的代码；
    *  - `countryName: string` 所在国家的名称中应包含的字符串；
    *  - `provinceId: string|number|bigint` 所在省份的ID；
-   *  - `provinceCode: string` 所在省份的编码；
+   *  - `provinceCode: string` 所在省份的代码；
    *  - `provinceName: string` 所在省份的名称中应包含的字符串；
    *  - `cityId: string|number|bigint` 所在城市的ID；
-   *  - `cityCode: string` 所在城市的编码；
+   *  - `cityCode: string` 所在城市的代码；
    *  - `cityName: string` 所在城市的名称中应包含的字符串；
    *  - `districtId: string|number|bigint` 所在区县的ID；
-   *  - `districtCode: string` 所在区县的编码；
+   *  - `districtCode: string` 所在区县的代码；
    *  - `districtName: string` 所在区县的名称中应包含的字符串；
    *  - `streetId: string|number|bigint` 所在街道的ID；
-   *  - `streetCode: string` 所在街道的编码；
+   *  - `streetCode: string` 所在街道的代码；
    *  - `streetName: string` 所在街道的名称中应包含的字符串；
-   *  - `postalcode: string` 邮政编码；
+   *  - `postalcode: string` 邮政代码；
    *  - `phone: string` 座机号码；
    *  - `mobile: string` 手机号码；
    *  - `email: string` 电子邮件地址中应包含的字符串；
@@ -215,7 +217,7 @@ class OrganizationApi {
    * 获取指定的`Organization`对象。
    *
    * @param {string} code
-   *     `Organization`对象的编码。
+   *     `Organization`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<Organization|ErrorInfo>}
@@ -267,7 +269,7 @@ class OrganizationApi {
    * 获取指定的`Organization`对象的基本信息。
    *
    * @param {string} code
-   *     `Organization`对象的编码。
+   *     `Organization`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<StatefulInfo|ErrorInfo>}
@@ -285,6 +287,114 @@ class OrganizationApi {
       const result = StatefulInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the Organization by code:', code);
       logger.debug('The info of the Organization is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Organization`对象所属分类的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `Organization`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Organization`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategory(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/organization/${stringifyId(id)}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the Organization by ID:', id);
+      logger.debug('The category of the Organization is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Organization`对象所属分类的基本信息。
+   *
+   * @param {string} code
+   *     `Organization`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Organization`对象
+   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getCategoryByCode(code, showLoading = true) {
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/organization/code/${code}/category`).then((obj) => {
+      const result = InfoWithEntity.create(obj, assignOptions);
+      logger.info('Successfully get the category of the Organization by code:', code);
+      logger.debug('The category of the Organization is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Organization`对象的联系方式。
+   *
+   * @param {string|number|bigint} id
+   *     `Organization`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Contact|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Organization`对象
+   *     的联系方式，或`null`若该对象没有联系方式；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getContact(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/organization/${stringifyId(id)}/contact`).then((obj) => {
+      const result = Contact.create(obj, assignOptions);
+      logger.info('Successfully get the contact of the Organization by ID:', id);
+      logger.debug('The contact of the Organization is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`Organization`对象的联系方式。
+   *
+   * @param {string} code
+   *     `Organization`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<InfoWithEntity|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Organization`对象
+   *     的联系方式，或`null`若该对象没有联系方式；若操作失败，则解析失败并返回一个
+   *     `ErrorInfo`对象。
+   */
+  @Log
+  getContactByCode(code, showLoading = true) {
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/organization/code/${code}/contact`).then((obj) => {
+      const result = Contact.create(obj, assignOptions);
+      logger.info('Successfully get the contact of the Organization by code:', code);
+      logger.debug('The contact of the Organization is:', result);
       return result;
     });
   }
@@ -346,10 +456,10 @@ class OrganizationApi {
   }
 
   /**
-   * 根据编码，更新一个`Organization`对象。
+   * 根据代码，更新一个`Organization`对象。
    *
    * @param {Organization|object} organization
-   *     要更新的`Organization`对象的数据，根据其编码确定要更新的对象。
+   *     要更新的`Organization`对象的数据，根据其代码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<Organization|ErrorInfo>}
@@ -402,10 +512,10 @@ class OrganizationApi {
   }
 
   /**
-   * 根据编码，更新一个`Organization`对象的状态。
+   * 根据代码，更新一个`Organization`对象的状态。
    *
    * @param {string} code
-   *     要更新的`Organization`对象的编码。
+   *     要更新的`Organization`对象的代码。
    * @param {State|string} state
    *     要更新的`Organization`对象的状态，必须是`State`枚举类型或表示其值的字符串。
    * @param {boolean} showLoading
@@ -454,10 +564,10 @@ class OrganizationApi {
   }
 
   /**
-   * 根据编码，标记删除一个`Organization`对象。
+   * 根据代码，标记删除一个`Organization`对象。
    *
    * @param {string} code
-   *     要标记删除的`Organization`对象的编码。
+   *     要标记删除的`Organization`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
@@ -500,10 +610,10 @@ class OrganizationApi {
   }
 
   /**
-   * 根据编码，恢复一个被标记删除的`Organization`对象。
+   * 根据代码，恢复一个被标记删除的`Organization`对象。
    *
    * @param {string} code
-   *     要恢复的`Organization`对象的编码，该对象必须已经被标记删除。
+   *     要恢复的`Organization`对象的代码，该对象必须已经被标记删除。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -544,10 +654,10 @@ class OrganizationApi {
   }
 
   /**
-   * 根据编码，清除一个被标记删除的`Organization`对象。
+   * 根据代码，清除一个被标记删除的`Organization`对象。
    *
    * @param {string} code
-   *     要清除的`Organization`对象的编码，该对象必须已经被标记删除。
+   *     要清除的`Organization`对象的代码，该对象必须已经被标记删除。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -591,27 +701,27 @@ class OrganizationApi {
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *  - `name: string` 名称中应包含的字符串；
    *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryCode: string` 所属类别的代码；
    *  - `categoryName: string` 所属类别的名称包含的字符串；
    *  - `parentId: string|number|bigint` 所属父机构的ID；
-   *  - `parentCode: string` 所属父机构的编码；
+   *  - `parentCode: string` 所属父机构的代码；
    *  - `parentName: string` 所属父机构名称中应包含的字符串；
    *  - `countryId: string|number|bigint` 所在国家的ID；
-   *  - `countryCode: string` 所在国家的编码；
+   *  - `countryCode: string` 所在国家的代码；
    *  - `countryName: string` 所在国家的名称中应包含的字符串；
    *  - `provinceId: string|number|bigint` 所在省份的ID；
-   *  - `provinceCode: string` 所在省份的编码；
+   *  - `provinceCode: string` 所在省份的代码；
    *  - `provinceName: string` 所在省份的名称中应包含的字符串；
    *  - `cityId: string|number|bigint` 所在城市的ID；
-   *  - `cityCode: string` 所在城市的编码；
+   *  - `cityCode: string` 所在城市的代码；
    *  - `cityName: string` 所在城市的名称中应包含的字符串；
    *  - `districtId: string|number|bigint` 所在区县的ID；
-   *  - `districtCode: string` 所在区县的编码；
+   *  - `districtCode: string` 所在区县的代码；
    *  - `districtName: string` 所在区县的名称中应包含的字符串；
    *  - `streetId: string|number|bigint` 所在街道的ID；
-   *  - `streetCode: string` 所在街道的编码；
+   *  - `streetCode: string` 所在街道的代码；
    *  - `streetName: string` 所在街道的名称中应包含的字符串；
-   *  - `postalcode: string` 邮政编码；
+   *  - `postalcode: string` 邮政代码；
    *  - `phone: string` 座机号码；
    *  - `mobile: string` 手机号码；
    *  - `email: string` 电子邮件地址中应包含的字符串；
