@@ -280,8 +280,9 @@ class UserApi {
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<StatefulInfo|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`UserInfo`对象所属机构的基本信息；
-   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`User`对象所属机构的
+   *     基本信息；注意若当前登录用户没有所属机构，返回值可以是`null`；若操作失败，则解析失败
+   *     并返回一个`ErrorInfo`对象。
    */
   @Log
   getOrganization(id, showLoading = true) {
