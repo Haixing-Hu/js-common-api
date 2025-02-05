@@ -13,6 +13,7 @@ import {
   State,
   User,
   UserInfo,
+  StatefulInfo,
 } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
@@ -267,6 +268,32 @@ class UserApi {
       const info = UserInfo.create(obj, assignOptions);
       logger.info('Successfully get the info of the User by username:', username);
       logger.debug('The info of the User is:', info);
+      return info;
+    });
+  }
+
+  /**
+   * 获取指定的`User`对象所属机构的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `User`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<StatefulInfo|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`UserInfo`对象所属机构的基本信息；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getOrganization(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/user/${stringifyId(id)}/organization`).then((obj) => {
+      const info = StatefulInfo.create(obj, assignOptions);
+      logger.info('Successfully get the organization info of the User by ID:', id);
+      logger.debug('The organization info of the User is:', info);
       return info;
     });
   }
