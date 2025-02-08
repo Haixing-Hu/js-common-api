@@ -136,6 +136,58 @@ class FileApi {
       return url;
     });
   }
+
+  /**
+   * 获取待下载的文件内容的BASE64编码。
+   *
+   * @param path
+   *     待下载文件在服务器上的相对路径。
+   * @param {boolean} showLoading
+   *    是否显示加载提示。默认值为`true`。
+   * @returns {Promise<String>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回待下载文件内容的BASE64编码，
+   *     以字符串形式表示；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getBase64(path, showLoading = true) {
+    const params = toJSON({
+      path,
+    }, toJsonOptions);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get('/file/base64', { params }).then((response) => {
+      const result = String(response);
+      logger.info('Successfully get the BASE-64 encoded string for file %s:', path, result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取待下载的文件内容的BASE64编码的数据URL。
+   *
+   * @param path
+   *     待下载文件在服务器上的相对路径。
+   * @param {boolean} showLoading
+   *    是否显示加载提示。默认值为`true`。
+   * @returns {Promise<String>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回待下载文件内容的BASE64编码
+   *     的数据URL；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getBase64DataUrl(path, showLoading = true) {
+    const params = toJSON({
+      path,
+    }, toJsonOptions);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get('/file/base64/url', { params }).then((response) => {
+      const result = String(response);
+      logger.info('Successfully get the BASE-64 encoded data URL for file %s:', path, result);
+      return result;
+    });
+  }
 }
 
 const fileApi = new FileApi();
