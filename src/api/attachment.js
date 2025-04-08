@@ -185,7 +185,7 @@ class AttachmentApi {
     checkIdArgumentType(id);
     checkArgumentType('state', state, [State, String]);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const data = { state: String(state) };
+    const data = toJSON(state, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
@@ -213,7 +213,7 @@ class AttachmentApi {
     checkIdArgumentType(id);
     checkArgumentType('visible', visible, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
-    const data = { visible };
+    const data = toJSON(visible, toJsonOptions);
     if (showLoading) {
       loading.showUpdating();
     }
