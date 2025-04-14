@@ -14,6 +14,7 @@ import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
 import checkCriteriaArgument from '../utils/check-criteria-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
+import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
@@ -383,7 +384,7 @@ class CategoryApi {
    */
   @Log
   batchDelete(ids, showLoading = true) {
-    checkArgumentType('ids', ids, Array);
+    checkIdArrayArgumentType(ids);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(ids, toJsonOptions);
     if (showLoading) {
@@ -452,7 +453,7 @@ class CategoryApi {
    */
   @Log
   batchRestore(ids, showLoading = true) {
-    checkArgumentType('ids', ids, Array);
+    checkIdArrayArgumentType(ids);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(ids, toJsonOptions);
     if (showLoading) {
@@ -540,7 +541,7 @@ class CategoryApi {
    */
   @Log
   batchPurge(ids, showLoading = true) {
-    checkArgumentType('ids', ids, Array);
+    checkIdArrayArgumentType(ids);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(ids, toJsonOptions);
     if (showLoading) {
@@ -609,7 +610,7 @@ class CategoryApi {
    */
   @Log
   batchErase(ids, showLoading = true) {
-    checkArgumentType('ids', ids, Array);
+    checkIdArrayArgumentType(ids);
     checkArgumentType('showLoading', showLoading, Boolean);
     const data = toJSON(ids, toJsonOptions);
     if (showLoading) {
