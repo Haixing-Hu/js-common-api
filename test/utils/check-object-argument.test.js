@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // import { expect } from 'chai';
 import { State } from '@qubit-ltd/common-model';
-import checkCriteriaArgument from '../../src/utils/check-criteria-argument';
+import checkObjectArgument from '../../src/utils/check-object-argument';
 
 // 为测试创建一个简单的类
 class TestClass {
@@ -39,24 +39,28 @@ const TEST_CRITERIA_DEFINITIONS = [
   { name: 'extraField', type: String },
 ];
 
-describe('checkCriteriaArgument', () => {
+describe('checkObjectArgument', () => {
   describe('基本参数检查', () => {
     it('应当接受空对象', () => {
-      expect(() => checkCriteriaArgument({})).not.toThrow();
+      expect(() => checkObjectArgument('criteria', {})).not.toThrow();
     });
 
-    it('应当接受null', () => {
-      expect(() => checkCriteriaArgument(null)).not.toThrow();
+    it('应当接受null（当nullable=true）', () => {
+      expect(() => checkObjectArgument('criteria', null, [], true)).not.toThrow();
+    });
+
+    it('应当拒绝null（当nullable=false）', () => {
+      expect(() => checkObjectArgument('criteria', null)).toThrow(TypeError);
     });
 
     it('应当拒绝非对象参数', () => {
-      expect(() => checkCriteriaArgument('string')).toThrow(TypeError);
-      expect(() => checkCriteriaArgument(123)).toThrow(TypeError);
-      expect(() => checkCriteriaArgument(true)).toThrow(TypeError);
+      expect(() => checkObjectArgument('criteria', 'string')).toThrow(TypeError);
+      expect(() => checkObjectArgument('criteria', 123)).toThrow(TypeError);
+      expect(() => checkObjectArgument('criteria', true)).toThrow(TypeError);
     });
   });
 
-  describe('使用criteriaDefinitions', () => {
+  describe('使用definition', () => {
     it('应当接受合法的查询条件', () => {
       const criteria = {
         name: 'test',
@@ -65,7 +69,7 @@ describe('checkCriteriaArgument', () => {
         createTimeStart: '2023-01-01T00:00:00Z',
         deleted: false,
       };
-      expect(() => checkCriteriaArgument(criteria, TEST_CRITERIA_DEFINITIONS)).not.toThrow();
+      expect(() => checkObjectArgument('criteria', criteria, TEST_CRITERIA_DEFINITIONS)).not.toThrow();
     });
 
     it('应当接受值为null或undefined的字段', () => {
@@ -74,45 +78,45 @@ describe('checkCriteriaArgument', () => {
         categoryId: null,
         state: undefined,
       };
-      expect(() => checkCriteriaArgument(criteria, TEST_CRITERIA_DEFINITIONS)).not.toThrow();
+      expect(() => checkObjectArgument('criteria', criteria, TEST_CRITERIA_DEFINITIONS)).not.toThrow();
     });
 
     it('应当拒绝类型不匹配的字段', () => {
       const criteria = {
         name: 123, // 应该是String
       };
-      expect(() => checkCriteriaArgument(criteria, TEST_CRITERIA_DEFINITIONS)).toThrow(TypeError);
+      expect(() => checkObjectArgument('criteria', criteria, TEST_CRITERIA_DEFINITIONS)).toThrow(TypeError);
     });
 
     it('应当拒绝未定义的字段', () => {
       const criteria = {
         unknownField: 'value', // 未在定义中声明的字段
       };
-      expect(() => checkCriteriaArgument(criteria, TEST_CRITERIA_DEFINITIONS)).toThrow(TypeError);
+      expect(() => checkObjectArgument('criteria', criteria, TEST_CRITERIA_DEFINITIONS)).toThrow(TypeError);
     });
-    
+
     it('应当接受extraField字段', () => {
       const criteria = {
         extraField: 'value',
       };
-      expect(() => checkCriteriaArgument(criteria, TEST_CRITERIA_DEFINITIONS)).not.toThrow();
+      expect(() => checkObjectArgument('criteria', criteria, TEST_CRITERIA_DEFINITIONS)).not.toThrow();
     });
   });
 
-  describe('不使用criteriaDefinitions', () => {
+  describe('不使用definition', () => {
     it('应当接受任何字段，因为没有验证规则', () => {
       const criteria = {
         anyField: 'any value',
         anotherField: 123,
       };
-      expect(() => checkCriteriaArgument(criteria)).not.toThrow();
+      expect(() => checkObjectArgument('criteria', criteria)).not.toThrow();
     });
-    
-    it('应当接受空的criteriaDefinitions数组', () => {
+
+    it('应当接受空的definition数组', () => {
       const criteria = {
         anyField: 'any value',
       };
-      expect(() => checkCriteriaArgument(criteria, [])).not.toThrow();
+      expect(() => checkObjectArgument('criteria', criteria, [])).not.toThrow();
     });
   });
-}); 
+});
