@@ -51,6 +51,7 @@ class AttachmentApi {
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
    *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
    *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   *  - `transformUrls: boolean` 是否将返回对象中所有文件的存储路径转换为外链URL。
    * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
@@ -90,20 +91,24 @@ class AttachmentApi {
    *
    * @param {string|number|bigint} id
    *     `Attachment`对象的ID。
+   * @param {boolean} transformUrls
+   *     是否转换URL。默认值为`true`。
    * @param {boolean} showLoading
-   *     是否显示加载提示。
+   *     是否显示加载提示。默认值为`true`。
    * @return {Promise<Attachment|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Attachment`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id, showLoading = true) {
+  get(id, transformUrls = true, showLoading = true) {
     checkIdArgumentType(id);
+    checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/attachment/${stringifyId(id)}}`).then((obj) => {
+    const params = transformUrls ? { transformUrls } : {};
+    return http.get(`/attachment/${stringifyId(id)}`, { params }).then((obj) => {
       const result = Attachment.create(obj, assignOptions);
       logger.info('Successfully get the Attachment by ID:', id);
       logger.debug('The Attachment is:', result);
@@ -190,7 +195,7 @@ class AttachmentApi {
       loading.showUpdating();
     }
     return http.put(`/attachment/${stringifyId(id)}/state`, data).then((timestamp) => {
-      logger.info('Successfully update the state of the App by ID %s at:', id, timestamp);
+      logger.info('Successfully update the state of the Attachment by ID %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -218,7 +223,7 @@ class AttachmentApi {
       loading.showUpdating();
     }
     return http.put(`/attachment/${stringifyId(id)}/visible`, data).then((timestamp) => {
-      logger.info('Successfully update the visibility of the App by ID %s at:', id, timestamp);
+      logger.info('Successfully update the visibility of the Attachment by ID %s at:', id, timestamp);
       return timestamp;
     });
   }
@@ -248,6 +253,31 @@ class AttachmentApi {
   }
 
   /**
+   * 批量标记删除指定的`Attachment`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量删除的`Attachment`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, showLoading = true) {
+    checkArgumentType('ids', ids, Array);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showDeleting();
+    }
+    return http.delete('/attachment/batch', data).then((count) => {
+      logger.info('Successfully batch delete %d Attachment(s).', count);
+      return count;
+    });
+  }
+
+  /**
    * 根据ID，恢复一个被标记删除的`Attachment`对象。
    *
    * @param {string} id
@@ -267,6 +297,31 @@ class AttachmentApi {
     }
     return http.patch(`/attachment/${stringifyId(id)}`)
       .then(() => logger.info('Successfully restore the Attachment by ID:', id));
+  }
+
+  /**
+   * 批量恢复已被标记删除的`Attachment`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量恢复的已被标记删除的`Attachment`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际恢复的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, showLoading = true) {
+    checkArgumentType('ids', ids, Array);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showRestoring();
+    }
+    return http.patch('/attachment/batch', data).then((count) => {
+      logger.info('Successfully batch restore %d Attachment(s).', count);
+      return count;
+    });
   }
 
   /**
@@ -308,6 +363,78 @@ class AttachmentApi {
     }
     return http.delete('/attachment/purge')
       .then(() => logger.info('Successfully purge all deleted Attachment.'));
+  }
+
+  /**
+   * 批量彻底清除已被标记删除的`Attachment`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的已被标记删除的`Attachment`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际被彻底清除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, showLoading = true) {
+    checkArgumentType('ids', ids, Array);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete('/attachment/batch/purge', data).then((count) => {
+      logger.info('Successfully batch purge %d Attachment(s).', count);
+      return count;
+    });
+  }
+
+  /**
+   * 彻底清除指定的`Attachment`对象（无论其是否被标记删除）。
+   *
+   * @param {string|number|bigint} id
+   *     要彻底清除的`Attachment`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete(`/attachment/${stringifyId(id)}/erase`)
+      .then(() => logger.info('Successfully erase the Attachment by ID:', id));
+  }
+
+  /**
+   * 批量彻底清除指定的`Attachment`对象（无论其是否被标记删除）。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的`Attachment`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际删除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, showLoading = true) {
+    checkArgumentType('ids', ids, Array);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete('/attachment/batch/erase', data).then((count) => {
+      logger.info('Successfully batch erase %d Attachment(s).', count);
+      return count;
+    });
   }
 }
 
