@@ -22,6 +22,14 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('SettingApi');
 
+const SETTING_CRITERIA_DEFINITIONS = [
+  { name: 'name', type: String },
+  { name: 'readonly', type: Boolean },
+  { name: 'nullable', type: Boolean },
+  { name: 'multiple', type: Boolean },
+  { name: 'encrypted', type: Boolean },
+];
+
 /**
  * 提供管理`Setting`对象的API。
  *
@@ -53,7 +61,7 @@ class SettingApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Setting);
+    checkCriteriaArgument(criteria, SETTING_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Setting);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

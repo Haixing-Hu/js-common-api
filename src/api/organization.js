@@ -28,6 +28,86 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('OrganizationApi');
 
 /**
+ * Organization 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const ORGANIZATION_CRITERIA_DEFINITIONS = [
+  // 名称中应包含的字符串
+  { name: 'name', type: String },
+  // 所属类别的ID
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  // 所属类别的代码
+  { name: 'categoryCode', type: String },
+  // 所属类别的名称包含的字符串
+  { name: 'categoryName', type: String },
+  // 所属父机构的ID
+  { name: 'parentId', type: [String, Number, BigInt] },
+  // 所属父机构的代码
+  { name: 'parentCode', type: String },
+  // 所属父机构名称中应包含的字符串
+  { name: 'parentName', type: String },
+  // 所在国家的ID
+  { name: 'countryId', type: [String, Number, BigInt] },
+  // 所在国家的代码
+  { name: 'countryCode', type: String },
+  // 所在国家的名称中应包含的字符串
+  { name: 'countryName', type: String },
+  // 所在省份的ID
+  { name: 'provinceId', type: [String, Number, BigInt] },
+  // 所在省份的代码
+  { name: 'provinceCode', type: String },
+  // 所在省份的名称中应包含的字符串
+  { name: 'provinceName', type: String },
+  // 所在城市的ID
+  { name: 'cityId', type: [String, Number, BigInt] },
+  // 所在城市的代码
+  { name: 'cityCode', type: String },
+  // 所在城市的名称中应包含的字符串
+  { name: 'cityName', type: String },
+  // 所在区县的ID
+  { name: 'districtId', type: [String, Number, BigInt] },
+  // 所在区县的代码
+  { name: 'districtCode', type: String },
+  // 所在区县的名称中应包含的字符串
+  { name: 'districtName', type: String },
+  // 所在街道的ID
+  { name: 'streetId', type: [String, Number, BigInt] },
+  // 所在街道的代码
+  { name: 'streetCode', type: String },
+  // 所在街道的名称中应包含的字符串
+  { name: 'streetName', type: String },
+  // 邮政代码
+  { name: 'postalcode', type: String },
+  // 座机号码
+  { name: 'phone', type: String },
+  // 手机号码
+  { name: 'mobile', type: String },
+  // 电子邮件地址中应包含的字符串
+  { name: 'email', type: String },
+  // 状态
+  { name: 'state', type: [State, String] },
+  // 是否是测试数据
+  { name: 'test', type: Boolean },
+  // 是否是预定义数据
+  { name: 'predefined', type: Boolean },
+  // 是否已经被标记删除
+  { name: 'deleted', type: Boolean },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+  // 标记删除时间范围的（闭区间）起始值
+  { name: 'deleteTimeStart', type: String },
+  // 标记删除时间范围的（闭区间）结束值
+  { name: 'deleteTimeEnd', type: String },
+];
+
+/**
  * 提供管理`Organization`对象的API。
  *
  * @author 胡海星
@@ -89,7 +169,7 @@ class OrganizationApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Organization);
+    checkCriteriaArgument(criteria, ORGANIZATION_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Organization);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -166,7 +246,7 @@ class OrganizationApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Organization);
+    checkCriteriaArgument(criteria, ORGANIZATION_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Organization);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

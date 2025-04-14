@@ -23,6 +23,18 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('UploadApi');
 
+// 定义 Upload 类的查询条件
+const UPLOAD_CRITERIA_DEFINITIONS = [
+  { name: 'type', type: String },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`Upload`对象的API。
  *
@@ -57,7 +69,7 @@ class UploadApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Upload);
+    checkCriteriaArgument(criteria, UPLOAD_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Upload);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

@@ -24,6 +24,19 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('SocialNetworkAccountApi');
 
+const SOCIAL_NETWORK_ACCOUNT_CRITERIA_DEFINITIONS = [
+  { name: 'username', type: String },
+  { name: 'socialNetwork', type: [SocialNetwork, String] },
+  { name: 'appId', type: String },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`SocialNetworkAccount`对象的API。
  *
@@ -61,7 +74,7 @@ class SocialNetworkAccountApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, SocialNetworkAccount);
+    checkCriteriaArgument(criteria, SOCIAL_NETWORK_ACCOUNT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, SocialNetworkAccount);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

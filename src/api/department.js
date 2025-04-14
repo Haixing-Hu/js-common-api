@@ -26,6 +26,50 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('DepartmentApi');
 
+// 定义 Department 类的查询条件
+const DEPARTMENT_CRITERIA_DEFINITIONS = [
+  { name: 'internalCode', type: String },
+  { name: 'name', type: String },
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  { name: 'categoryCode', type: String },
+  { name: 'categoryName', type: String },
+  { name: 'parentId', type: [String, Number, BigInt] },
+  { name: 'parentCode', type: String },
+  { name: 'parentName', type: String },
+  { name: 'organizationId', type: [String, Number, BigInt] },
+  { name: 'organizationCode', type: String },
+  { name: 'organizationName', type: String },
+  { name: 'countryId', type: [String, Number, BigInt] },
+  { name: 'countryCode', type: String },
+  { name: 'countryName', type: String },
+  { name: 'provinceId', type: [String, Number, BigInt] },
+  { name: 'provinceCode', type: String },
+  { name: 'provinceName', type: String },
+  { name: 'cityId', type: [String, Number, BigInt] },
+  { name: 'cityCode', type: String },
+  { name: 'cityName', type: String },
+  { name: 'districtId', type: [String, Number, BigInt] },
+  { name: 'districtCode', type: String },
+  { name: 'districtName', type: String },
+  { name: 'streetId', type: [String, Number, BigInt] },
+  { name: 'streetCode', type: String },
+  { name: 'streetName', type: String },
+  { name: 'postalcode', type: String },
+  { name: 'phone', type: String },
+  { name: 'mobile', type: String },
+  { name: 'email', type: String },
+  { name: 'state', type: [State, String] },
+  { name: 'test', type: Boolean },
+  { name: 'predefined', type: Boolean },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`Department`对象的API。
  *
@@ -92,7 +136,7 @@ class DepartmentApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Department);
+    checkCriteriaArgument(criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Department);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -173,7 +217,7 @@ class DepartmentApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Department);
+    checkCriteriaArgument(criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Department);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -700,8 +744,6 @@ class DepartmentApi {
    *     是否自动下载文件。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
    * @return {Promise<string|null|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
    *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
@@ -710,7 +752,7 @@ class DepartmentApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Department);
+    checkCriteriaArgument(criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Department);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

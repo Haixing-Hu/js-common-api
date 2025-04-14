@@ -22,6 +22,40 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('CategoryApi');
 
 /**
+ * Category 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const CATEGORY_CRITERIA_DEFINITIONS = [
+  // 所属实体名称
+  { name: 'entity', type: String },
+  // 名称中应包含的字符串
+  { name: 'name', type: String },
+  // 所属父类别的ID
+  { name: 'parentId', type: [String, Number, BigInt] },
+  // 所属父类别的编码
+  { name: 'parentCode', type: String },
+  // 所属父类别名称中应包含的字符串
+  { name: 'parentName', type: String },
+  // 是否是预定义数据
+  { name: 'predefined', type: Boolean },
+  // 是否已经被标记删除
+  { name: 'deleted', type: Boolean },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+  // 标记删除时间范围的（闭区间）起始值
+  { name: 'deleteTimeStart', type: String },
+  // 标记删除时间范围的（闭区间）结束值
+  { name: 'deleteTimeEnd', type: String },
+];
+
+/**
  * 提供管理`Category`对象的API。
  *
  * @author 胡海星
@@ -60,7 +94,7 @@ class CategoryApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Category);
+    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -114,7 +148,7 @@ class CategoryApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Category);
+    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -808,7 +842,7 @@ class CategoryApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Category);
+    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -860,7 +894,7 @@ class CategoryApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Category);
+    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -912,7 +946,7 @@ class CategoryApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Category);
+    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -964,7 +998,7 @@ class CategoryApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Category);
+    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

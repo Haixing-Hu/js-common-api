@@ -15,6 +15,7 @@ import {
   Hardware,
   Location,
   CommonMimeType,
+  CredentialType,
   PersonInfo,
   Software,
   State,
@@ -29,6 +30,94 @@ import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('DeviceApi');
+
+/**
+ * Device 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const DEVICE_CRITERIA_DEFINITIONS = [
+  // 所属应用的ID
+  { name: 'appId', type: [String, Number, BigInt] },
+  // 所属应用的编码
+  { name: 'appCode', type: String },
+  // 所属应用的名称中应包含的字符串
+  { name: 'appName', type: String },
+  // 设备名称中应包含的字符串
+  { name: 'name', type: String },
+  // 所有者ID
+  { name: 'ownerId', type: [String, Number, BigInt] },
+  // 所有者的用户名
+  { name: 'ownerUsername', type: String },
+  // 所有者的姓名
+  { name: 'ownerName', type: String },
+  // 所有者的手机号码
+  { name: 'ownerMobile', type: String },
+  // 所有者的证件类型
+  { name: 'ownerCredentialType', type: [CredentialType, String] },
+  // 所有者的证件号码
+  { name: 'ownerCredentialNumber', type: String },
+  // 设备IP地址
+  { name: 'ipAddress', type: String },
+  // 设备部署地址所在国家的ID
+  { name: 'countryId', type: [String, Number, BigInt] },
+  // 设备部署地址所在国家的编码
+  { name: 'countryCode', type: String },
+  // 设备部署地址所在国家的名称中应包含的字符串
+  { name: 'countryName', type: String },
+  // 设备部署地址所在省份的ID
+  { name: 'provinceId', type: [String, Number, BigInt] },
+  // 设备部署地址所在省份的编码
+  { name: 'provinceCode', type: String },
+  // 设备部署地址所在省份的名称中应包含的字符串
+  { name: 'provinceName', type: String },
+  // 设备部署地址所在城市的ID
+  { name: 'cityId', type: [String, Number, BigInt] },
+  // 设备部署地址所在城市的编码
+  { name: 'cityCode', type: String },
+  // 设备部署地址所在城市的名称中应包含的字符串
+  { name: 'cityName', type: String },
+  // 设备部署地址所在区县的ID
+  { name: 'districtId', type: [String, Number, BigInt] },
+  // 设备部署地址所在区县的编码
+  { name: 'districtCode', type: String },
+  // 设备部署地址所在区县的名称中应包含的字符串
+  { name: 'districtName', type: String },
+  // 设备部署地址所在街道的ID
+  { name: 'streetId', type: [String, Number, BigInt] },
+  // 设备部署地址所在街道的编码
+  { name: 'streetCode', type: String },
+  // 设备部署地址所在街道的名称中应包含的字符串
+  { name: 'streetName', type: String },
+  // 设备注册时间范围的（闭区间）起始值
+  { name: 'registerTimeStart', type: String },
+  // 设备注册时间范围的（闭区间）结束值
+  { name: 'registerTimeEnd', type: String },
+  // 设备最后一次启动时间范围的（闭区间）起始值
+  { name: 'lastStartupTimeStart', type: String },
+  // 设备最后一次启动时间范围的（闭区间）结束值
+  { name: 'lastStartupTimeEnd', type: String },
+  // 设备最后一次心跳连接时间范围的（闭区间）起始值
+  { name: 'lastHeartbeatTimeStart', type: String },
+  // 设备最后一次心跳连接时间范围的（闭区间）结束值
+  { name: 'lastHeartbeatTimeEnd', type: String },
+  // 设备状态
+  { name: 'state', type: [State, String] },
+  // 是否已经被标记删除
+  { name: 'deleted', type: Boolean },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+  // 标记删除时间范围的（闭区间）起始值
+  { name: 'deleteTimeStart', type: String },
+  // 标记删除时间范围的（闭区间）结束值
+  { name: 'deleteTimeEnd', type: String },
+];
 
 /**
  * 提供管理`Device`对象的API。
@@ -96,7 +185,7 @@ class DeviceApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Device);
+    checkCriteriaArgument(criteria, DEVICE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Device);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -177,7 +266,7 @@ class DeviceApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Device);
+    checkCriteriaArgument(criteria, DEVICE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Device);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -914,7 +1003,7 @@ class DeviceApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Device);
+    checkCriteriaArgument(criteria, DEVICE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Device);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

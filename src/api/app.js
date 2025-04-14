@@ -28,6 +28,48 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('AppApi');
 
 /**
+ * App 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const APP_CRITERIA_DEFINITIONS = [
+  // 名称中应包含的字符串
+  { name: 'name', type: String },
+  // 所属机构的ID
+  { name: 'organizationId', type: [String, Number, BigInt] },
+  // 所属机构的名称包含的字符串
+  { name: 'organizationName', type: String },
+  // 所属类别的ID
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  // 所属类别的编码
+  { name: 'categoryCode', type: String },
+  // 所属类别的名称包含的字符串
+  { name: 'categoryName', type: String },
+  // 状态
+  { name: 'state', type: [State, String] },
+  // 最后一次认证时间范围的（闭区间）起始值
+  { name: 'lastAuthorizeTimeStart', type: String },
+  // 最后一次认证时间范围的（闭区间）结束值
+  { name: 'lastAuthorizeTimeEnd', type: String },
+  // 是否是预定义数据
+  { name: 'predefined', type: Boolean },
+  // 是否已经被标记删除
+  { name: 'deleted', type: Boolean },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+  // 标记删除时间范围的（闭区间）起始值
+  { name: 'deleteTimeStart', type: String },
+  // 标记删除时间范围的（闭区间）结束值
+  { name: 'deleteTimeEnd', type: String },
+];
+
+/**
  * 提供管理`App`对象的API。
  *
  * @author 胡海星
@@ -70,7 +112,7 @@ class AppApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, App);
+    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -128,7 +170,7 @@ class AppApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, App);
+    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -775,7 +817,7 @@ class AppApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, App);
+    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -831,7 +873,7 @@ class AppApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, App);
+    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -887,7 +929,7 @@ class AppApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, App);
+    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -943,7 +985,7 @@ class AppApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, App);
+    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

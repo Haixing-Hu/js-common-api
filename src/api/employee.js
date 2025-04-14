@@ -27,6 +27,38 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('EmployeeApi');
 
+const EMPLOYEE_CRITERIA_DEFINITIONS = [
+  { name: 'username', type: String },
+  { name: 'personId', type: [String, Number, BigInt] },
+  { name: 'internalCode', type: String },
+  { name: 'name', type: String },
+  { name: 'gender', type: [Object, String] },
+  { name: 'credentialType', type: [Object, String] }, 
+  { name: 'credentialNumber', type: String },
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  { name: 'categoryCode', type: String },
+  { name: 'categoryName', type: String },
+  { name: 'organizationId', type: [String, Number, BigInt] },
+  { name: 'organizationCode', type: String },
+  { name: 'organizationName', type: String },
+  { name: 'departmentId', type: [String, Number, BigInt] },
+  { name: 'departmentCode', type: String },
+  { name: 'departmentName', type: String },
+  { name: 'phone', type: String },
+  { name: 'mobile', type: String },
+  { name: 'email', type: String },
+  { name: 'jobTitle', type: String },
+  { name: 'state', type: [Object, String] },
+  { name: 'test', type: Boolean },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`Employee`对象的API。
  *
@@ -84,7 +116,7 @@ class EmployeeApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Employee);
+    checkCriteriaArgument(criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Employee);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -156,7 +188,7 @@ class EmployeeApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Employee);
+    checkCriteriaArgument(criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Employee);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

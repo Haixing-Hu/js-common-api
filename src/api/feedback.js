@@ -12,6 +12,8 @@ import {
   Feedback,
   FeedbackAction,
   FeedbackTrack,
+  FeedbackType,
+  FeedbackStatus,
   PageRequest,
 } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
@@ -24,6 +26,24 @@ import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('FeedbackApi');
+
+const FEEDBACK_CRITERIA_DEFINITIONS = [
+  { name: 'appId', type: [String, Number, BigInt] },
+  { name: 'appCode', type: String },
+  { name: 'appName', type: String },
+  { name: 'type', type: [FeedbackType, String] },
+  { name: 'category', type: String },
+  { name: 'submitterId', type: [String, Number, BigInt] },
+  { name: 'submitterUsername', type: String },
+  { name: 'status', type: [FeedbackStatus, String] },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
 
 /**
  * 提供管理`Feedback`对象的API。
@@ -68,7 +88,7 @@ class FeedbackApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Feedback);
+    checkCriteriaArgument(criteria, FEEDBACK_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Feedback);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

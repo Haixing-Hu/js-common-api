@@ -24,6 +24,23 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('DictEntryApi');
 
+const DICT_ENTRY_CRITERIA_DEFINITIONS = [
+  { name: 'name', type: String },
+  { name: 'dictId', type: [String, Number, BigInt] },
+  { name: 'dictCode', type: String },
+  { name: 'dictName', type: String },
+  { name: 'parentId', type: [String, Number, BigInt] },
+  { name: 'parentCode', type: String },
+  { name: 'parentName', type: String },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`DictEntry`对象的API。
  *
@@ -64,7 +81,7 @@ class DictEntryApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, DictEntry);
+    checkCriteriaArgument(criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, DictEntry);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -119,7 +136,7 @@ class DictEntryApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, DictEntry);
+    checkCriteriaArgument(criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, DictEntry);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

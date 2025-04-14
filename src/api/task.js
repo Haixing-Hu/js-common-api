@@ -12,9 +12,61 @@ import { PageRequest, TaskInfo, TaskStatus } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
+import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
+import checkIdArgumentType from '../utils/check-id-argument-type';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('TaskApi');
+
+/**
+ * TaskInfo 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const TASK_CRITERIA_DEFINITIONS = [
+  // 所属类别的ID
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  // 所属类别的编码
+  { name: 'categoryCode', type: String },
+  // 所属类别的名称包含的字符串
+  { name: 'categoryName', type: String },
+  // 任务目标对象实体名称
+  { name: 'targetEntity', type: String },
+  // 任务目标对象ID
+  { name: 'targetId', type: [String, Number, BigInt] },
+  // 任务结果对象实体名称
+  { name: 'resultEntity', type: String },
+  // 任务结果对象ID
+  { name: 'resultId', type: [String, Number, BigInt] },
+  // 任务状态
+  { name: 'status', type: [TaskStatus, String] },
+  // 提交时间范围的（闭区间）起始值
+  { name: 'submitTimeStart', type: String },
+  // 提交时间范围的（闭区间）结束值
+  { name: 'submitTimeEnd', type: String },
+  // 开始时间范围的（闭区间）起始值
+  { name: 'startTimeStart', type: String },
+  // 开始时间范围的（闭区间）结束值
+  { name: 'startTimeEnd', type: String },
+  // 取消时间范围的（闭区间）起始值
+  { name: 'cancelTimeStart', type: String },
+  // 取消时间范围的（闭区间）结束值
+  { name: 'cancelTimeEnd', type: String },
+  // 完成时间范围的（闭区间）起始值
+  { name: 'finishTimeStart', type: String },
+  // 完成时间范围的（闭区间）结束值
+  { name: 'finishTimeEnd', type: String },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+];
 
 /**
  * 提供管理`TaskInfo`对象的API。
@@ -49,7 +101,7 @@ class TaskApi {
    *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；若不提供，则忽略此条件；
    *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；若不提供，则忽略此条件；
    *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；若不提供，则忽略此条件；
-   * @param {object} sort
+   * @param {object} sortRequest
    *     排序参数，指定按照哪个属性排序；若不提供，则忽略此参数。允许的条件包括：
    *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
    *  - `sortOrder: SortOrder` 指定是正序还是倒序。
@@ -60,15 +112,15 @@ class TaskApi {
    *     件的`TaskInfo`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  list(pageRequest, criteria = {}, sort = {}, showLoading = true) {
-    checkArgumentType('pageRequest', pageRequest, [PageRequest, Object]);
-    checkArgumentType('criteria', criteria, Object);
-    checkArgumentType('sort', sort, Object);
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkCriteriaArgument(criteria, TASK_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, TaskInfo);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
       ...pageRequest,
       ...criteria,
-      ...sort,
+      ...sortRequest,
     }, toJsonOptions);
     if (showLoading) {
       loading.showGetting();
@@ -96,7 +148,7 @@ class TaskApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();
@@ -122,7 +174,7 @@ class TaskApi {
    */
   @Log
   getStatus(id, showLoading = true) {
-    checkArgumentType('id', id, [String, Number, BigInt]);
+    checkIdArgumentType(id);
     checkArgumentType('showLoading', showLoading, Boolean);
     if (showLoading) {
       loading.showGetting();

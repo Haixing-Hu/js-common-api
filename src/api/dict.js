@@ -27,6 +27,27 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('DictApi');
 
+const DICT_CRITERIA_DEFINITIONS = [
+  { name: 'name', type: String },
+  { name: 'standardDoc', type: String },
+  { name: 'standardCode', type: String },
+  { name: 'appId', type: [String, Number, BigInt] },
+  { name: 'appCode', type: String },
+  { name: 'appName', type: String },
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  { name: 'categoryCode', type: String },
+  { name: 'categoryName', type: String },
+  { name: 'state', type: [State, String] },
+  { name: 'predefined', type: Boolean },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`Dict`对象的API。
  *
@@ -71,7 +92,7 @@ class DictApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Dict);
+    checkCriteriaArgument(criteria, DICT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Dict);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -130,7 +151,7 @@ class DictApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Dict);
+    checkCriteriaArgument(criteria, DICT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Dict);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

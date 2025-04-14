@@ -27,6 +27,46 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('PersonApi');
 
+const PERSON_CRITERIA_DEFINITIONS = [
+  { name: 'name', type: String },
+  { name: 'username', type: String },
+  { name: 'gender', type: [Object, String] },
+  { name: 'birthdayStart', type: String },
+  { name: 'birthdayEnd', type: String },
+  { name: 'credentialType', type: [Object, String] },
+  { name: 'credentialNumber', type: String },
+  { name: 'hasMedicare', type: Boolean },
+  { name: 'medicareType', type: [Object, String] },
+  { name: 'medicareCityId', type: [String, Number, BigInt] },
+  { name: 'medicareCityCode', type: String },
+  { name: 'medicareCityName', type: String },
+  { name: 'hasSocialSecurity', type: Boolean },
+  { name: 'socialSecurityCityId', type: [String, Number, BigInt] },
+  { name: 'socialSecurityCityCode', type: String },
+  { name: 'socialSecurityCityName', type: String },
+  { name: 'sourceId', type: [String, Number, BigInt] },
+  { name: 'sourceCode', type: String },
+  { name: 'sourceName', type: String },
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  { name: 'categoryCode', type: String },
+  { name: 'categoryName', type: String },
+  { name: 'phone', type: String },
+  { name: 'mobile', type: String },
+  { name: 'email', type: String },
+  { name: 'guardianId', type: [String, Number, BigInt] },
+  { name: 'organizationId', type: [String, Number, BigInt] },
+  { name: 'organizationCode', type: String },
+  { name: 'organizationName', type: String },
+  { name: 'test', type: Boolean },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`Person`对象的API。
  *
@@ -92,7 +132,7 @@ class PersonApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Person);
+    checkCriteriaArgument(criteria, PERSON_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -172,7 +212,7 @@ class PersonApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Person);
+    checkCriteriaArgument(criteria, PERSON_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

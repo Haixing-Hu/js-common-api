@@ -22,6 +22,52 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('AttachmentApi');
 
 /**
+ * Attachment 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const ATTACHMENT_CRITERIA_DEFINITIONS = [
+  // 所属实体的类型
+  { name: 'ownerType', type: String },
+  // 所属实体的ID
+  { name: 'ownerId', type: [String, Number, BigInt] },
+  // 所属实体的属性的名称
+  { name: 'ownerProperty', type: String },
+  // 附件类型
+  { name: 'type', type: String },
+  // 所属类别的ID
+  { name: 'categoryId', type: [String, Number, BigInt] },
+  // 所属类别的编码
+  { name: 'categoryCode', type: String },
+  // 所属类别的名称包含的字符串
+  { name: 'categoryName', type: String },
+  // 标题所包含的字符串
+  { name: 'title', type: String },
+  // 所对应的上传的文件的ID
+  { name: 'attachmentId', type: [String, Number, BigInt] },
+  // 状态
+  { name: 'state', type: [State, String] },
+  // 是否可见
+  { name: 'visible', type: Boolean },
+  // 是否已经被标记删除
+  { name: 'deleted', type: Boolean },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+  // 标记删除时间范围的（闭区间）起始值
+  { name: 'deleteTimeStart', type: String },
+  // 标记删除时间范围的（闭区间）结束值
+  { name: 'deleteTimeEnd', type: String },
+  // 是否将返回对象中所有文件的存储路径转换为外链URL
+  { name: 'transformUrls', type: Boolean },
+];
+
+/**
  * 提供管理`Attachment`对象的API。
  *
  * @author 胡海星
@@ -66,7 +112,7 @@ class AttachmentApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, Attachment);
+    checkCriteriaArgument(criteria, ATTACHMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Attachment);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

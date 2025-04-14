@@ -26,6 +26,44 @@ import { assignOptions, toJsonOptions } from './impl/options';
 const logger = Logger.getLogger('CityApi');
 
 /**
+ * City 类的查询条件定义
+ * 
+ * @type {Array<Object>}
+ */
+const CITY_CRITERIA_DEFINITIONS = [
+  // 所属省份的ID
+  { name: 'provinceId', type: [String, Number, BigInt] },
+  // 所属省份的编码
+  { name: 'provinceCode', type: String },
+  // 所属省份的名称中应包含的字符串
+  { name: 'provinceName', type: String },
+  // 名称中应包含的字符串
+  { name: 'name', type: String },
+  // 电话区号
+  { name: 'phoneArea', type: String },
+  // 邮政编码
+  { name: 'postalcode', type: String },
+  // 级别
+  { name: 'level', type: Number },
+  // 是否是预定义数据
+  { name: 'predefined', type: Boolean },
+  // 是否已经被标记删除
+  { name: 'deleted', type: Boolean },
+  // 创建时间范围的（闭区间）起始值
+  { name: 'createTimeStart', type: String },
+  // 创建时间范围的（闭区间）结束值
+  { name: 'createTimeEnd', type: String },
+  // 修改时间范围的（闭区间）起始值
+  { name: 'modifyTimeStart', type: String },
+  // 修改时间范围的（闭区间）结束值
+  { name: 'modifyTimeEnd', type: String },
+  // 标记删除时间范围的（闭区间）起始值
+  { name: 'deleteTimeStart', type: String },
+  // 标记删除时间范围的（闭区间）结束值
+  { name: 'deleteTimeEnd', type: String },
+];
+
+/**
  * 提供管理`City`对象的API。
  *
  * @author 胡海星
@@ -66,7 +104,7 @@ class CityApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, City);
+    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -122,7 +160,7 @@ class CityApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, City);
+    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -688,7 +726,7 @@ class CityApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, City);
+    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -742,7 +780,7 @@ class CityApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, City);
+    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -796,7 +834,7 @@ class CityApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, City);
+    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -850,7 +888,7 @@ class CityApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, City);
+    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
