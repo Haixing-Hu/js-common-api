@@ -16,7 +16,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
@@ -27,7 +27,7 @@ const logger = Logger.getLogger('CityApi');
 
 /**
  * City 类的查询条件定义
- * 
+ *
  * @type {Array<Object>}
  */
 const CITY_CRITERIA_DEFINITIONS = [
@@ -104,7 +104,7 @@ class CityApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -160,7 +160,7 @@ class CityApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -726,7 +726,7 @@ class CityApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -780,7 +780,7 @@ class CityApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -834,7 +834,7 @@ class CityApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -888,7 +888,7 @@ class CityApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CITY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CITY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, City);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

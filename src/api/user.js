@@ -18,7 +18,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
@@ -32,7 +32,7 @@ const USER_CRITERIA_DEFINITIONS = [
   { name: 'organizationId', type: [String, Number, BigInt] },
   { name: 'organizationCode', type: String },
   { name: 'organizationName', type: String },
-  { name: 'state', type: String },
+  { name: 'state', type: [State, String] },
   { name: 'lastLoginTimeStart', type: String },
   { name: 'lastLoginTimeEnd', type: String },
   { name: 'validTimeStart', type: String },
@@ -68,7 +68,7 @@ class UserApi {
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationCode: string` 所属机构的编码；
    *  - `organizationName: string` 所属机构名称中应包含的字符串；
-   *  - `state: State` 状态；
+   *  - `state: State|String` 状态；
    *  - `lastLoginTimeStart: string`最后一次登录时间范围的（闭区间）起始值；
    *  - `lastLoginTimeEnd: string` 最后一次登录时间范围的（闭区间）结束值；
    *  - `validTimeStart: string`账户生效时间范围的（闭区间）起始值；
@@ -99,7 +99,7 @@ class UserApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, USER_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, USER_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, User);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -163,7 +163,7 @@ class UserApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, USER_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, USER_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, User);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -711,7 +711,7 @@ class UserApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, User);
+    checkObjectArgument('criteria', criteria, USER_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, User);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

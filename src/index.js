@@ -37,7 +37,7 @@ import verifyCodeApi from './api/verify-code';
 import wechatApi from './api/wechat';
 import { assignOptions, toJsonOptions } from './api/impl/options';
 import wechat from './utils/wechat';
-import checkCriteriaArgument from './utils/check-criteria-argument';
+import checkObjectArgument from './utils/check-object-argument';
 import checkIdArgumentType from './utils/check-id-argument-type';
 import checkIdArrayArgumentType from './utils/check-id-array-argument-type';
 import checkPageRequestArgument from './utils/check-page-request-argument';
@@ -77,7 +77,7 @@ export {
   assignOptions,
   toJsonOptions,
   wechat,
-  checkCriteriaArgument,
+  checkObjectArgument,
   checkIdArgumentType,
   checkIdArrayArgumentType,
   checkPageRequestArgument,

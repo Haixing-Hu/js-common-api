@@ -12,7 +12,7 @@ import { PageRequest, TaskInfo, TaskStatus } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
@@ -22,7 +22,7 @@ const logger = Logger.getLogger('TaskApi');
 
 /**
  * TaskInfo 类的查询条件定义
- * 
+ *
  * @type {Array<Object>}
  */
 const TASK_CRITERIA_DEFINITIONS = [
@@ -114,7 +114,7 @@ class TaskApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, TASK_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, TASK_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, TaskInfo);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

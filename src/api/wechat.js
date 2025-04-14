@@ -40,7 +40,7 @@ class WechatApi {
     // 注意：我们没有采用直接拼接URL的方式带上query string，
     // 因为需要对参数url做 URI encoding，
     // 否则如果参数url中也带有hash或query，就会出错。
-    return http.get('/wechat/js/jsconfig', {
+    return http.get('/wechat/js/config', {
       params: {
         url,
       },

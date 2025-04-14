@@ -267,6 +267,54 @@ class UserAuthenticateApi {
       logger.info('Successfully bind the open ID to the current user:', socialNetwork, appId, openId);
     });
   }
+
+  /**
+   * 重置密码。
+   *
+   * @param {string|null|undefined} mobile
+   *     用户的手机号码，若使用电子邮件地址重置则此参数为`null`或`undefined`。
+   * @param {string|null|undefined} email
+   *     用户的电子邮件地址，若使用手机号码重置则此参数为`null`或`undefined`。
+   * @param {string} password
+   *     用户的新密码。
+   * @param {string} verifyCode
+   *     用户通过手机号码或电子邮件收到的验证码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此 HTTP 请求的 Promise；若操作成功，解析成功且没有返回值；若操作失败，解析失败并返
+   *     回一个`ErrorInfo`对象。
+   */
+  @Log
+  resetPassword(mobile, email, password, verifyCode, showLoading = true) {
+    checkArgumentType('mobile', mobile, String, true);
+    checkArgumentType('email', email, String, true);
+    checkArgumentType('password', password, String);
+    checkArgumentType('verifyCode', verifyCode, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (mobile === null && email === null) {
+      throw new Error('mobile 和 email 参数不能同时为 null');
+    }
+    const params = new URLSearchParams();
+    if (mobile) {
+      params.append('mobile', mobile);
+    }
+    if (email) {
+      params.append('email', email);
+    }
+    params.append('password', password);
+    params.append('verifyCode', verifyCode);
+    if (showLoading) {
+      loading.show('正在重置密码...');
+    }
+    return http.post('/authenticate/user/password/reset', params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    }).then(() => {
+      logger.info('Successfully reset the password.');
+    });
+  }
 }
 
 const userAuthenticateApi = new UserAuthenticateApi();

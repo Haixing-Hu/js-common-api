@@ -19,7 +19,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
@@ -33,7 +33,7 @@ const EMPLOYEE_CRITERIA_DEFINITIONS = [
   { name: 'internalCode', type: String },
   { name: 'name', type: String },
   { name: 'gender', type: [Object, String] },
-  { name: 'credentialType', type: [Object, String] }, 
+  { name: 'credentialType', type: [Object, String] },
   { name: 'credentialNumber', type: String },
   { name: 'categoryId', type: [String, Number, BigInt] },
   { name: 'categoryCode', type: String },
@@ -116,7 +116,7 @@ class EmployeeApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Employee);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -188,7 +188,7 @@ class EmployeeApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Employee);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -848,7 +848,7 @@ class EmployeeApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Employee);
+    checkObjectArgument('criteria', criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Employee);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

@@ -16,7 +16,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
@@ -81,7 +81,7 @@ class DictEntryApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, DictEntry);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -136,7 +136,7 @@ class DictEntryApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, DictEntry);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({

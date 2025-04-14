@@ -19,7 +19,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
@@ -132,7 +132,7 @@ class PersonApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, PERSON_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, PERSON_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -212,7 +212,7 @@ class PersonApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, PERSON_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, PERSON_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -737,7 +737,7 @@ class PersonApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, Person);
+    checkObjectArgument('criteria', criteria, PERSON_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Person);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

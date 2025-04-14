@@ -16,7 +16,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
@@ -26,7 +26,7 @@ const logger = Logger.getLogger('StreetApi');
 
 /**
  * Street 类的查询条件定义
- * 
+ *
  * @type {Array<Object>}
  */
 const STREET_CRITERIA_DEFINITIONS = [
@@ -103,7 +103,7 @@ class StreetApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, STREET_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, STREET_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Street);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -159,7 +159,7 @@ class StreetApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, STREET_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, STREET_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Street);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -558,7 +558,7 @@ class StreetApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, STREET_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, STREET_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Street);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

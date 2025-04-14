@@ -18,7 +18,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
 import checkSortRequestArgument from '../utils/check-sort-request-argument';
@@ -136,7 +136,7 @@ class DepartmentApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Department);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -217,7 +217,7 @@ class DepartmentApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Department);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -752,7 +752,7 @@ class DepartmentApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, DEPARTMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Department);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
