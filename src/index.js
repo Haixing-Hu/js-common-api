@@ -39,6 +39,7 @@ import { assignOptions, toJsonOptions } from './api/impl/options';
 import wechat from './utils/wechat';
 import checkCriteriaArgument from './utils/check-criteria-argument';
 import checkIdArgumentType from './utils/check-id-argument-type';
+import checkIdArrayArgumentType from './utils/check-id-array-argument-type';
 import checkPageRequestArgument from './utils/check-page-request-argument';
 import checkSortRequestArgument from './utils/check-sort-request-argument';
 import TaskFilter from './params/TaskFilter';
@@ -78,6 +79,7 @@ export {
   wechat,
   checkCriteriaArgument,
   checkIdArgumentType,
+  checkIdArrayArgumentType,
   checkPageRequestArgument,
   checkSortRequestArgument,
   TaskFilter,
