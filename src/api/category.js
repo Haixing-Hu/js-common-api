@@ -12,7 +12,7 @@ import { Category, InfoWithEntity, CommonMimeType } from '@qubit-ltd/common-mode
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
@@ -23,7 +23,7 @@ const logger = Logger.getLogger('CategoryApi');
 
 /**
  * Category 类的查询条件定义
- * 
+ *
  * @type {Array<Object>}
  */
 const CATEGORY_CRITERIA_DEFINITIONS = [
@@ -94,7 +94,7 @@ class CategoryApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -148,7 +148,7 @@ class CategoryApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -424,7 +424,9 @@ class CategoryApi {
     if (showLoading) {
       loading.showDeleting();
     }
-    return http.delete('/category/batch', data).then((count) => {
+    return http.delete('/category/batch', {
+      data,
+    }).then((count) => {
       logger.info('Successfully batch delete %d Category(s).', count);
       return count;
     });
@@ -581,7 +583,9 @@ class CategoryApi {
     if (showLoading) {
       loading.showPurging();
     }
-    return http.delete('/category/batch/purge', data).then((count) => {
+    return http.delete('/category/batch/purge', {
+      data,
+    }).then((count) => {
       logger.info('Successfully batch purge %d Category(s).', count);
       return count;
     });
@@ -650,7 +654,9 @@ class CategoryApi {
     if (showLoading) {
       loading.showPurging();
     }
-    return http.delete('/category/batch/erase', data).then((count) => {
+    return http.delete('/category/batch/erase', {
+      data,
+    }).then((count) => {
       logger.info('Successfully batch erase %d Category(s).', count);
       return count;
     });
@@ -842,7 +848,7 @@ class CategoryApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -894,7 +900,7 @@ class CategoryApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -946,7 +952,7 @@ class CategoryApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -998,7 +1004,7 @@ class CategoryApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, CATEGORY_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Category);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

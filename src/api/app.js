@@ -18,7 +18,7 @@ import {
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
@@ -29,7 +29,7 @@ const logger = Logger.getLogger('AppApi');
 
 /**
  * App 类的查询条件定义
- * 
+ *
  * @type {Array<Object>}
  */
 const APP_CRITERIA_DEFINITIONS = [
@@ -112,7 +112,7 @@ class AppApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -170,7 +170,7 @@ class AppApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -615,7 +615,7 @@ class AppApi {
     return http.delete('/app/batch', {
       data,
     }).then((count) => {
-      logger.info('Successfully batch delete the App, count:', count);
+      logger.info('Successfully batch delete %d App(s).', count);
       return count;
     });
   }
@@ -684,7 +684,7 @@ class AppApi {
       loading.showRestoring();
     }
     return http.patch('/app/batch', data).then((count) => {
-      logger.info('Successfully batch restore the App, count:', count);
+      logger.info('Successfully batch restore the %d App(s).', count);
       return count;
     });
   }
@@ -774,7 +774,7 @@ class AppApi {
     return http.delete('/app/batch/purge', {
       data,
     }).then((count) => {
-      logger.info('Successfully batch purge the App, count:', count);
+      logger.info('Successfully batch purge %d App(s).', count);
       return count;
     });
   }
@@ -817,7 +817,7 @@ class AppApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -873,7 +873,7 @@ class AppApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -929,7 +929,7 @@ class AppApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -985,7 +985,7 @@ class AppApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkCriteriaArgument(criteria, APP_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, App);
     checkArgumentType('autoDownload', autoDownload, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);

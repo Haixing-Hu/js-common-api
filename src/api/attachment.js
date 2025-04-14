@@ -12,7 +12,7 @@ import { Attachment, State } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
 import { Log, Logger } from '@qubit-ltd/logging';
-import checkCriteriaArgument from '../utils/check-criteria-argument';
+import checkObjectArgument from '../utils/check-object-argument';
 import checkIdArgumentType from '../utils/check-id-argument-type';
 import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
 import checkPageRequestArgument from '../utils/check-page-request-argument';
@@ -23,7 +23,7 @@ const logger = Logger.getLogger('AttachmentApi');
 
 /**
  * Attachment 类的查询条件定义
- * 
+ *
  * @type {Array<Object>}
  */
 const ATTACHMENT_CRITERIA_DEFINITIONS = [
@@ -112,7 +112,7 @@ class AttachmentApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, ATTACHMENT_CRITERIA_DEFINITIONS);
+    checkObjectArgument('criteria', criteria, ATTACHMENT_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, Attachment);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -248,11 +248,11 @@ class AttachmentApi {
   }
 
   /**
-   * 根据ID，更新一个`Attachment`对象的状态。
+   * 根据ID，更新一个`Attachment`对象的可见性。
    *
    * @param {string|number|bigint} id
    *     `Attachment`对象的ID。
-   * @param {boolean|string} visible
+   * @param {boolean} visible
    *     要更新的`Attachment`对象的可见性。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -318,7 +318,9 @@ class AttachmentApi {
     if (showLoading) {
       loading.showDeleting();
     }
-    return http.delete('/attachment/batch', data).then((count) => {
+    return http.delete('/attachment/batch', {
+      data,
+    }).then((count) => {
       logger.info('Successfully batch delete %d Attachment(s).', count);
       return count;
     });
@@ -431,7 +433,9 @@ class AttachmentApi {
     if (showLoading) {
       loading.showPurging();
     }
-    return http.delete('/attachment/batch/purge', data).then((count) => {
+    return http.delete('/attachment/batch/purge', {
+      data,
+    }).then((count) => {
       logger.info('Successfully batch purge %d Attachment(s).', count);
       return count;
     });
@@ -478,7 +482,9 @@ class AttachmentApi {
     if (showLoading) {
       loading.showPurging();
     }
-    return http.delete('/attachment/batch/erase', data).then((count) => {
+    return http.delete('/attachment/batch/erase', {
+      data,
+    }).then((count) => {
       logger.info('Successfully batch erase %d Attachment(s).', count);
       return count;
     });
