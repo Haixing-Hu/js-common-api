@@ -160,7 +160,7 @@ class StreetApi {
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/street/${stringifyId(id)}}`).then((obj) => {
+    return http.get(`/street/${stringifyId(id)}`).then((obj) => {
       const result = Street.create(obj, assignOptions);
       logger.info('Successfully get the Street by ID:', id);
       logger.debug('The Street is:', result);

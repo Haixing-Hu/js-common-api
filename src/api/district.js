@@ -160,7 +160,7 @@ class DistrictApi {
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/district/${stringifyId(id)}}`).then((obj) => {
+    return http.get(`/district/${stringifyId(id)}`).then((obj) => {
       const result = District.create(obj, assignOptions);
       logger.info('Successfully get the District by ID:', id);
       logger.debug('The District is:', result);

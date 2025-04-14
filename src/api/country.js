@@ -150,7 +150,7 @@ class CountryApi {
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/country/${stringifyId(id)}}`).then((obj) => {
+    return http.get(`/country/${stringifyId(id)}`).then((obj) => {
       const result = Country.create(obj, assignOptions);
       logger.info('Successfully get the Country by ID:', id);
       logger.debug('The Country is:', result);

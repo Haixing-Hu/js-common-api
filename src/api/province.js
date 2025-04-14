@@ -160,7 +160,7 @@ class ProvinceApi {
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/province/${stringifyId(id)}}`).then((obj) => {
+    return http.get(`/province/${stringifyId(id)}`).then((obj) => {
       const result = Province.create(obj, assignOptions);
       logger.info('Successfully get the Province by ID:', id);
       logger.debug('The Province is:', result);

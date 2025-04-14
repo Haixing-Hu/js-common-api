@@ -96,7 +96,7 @@ class UploadApi {
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/upload/${stringifyId(id)}}`).then((obj) => {
+    return http.get(`/upload/${stringifyId(id)}`).then((obj) => {
       const result = Upload.create(obj, assignOptions);
       logger.info('Successfully get the Upload by ID:', id);
       logger.debug('The Upload is:', result);

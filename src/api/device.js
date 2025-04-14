@@ -216,7 +216,7 @@ class DeviceApi {
     if (showLoading) {
       loading.showGetting();
     }
-    return http.get(`/device/${stringifyId(id)}}`).then((obj) => {
+    return http.get(`/device/${stringifyId(id)}`).then((obj) => {
       const result = Device.create(obj, assignOptions);
       logger.info('Successfully get the Device by ID:', id);
       logger.debug('The Device is:', result);
