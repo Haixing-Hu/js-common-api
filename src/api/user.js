@@ -26,6 +26,30 @@ import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('UserApi');
 
+const USER_CRITERIA_DEFINITIONS = [
+  { name: 'name', type: String },
+  { name: 'nickname', type: String },
+  { name: 'organizationId', type: [String, Number, BigInt] },
+  { name: 'organizationCode', type: String },
+  { name: 'organizationName', type: String },
+  { name: 'state', type: String },
+  { name: 'lastLoginTimeStart', type: String },
+  { name: 'lastLoginTimeEnd', type: String },
+  { name: 'validTimeStart', type: String },
+  { name: 'validTimeEnd', type: String },
+  { name: 'expiredTimeStart', type: String },
+  { name: 'expiredTimeEnd', type: String },
+  { name: 'predefined', type: Boolean },
+  { name: 'test', type: Boolean },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
 /**
  * 提供管理`User`对象的API。
  *
@@ -75,7 +99,7 @@ class UserApi {
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, User);
+    checkCriteriaArgument(criteria, USER_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, User);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -139,7 +163,7 @@ class UserApi {
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
     checkPageRequestArgument(pageRequest);
-    checkCriteriaArgument(criteria, User);
+    checkCriteriaArgument(criteria, USER_CRITERIA_DEFINITIONS);
     checkSortRequestArgument(sortRequest, User);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
