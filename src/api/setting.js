@@ -118,6 +118,329 @@ class SettingApi {
   update(name, value, showLoading = true) {
     return updatePropertyImpl(this, '/setting/{id}', name, 'value', String, value, showLoading);
   }
+  
+  /**
+   * 以布尔值形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<boolean|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为布尔值），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getBool(name, showLoading = true) {
+    const setting = await this.get(name, showLoading);
+    if (setting && setting.value !== null && setting.value !== undefined) {
+      if (setting.value.toLowerCase() === 'true') {
+        return true;
+      } else if (setting.value.toLowerCase() === 'false') {
+        return false;
+      } else {
+        return Boolean(setting.value);
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * 以数字形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为数字），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getInt(name, showLoading = true) {
+    const setting = await this.get(name, showLoading);
+    if (setting && setting.value !== null && setting.value !== undefined) {
+      return parseInt(setting.value, 10);
+    }
+    return null;
+  }
+  
+  /**
+   * 以长整数形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|bigint|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为长整数），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getLong(name, showLoading = true) {
+    const setting = await this.get(name, showLoading);
+    if (setting && setting.value !== null && setting.value !== undefined) {
+      try {
+        return BigInt(setting.value);
+      } catch (e) {
+        return parseInt(setting.value, 10);
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * 以浮点数形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为浮点数），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getFloat(name, showLoading = true) {
+    const setting = await this.get(name, showLoading);
+    if (setting && setting.value !== null && setting.value !== undefined) {
+      return parseFloat(setting.value);
+    }
+    return null;
+  }
+  
+  /**
+   * 以双精度浮点数形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为双精度浮点数），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getDouble(name, showLoading = true) {
+    return this.getFloat(name, showLoading);
+  }
+  
+  /**
+   * 以字符串形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为字符串），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getString(name, showLoading = true) {
+    const setting = await this.get(name, showLoading);
+    if (setting) {
+      return setting.value;
+    }
+    return null;
+  }
+  
+  /**
+   * 以日期形式获取指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Date|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定设置的值（转换为日期），注意可能为`null`；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async getDate(name, showLoading = true) {
+    const setting = await this.get(name, showLoading);
+    if (setting && setting.value !== null && setting.value !== undefined) {
+      return new Date(setting.value);
+    }
+    return null;
+  }
+
+  /**
+   * 以布尔值的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {boolean} value
+   *     要设置的布尔值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setBool(name, value, showLoading = true) {
+    const strValue = value === null || value === undefined ? null : String(value);
+    return this.update(name, strValue, showLoading);
+  }
+  
+  /**
+   * 以整数的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {number} value
+   *     要设置的整数值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setInt(name, value, showLoading = true) {
+    const strValue = value === null || value === undefined ? null : String(value);
+    return this.update(name, strValue, showLoading);
+  }
+  
+  /**
+   * 以长整数的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {number|bigint} value
+   *     要设置的长整数值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setLong(name, value, showLoading = true) {
+    const strValue = value === null || value === undefined ? null : String(value);
+    return this.update(name, strValue, showLoading);
+  }
+  
+  /**
+   * 以浮点数的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {number} value
+   *     要设置的浮点数值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setFloat(name, value, showLoading = true) {
+    const strValue = value === null || value === undefined ? null : String(value);
+    return this.update(name, strValue, showLoading);
+  }
+  
+  /**
+   * 以双精度浮点数的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {number} value
+   *     要设置的双精度浮点数值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setDouble(name, value, showLoading = true) {
+    return this.setFloat(name, value, showLoading);
+  }
+  
+  /**
+   * 以字符串的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {string} value
+   *     要设置的字符串值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setString(name, value, showLoading = true) {
+    return this.update(name, value, showLoading);
+  }
+  
+  /**
+   * 以日期的形式设置指定设置的值。
+   *
+   * @param {string} name
+   *     指定设置的名称。
+   * @param {Date} value
+   *     要设置的日期值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  setDate(name, value, showLoading = true) {
+    const strValue = value === null || value === undefined ? null : value.toISOString();
+    return this.update(name, strValue, showLoading);
+  }
+  
+  /**
+   * 检查并更新指定的设置的值。
+   *
+   * @param {string} name
+   *     指定的设置的名称。
+   * @param {*} value
+   *     待更新的新的值，若为`null`则不做更新。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的值；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  async checkAndUpdate(name, value, showLoading = true) {
+    if (value === null || value === undefined) {
+      return this.getString(name, showLoading);
+    }
+    const strValue = String(value);
+    await this.update(name, strValue, showLoading);
+    return strValue;
+  }
+
+  /**
+   * 根据名称更新一个已存在的`Setting`的类型和取值。
+   *
+   * @param {Setting|object} setting
+   *     待更新的`Setting`对象，必须指定其`name`属性。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被修改时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateTypeValueByName(setting, showLoading = true) {
+    // 确保setting是Setting类的实例
+    const settingObj = Setting.create(setting);
+    if (!settingObj.name) {
+      throw new Error('设置对象必须指定名称');
+    }
+    // 由于缺少专用接口，我们只能通过更新值来实现部分功能
+    // 注意：这种方式无法更新类型，只能更新值
+    return this.update(settingObj.name, settingObj.value, showLoading);
+  }
 
   /**
    * 导出符合条件的`Setting`对象为XML文件。

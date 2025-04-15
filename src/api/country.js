@@ -70,8 +70,6 @@ class CountryApi {
     { name: 'phoneArea', type: String },
     // 邮政编码
     { name: 'postalcode', type: String },
-    // 级别
-    { name: 'level', type: Number },
     // 是否是预定义数据
     { name: 'predefined', type: Boolean },
     // 是否已经被标记删除
@@ -100,7 +98,6 @@ class CountryApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `phoneArea: string` 电话区号；
    *  - `postalcode: string` 邮政编码；
-   *  - `level: number` 级别；
    *  - `predefined: boolean` 是否是预定义数据；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -134,7 +131,6 @@ class CountryApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `phoneArea: string` 电话区号；
    *  - `postalcode: string` 邮政编码；
-   *  - `level: number` 级别；
    *  - `predefined: boolean` 是否是预定义数据；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -483,8 +479,7 @@ class CountryApi {
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *  - `name: string` 名称中应包含的字符串；
    *  - `phoneArea: string` 电话区号；
-   *  - `postalcode: string` 邮政编码；
-   *  - `level: number` 级别；
+   *  - `postalcode: string` 邮政编码；   
    *  - `predefined: boolean` 是否是预定义数据；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -520,7 +515,6 @@ class CountryApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `phoneArea: string` 电话区号；
    *  - `postalcode: string` 邮政编码；
-   *  - `level: number` 级别；
    *  - `predefined: boolean` 是否是预定义数据；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -556,7 +550,6 @@ class CountryApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `phoneArea: string` 电话区号；
    *  - `postalcode: string` 邮政编码；
-   *  - `level: number` 级别；
    *  - `predefined: boolean` 是否是预定义数据；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
@@ -592,7 +585,6 @@ class CountryApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `phoneArea: string` 电话区号；
    *  - `postalcode: string` 邮政编码；
-   *  - `level: number` 级别；
    *  - `predefined: boolean` 是否是预定义数据；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；

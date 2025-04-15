@@ -9,7 +9,12 @@
 import { Info, Province } from '@qubit-ltd/common-model';
 import { HasLogger, Log } from '@qubit-ltd/logging';
 import addImpl from './impl/add-impl';
-import { deleteByKeyImpl, deleteImpl } from './impl/delete-impl';
+import {
+  batchDeleteImpl,
+  deleteByKeyImpl,
+  deleteImpl,
+} from './impl/delete-impl';
+import { batchEraseImpl, eraseByKeyImpl, eraseImpl } from './impl/erase-impl';
 import exportImpl from './impl/export-impl';
 import {
   getByKeyImpl,
@@ -17,9 +22,19 @@ import {
   getInfoByKeyImpl,
   getInfoImpl,
 } from './impl/get-impl';
+import importImpl from './impl/import-impl';
 import { listImpl, listInfoImpl } from './impl/list-impl';
-import { purgeAllImpl, purgeByKeyImpl, purgeImpl } from './impl/purge-impl';
-import { restoreByKeyImpl, restoreImpl } from './impl/restore-impl';
+import {
+  batchPurgeImpl,
+  purgeAllImpl,
+  purgeByKeyImpl,
+  purgeImpl,
+} from './impl/purge-impl';
+import {
+  batchRestoreImpl,
+  restoreByKeyImpl,
+  restoreImpl,
+} from './impl/restore-impl';
 import { updateByKeyImpl, updateImpl } from './impl/update-impl';
 
 /**
@@ -300,6 +315,22 @@ class ProvinceApi {
   }
 
   /**
+   * 批量标记删除指定的`Province`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量标记删除的`Province`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, showLoading = true) {
+    return batchDeleteImpl(this, '/province/batch', ids, showLoading);
+  }
+
+  /**
    * 根据ID，恢复一个被标记删除的`Province`对象。
    *
    * @param {string} id
@@ -329,6 +360,22 @@ class ProvinceApi {
   @Log
   restoreByCode(code, showLoading = true) {
     return restoreByKeyImpl(this, '/province/code/{code}', 'code', code, showLoading);
+  }
+
+  /**
+   * 批量恢复已被标记删除的`Province`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量恢复的已被标记删除的`Province`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际恢复的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, showLoading = true) {
+    return batchRestoreImpl(this, '/province/batch', ids, showLoading);
   }
 
   /**
@@ -378,6 +425,70 @@ class ProvinceApi {
   }
 
   /**
+   * 批量彻底清除已被标记删除的`Province`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的已被标记删除的`Province`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际被彻底清除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, showLoading = true) {
+    return batchPurgeImpl(this, '/province/batch/purge', ids, showLoading);
+  }
+
+  /**
+   * 彻底清除指定的`Province`对象（无论其是否被标记删除）。
+   *
+   * @param {string|number|bigint} id
+   *     要彻底清除的`Province`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, showLoading = true) {
+    return eraseImpl(this, '/province/{id}/erase', id, showLoading);
+  }
+
+  /**
+   * 根据编码，彻底清除指定的`Province`对象（无论其是否被标记删除）。
+   *
+   * @param {string} code
+   *     要彻底清除的`Province`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  eraseByCode(code, showLoading = true) {
+    return eraseByKeyImpl(this, '/province/code/{code}/erase', 'code', code, showLoading);
+  }
+
+  /**
+   * 批量彻底清除指定的`Province`对象（无论其是否被标记删除）。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的`Province`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际删除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, showLoading = true) {
+    return batchEraseImpl(this, '/province/batch/erase', ids, showLoading);
+  }
+
+  /**
    * 导出符合条件的`Province`对象为XML文件。
    *
    * @param {object} criteria
@@ -414,6 +525,207 @@ class ProvinceApi {
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
     return exportImpl(this, '/province/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Province`对象为JSON文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `countryId: string|number|bigint` 所属国家的ID；
+   *  - `countryCode: string` 所属国家的编码；
+   *  - `countryName: string` 所属国家的名称中应包含的字符串；
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `phoneArea: string` 电话区号；
+   *  - `postalcode: string` 邮政编码；
+   *  - `level: number` 级别；
+   *  - `predefined: boolean` 是否是预定义数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/province/export/json', 'JSON', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Province`对象为Excel文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `countryId: string|number|bigint` 所属国家的ID；
+   *  - `countryCode: string` 所属国家的编码；
+   *  - `countryName: string` 所属国家的名称中应包含的字符串；
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `phoneArea: string` 电话区号；
+   *  - `postalcode: string` 邮政编码；
+   *  - `level: number` 级别；
+   *  - `predefined: boolean` 是否是预定义数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/province/export/excel', 'Excel', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Province`对象为CSV文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `countryId: string|number|bigint` 所属国家的ID；
+   *  - `countryCode: string` 所属国家的编码；
+   *  - `countryName: string` 所属国家的名称中应包含的字符串；
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `phoneArea: string` 电话区号；
+   *  - `postalcode: string` 邮政编码；
+   *  - `level: number` 级别；
+   *  - `predefined: boolean` 是否是预定义数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/province/export/csv', 'CSV', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 从XML文件导入`Province`对象。
+   *
+   * @param {File} file
+   *     XML文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Province`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importXml(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/province/import/xml', 'XML', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从JSON文件导入`Province`对象。
+   *
+   * @param {File} file
+   *     JSON文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Province`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importJson(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/province/import/json', 'JSON', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从Excel文件导入`Province`对象。
+   *
+   * @param {File} file
+   *     Excel文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Province`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importExcel(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/province/import/excel', 'Excel', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从CSV文件导入`Province`对象。
+   *
+   * @param {File} file
+   *     CSV文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Province`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importCsv(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/province/import/csv', 'CSV', file, parallel, threads, showLoading);
   }
 }
 

@@ -96,7 +96,7 @@ function updateByKeyImpl(api, url, keyName, entity, showLoading, options = {}) {
  *     指定的实体的ID。
  * @param {string} propertyName
  *     指定的属性的名称。
- * @param {function} propertyClass
+ * @param {function|array<function>} propertyClass
  *     指定的属性的类型。
  * @param {any} propertyValue
  *     指定的属性的值。

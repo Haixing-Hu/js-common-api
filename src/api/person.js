@@ -15,7 +15,8 @@ import {
 } from '@qubit-ltd/common-model';
 import { HasLogger, Log } from '@qubit-ltd/logging';
 import addImpl from './impl/add-impl';
-import { deleteImpl } from './impl/delete-impl';
+import { batchDeleteImpl, deleteImpl } from './impl/delete-impl';
+import { batchEraseImpl, eraseByKeyImpl, eraseImpl } from './impl/erase-impl';
 import exportImpl from './impl/export-impl';
 import {
   getByKeyImpl,
@@ -24,9 +25,10 @@ import {
   getInfoImpl,
   getPropertyImpl,
 } from './impl/get-impl';
+import importImpl from './impl/import-impl';
 import { listImpl, listInfoImpl } from './impl/list-impl';
-import { purgeAllImpl, purgeImpl } from './impl/purge-impl';
-import { restoreImpl } from './impl/restore-impl';
+import { batchPurgeImpl, purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { batchRestoreImpl, restoreImpl } from './impl/restore-impl';
 import { updateImpl, updatePropertyImpl } from './impl/update-impl';
 
 /**
@@ -473,6 +475,24 @@ class PersonApi {
   }
 
   /**
+   * 批量标记删除`Person`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     要批量标记删除的`Person`对象的ID列表。
+   * @param {boolean} withUser
+   *     是否同时标记删除`Person`对象所绑定的用户对象`User`。默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, withUser = false, showLoading = true) {
+    return batchDeleteImpl(this, '/person/batch', ids, showLoading, { withUser });
+  }
+
+  /**
    * 根据ID，恢复一个被标记删除的`Person`对象。
    *
    * @param {string} id
@@ -490,6 +510,26 @@ class PersonApi {
   @Log
   restore(id, withUser = false, showLoading = true) {
     return restoreImpl(this, '/person/{id}', id, showLoading, { withUser });
+  }
+
+  /**
+   * 批量恢复被标记删除的`Person`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     要批量恢复的`Person`对象的ID列表，这些对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时恢复`Person`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被恢复的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, withUser = false, showLoading = true) {
+    return batchRestoreImpl(this, '/person/batch', ids, showLoading, { withUser });
   }
 
   /**
@@ -531,6 +571,86 @@ class PersonApi {
   }
 
   /**
+   * 批量清除已被标记删除的`Person`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     要批量清除的`Person`对象的ID列表，这些对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时彻底清除`Person`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Person`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被清除的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, withUser = false, showLoading = true) {
+    return batchPurgeImpl(this, '/person/batch/purge', ids, showLoading, { withUser });
+  }
+
+  /**
+   * 根据ID，擦除一个`Person`对象，无论其是否被标记删除。
+   *
+   * 此操作将直接从数据库中删除数据，不可恢复，请谨慎使用。
+   *
+   * @param {string|number|bigint} id
+   *     要擦除的`Person`对象的ID。
+   * @param {boolean} withUser
+   *     是否同时擦除`Person`对象所绑定的用户对象`User`。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, withUser = false, showLoading = true) {
+    return eraseImpl(this, '/person/{id}/erase', id, showLoading, { withUser });
+  }
+
+  /**
+   * 根据用户名，擦除一个`Person`对象，无论其是否被标记删除。
+   *
+   * 此操作将直接从数据库中删除数据，不可恢复，请谨慎使用。
+   *
+   * @param {string} username
+   *     要擦除的`Person`对象对应的用户的用户名。
+   * @param {boolean} withUser
+   *     是否同时擦除`Person`对象所绑定的用户对象`User`。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  eraseByUsername(username, withUser = false, showLoading = true) {
+    return eraseByKeyImpl(this, '/person/username/{username}/erase', 'username', username, showLoading, { withUser });
+  }
+
+  /**
+   * 批量擦除`Person`对象，无论其是否被标记删除。
+   *
+   * 此操作将直接从数据库中删除数据，不可恢复，请谨慎使用。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     要批量擦除的`Person`对象的ID列表。
+   * @param {boolean} withUser
+   *     是否同时擦除`Person`对象所绑定的用户对象`User`。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被擦除的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, withUser = false, showLoading = true) {
+    return batchEraseImpl(this, '/person/batch/erase', ids, showLoading, { withUser });
+  }
+
+  /**
    * 导出符合条件的`Person`对象为XML文件。
    *
    * @param {object} criteria
@@ -550,6 +670,152 @@ class PersonApi {
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
     return exportImpl(this, '/person/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Person`对象为JSON文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/person/export/json', 'JSON', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Person`对象为Excel文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/person/export/excel', 'Excel', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Person`对象为CSV文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/person/export/csv', 'CSV', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 从XML文件导入`Person`对象。
+   *
+   * @param {File|Blob} file
+   *     要导入的XML文件。
+   * @param {boolean} parallel
+   *     是否使用并行处理。默认值为`false`。
+   * @param {number} threads
+   *     如果使用并行处理，指定并行线程数。默认值为`null`，表示使用系统默认的线程数。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importXml(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/person/import/xml', 'XML', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从JSON文件导入`Person`对象。
+   *
+   * @param {File|Blob} file
+   *     要导入的JSON文件。
+   * @param {boolean} parallel
+   *     是否使用并行处理。默认值为`false`。
+   * @param {number} threads
+   *     如果使用并行处理，指定并行线程数。默认值为`null`，表示使用系统默认的线程数。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importJson(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/person/import/json', 'JSON', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从Excel文件导入`Person`对象。
+   *
+   * @param {File|Blob} file
+   *     要导入的Excel文件。
+   * @param {boolean} parallel
+   *     是否使用并行处理。默认值为`false`。
+   * @param {number} threads
+   *     如果使用并行处理，指定并行线程数。默认值为`null`，表示使用系统默认的线程数。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importExcel(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/person/import/excel', 'Excel', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从CSV文件导入`Person`对象。
+   *
+   * @param {File|Blob} file
+   *     要导入的CSV文件。
+   * @param {boolean} parallel
+   *     是否使用并行处理。默认值为`false`。
+   * @param {number} threads
+   *     如果使用并行处理，指定并行线程数。默认值为`null`，表示使用系统默认的线程数。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importCsv(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/person/import/csv', 'CSV', file, parallel, threads, showLoading);
   }
 }
 

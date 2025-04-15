@@ -65,7 +65,7 @@ class VerifyCodeApi {
    */
   @Log
   sendByEmail(email, scene, showLoading = true) {
-    checkArgumentType('mobile', email, String);
+    checkArgumentType('email', email, String);
     checkArgumentType('scene', scene, [VerifyScene, String]);
     checkArgumentType('showLoading', showLoading, Boolean);
     logger.info('Sending verification code to the email:', email);

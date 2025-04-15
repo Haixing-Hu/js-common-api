@@ -9,11 +9,12 @@
 import { SocialNetwork, SocialNetworkAccount } from '@qubit-ltd/common-model';
 import { HasLogger, Log } from '@qubit-ltd/logging';
 import addImpl from './impl/add-impl';
-import { deleteImpl } from './impl/delete-impl';
+import { batchDeleteImpl, deleteImpl } from './impl/delete-impl';
+import { batchEraseImpl, eraseImpl } from './impl/erase-impl';
 import { getByKeyImpl, getImpl } from './impl/get-impl';
 import { listImpl } from './impl/list-impl';
-import { purgeAllImpl, purgeImpl } from './impl/purge-impl';
-import { restoreImpl } from './impl/restore-impl';
+import { batchPurgeImpl, purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { batchRestoreImpl, restoreImpl } from './impl/restore-impl';
 import { updateByKeyImpl, updateImpl } from './impl/update-impl';
 
 /**
@@ -184,6 +185,22 @@ class SocialNetworkAccountApi {
   }
 
   /**
+   * 批量标记删除指定的`SocialNetworkAccount`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量标记删除的`SocialNetworkAccount`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, showLoading = true) {
+    return batchDeleteImpl(this, '/social-network-account/batch', ids, showLoading);
+  }
+
+  /**
    * 根据ID，恢复一个被标记删除的`SocialNetworkAccount`对象。
    *
    * @param {string} id
@@ -197,6 +214,22 @@ class SocialNetworkAccountApi {
   @Log
   restore(id, showLoading = true) {
     return restoreImpl(this, '/social-network-account/{id}', id, showLoading);
+  }
+
+  /**
+   * 批量恢复已被标记删除的`SocialNetworkAccount`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量恢复的已被标记删除的`SocialNetworkAccount`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际恢复的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, showLoading = true) {
+    return batchRestoreImpl(this, '/social-network-account/batch', ids, showLoading);
   }
 
   /**
@@ -227,6 +260,54 @@ class SocialNetworkAccountApi {
   @Log
   purgeAll(showLoading = true) {
     return purgeAllImpl(this, '/social-network-account/purge', showLoading);
+  }
+
+  /**
+   * 批量彻底清除已被标记删除的`SocialNetworkAccount`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的已被标记删除的`SocialNetworkAccount`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际被彻底清除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, showLoading = true) {
+    return batchPurgeImpl(this, '/social-network-account/batch/purge', ids, showLoading);
+  }
+
+  /**
+   * 彻底清除指定的`SocialNetworkAccount`对象（无论其是否被标记删除）。
+   *
+   * @param {string|number|bigint} id
+   *     要彻底清除的`SocialNetworkAccount`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, showLoading = true) {
+    return eraseImpl(this, '/social-network-account/{id}/erase', id, showLoading);
+  }
+
+  /**
+   * 批量彻底清除指定的`SocialNetworkAccount`对象（无论其是否被标记删除）。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的`SocialNetworkAccount`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际删除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, showLoading = true) {
+    return batchEraseImpl(this, '/social-network-account/batch/erase', ids, showLoading);
   }
 }
 
