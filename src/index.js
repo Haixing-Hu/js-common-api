@@ -26,6 +26,7 @@ import { assignOptions, toJsonOptions } from './api/impl/options';
 import organizationApi from './api/organization';
 import personApi from './api/person';
 import provinceApi from './api/province';
+import roleApi from './api/role';
 import settingApi from './api/setting';
 import socialNetworkAccountApi from './api/social-network-account';
 import streetApi from './api/street';
@@ -34,6 +35,7 @@ import taskInfoApi from './api/task-info';
 import uploadApi from './api/upload';
 import userApi from './api/user';
 import userAuthenticateApi from './api/user-authenticate';
+import userRoleApi from './api/user-role';
 import verifyCodeApi from './api/verify-code';
 import wechatApi from './api/wechat';
 import TaskFilter from './params/TaskFilter';
@@ -64,6 +66,7 @@ export {
   organizationApi,
   personApi,
   provinceApi,
+  roleApi,
   settingApi,
   socialNetworkAccountApi,
   streetApi,
@@ -72,6 +75,7 @@ export {
   uploadApi,
   userApi,
   userAuthenticateApi,
+  userRoleApi,
   verifyCodeApi,
   wechatApi,
   assignOptions,
