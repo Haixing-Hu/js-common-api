@@ -6,43 +6,48 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
-import {
-  SocialNetworkAccount,
-  PageRequest,
-  SocialNetwork,
-} from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('SocialNetworkAccountApi');
-
-const SOCIAL_NETWORK_ACCOUNT_CRITERIA_DEFINITIONS = [
-  { name: 'username', type: String },
-  { name: 'socialNetwork', type: [SocialNetwork, String] },
-  { name: 'appId', type: String },
-  { name: 'deleted', type: Boolean },
-  { name: 'createTimeStart', type: String },
-  { name: 'createTimeEnd', type: String },
-  { name: 'modifyTimeStart', type: String },
-  { name: 'modifyTimeEnd', type: String },
-  { name: 'deleteTimeStart', type: String },
-  { name: 'deleteTimeEnd', type: String },
-];
+import { SocialNetwork, SocialNetworkAccount } from '@qubit-ltd/common-model';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { deleteImpl } from './impl/delete-impl';
+import { getByKeyImpl, getImpl } from './impl/get-impl';
+import { listImpl } from './impl/list-impl';
+import { purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { restoreImpl } from './impl/restore-impl';
+import { updateByKeyImpl, updateImpl } from './impl/update-impl';
 
 /**
  * 提供管理`SocialNetworkAccount`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class SocialNetworkAccountApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = SocialNetworkAccount;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    { name: 'username', type: String },
+    { name: 'socialNetwork', type: [SocialNetwork, String] },
+    { name: 'appId', type: String },
+    { name: 'deleted', type: Boolean },
+    { name: 'createTimeStart', type: String },
+    { name: 'createTimeEnd', type: String },
+    { name: 'modifyTimeStart', type: String },
+    { name: 'modifyTimeEnd', type: String },
+    { name: 'deleteTimeStart', type: String },
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`SocialNetworkAccount`对象。
    *
@@ -73,26 +78,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, SOCIAL_NETWORK_ACCOUNT_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, SocialNetworkAccount);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/social-network-account', {
-      params,
-    }).then((obj) => {
-      const page = SocialNetworkAccount.createPage(obj, assignOptions);
-      logger.info('Successfully list the SocialNetworkAccount.');
-      logger.debug('The page of SocialNetworkAccount is:', page);
-      return page;
-    });
+    return listImpl(this, '/social-network-account', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -108,17 +94,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/social-network-account/${stringifyId(id)}`).then((obj) => {
-      const result = SocialNetworkAccount.create(obj, assignOptions);
-      logger.info('Successfully get the SocialNetworkAccount by ID:', id);
-      logger.debug('The SocialNetworkAccount is:', result);
-      return result;
-    });
+    return getImpl(this, '/social-network-account/{id}', id, showLoading);
   }
 
   /**
@@ -138,20 +114,8 @@ class SocialNetworkAccountApi {
    */
   @Log
   getByOpenId(socialNetwork, appId, openId, showLoading = true) {
-    checkArgumentType('socialNetwork', socialNetwork, [SocialNetwork, String]);
-    checkArgumentType('appId', appId, String);
-    checkArgumentType('openId', openId, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const url = `/social-network-account/open-id/${socialNetwork}/${appId}/${openId}`;
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(url).then((obj) => {
-      const result = SocialNetworkAccount.create(obj, assignOptions);
-      logger.info('Successfully get the SocialNetworkAccount by open ID:', socialNetwork, appId, openId);
-      logger.debug('The SocialNetworkAccount is:', result);
-      return result;
-    });
+    const url = `/social-network-account/open-id/${socialNetwork}/${appId}/{openId}`;
+    return getByKeyImpl(this, url, 'openId', openId, showLoading);
   }
 
   /**
@@ -167,24 +131,13 @@ class SocialNetworkAccountApi {
    */
   @Log
   add(account, showLoading = true) {
-    checkArgumentType('account', account, [SocialNetworkAccount, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(account, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/social-network-account', data).then((obj) => {
-      const result = SocialNetworkAccount.create(obj, assignOptions);
-      logger.info('Successfully add the SocialNetworkAccount:', result.id);
-      logger.debug('The added SocialNetworkAccount is:', result);
-      return result;
-    });
+    return addImpl(this, '/social-network-account', account, showLoading);
   }
 
   /**
    * 根据ID，更新一个`SocialNetworkAccount`对象。
    *
-   * @param {SocialNetworkAccount|object} account
+   * @param {SocialNetworkAccount|object} entity
    *     要更新的`SocialNetworkAccount`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -193,27 +146,14 @@ class SocialNetworkAccountApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(account, showLoading = true) {
-    checkArgumentType('account', account, [SocialNetworkAccount, Object]);
-    checkIdArgumentType(account.id, 'account.id');
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const url = `/social-network-account/${stringifyId(account.id)}`;
-    const data = toJSON(account, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(url, data).then((obj) => {
-      const result = SocialNetworkAccount.create(obj, assignOptions);
-      logger.info('Successfully update the SocialNetworkAccount by ID %s at:', result.id, result.modifyTime);
-      logger.debug('The updated SocialNetworkAccount is:', result);
-      return result;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/social-network-account/{id}', entity, showLoading);
   }
 
   /**
    * 根据编码，更新一个`SocialNetworkAccount`对象。
    *
-   * @param {SocialNetworkAccount|object} account
+   * @param {SocialNetworkAccount|object} entity
    *     要更新的`SocialNetworkAccount`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -222,27 +162,9 @@ class SocialNetworkAccountApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByOpenId(account, showLoading = true) {
-    checkArgumentType('account', account, [SocialNetworkAccount, Object]);
-    checkArgumentType('account.socialNetwork', account, [SocialNetwork, String]);
-    checkArgumentType('account.appId', account.appId, String);
-    checkArgumentType('account.openId', account.openId, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(account, toJsonOptions);
-    const url = `/social-network-account/open-id/${data.socialNetwork}/${data.appId}/${data.openId}`;
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(url, data).then((obj) => {
-      const result = SocialNetworkAccount.create(obj, assignOptions);
-      logger.info('Successfully update the SocialNetworkAccount by open ID "%s-%s-%s" at:',
-        result.socialNetwork,
-        result.appId,
-        result.openId,
-        result.modifyTime);
-      logger.debug('The updated SocialNetworkAccount is:', result);
-      return result;
-    });
+  updateByOpenId(entity, showLoading = true) {
+    const url = `/social-network-account/open-id/${entity.socialNetwork}/${entity.appId}/{openId}`;
+    return updateByKeyImpl(this, url, 'openId', entity, showLoading);
   }
 
   /**
@@ -258,15 +180,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/social-network-account/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the SocialNetworkAccount by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/social-network-account/{id}', id, showLoading);
   }
 
   /**
@@ -282,13 +196,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/social-network-account/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the SocialNetworkAccount by ID:', id));
+    return restoreImpl(this, '/social-network-account/{id}', id, showLoading);
   }
 
   /**
@@ -304,17 +212,11 @@ class SocialNetworkAccountApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/social-network-account/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the SocialNetworkAccount by ID:', id));
+    return purgeImpl(this, '/social-network-account/{id}/purge', id, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`SocialNetworkAccount`对象。
+   * 彻底清除全部已被标记删除的`SocialNetworkAccount`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -324,12 +226,7 @@ class SocialNetworkAccountApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/social-network-account/purge')
-      .then(() => logger.info('Successfully purge all deleted SocialNetworkAccount.'));
+    return purgeAllImpl(this, '/social-network-account/purge', showLoading);
   }
 }
 

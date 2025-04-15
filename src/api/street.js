@@ -6,68 +6,81 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
+import { Info, Street } from '@qubit-ltd/common-model';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { deleteByKeyImpl, deleteImpl } from './impl/delete-impl';
+import exportImpl from './impl/export-impl';
 import {
-  Street,
-  Info,
-  CommonMimeType,
-} from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('StreetApi');
-
-/**
- * Street 类的查询条件定义
- *
- * @type {Array<Object>}
- */
-const STREET_CRITERIA_DEFINITIONS = [
-  // 所属区县的ID
-  { name: 'districtId', type: [String, Number, BigInt] },
-  // 所属区县的编码
-  { name: 'districtCode', type: String },
-  // 所属区县的名称中应包含的字符串
-  { name: 'districtName', type: String },
-  // 名称中应包含的字符串
-  { name: 'name', type: String },
-  // 电话区号
-  { name: 'phoneArea', type: String },
-  // 邮政编码
-  { name: 'postalcode', type: String },
-  // 级别
-  { name: 'level', type: Number },
-  // 是否是预定义数据
-  { name: 'predefined', type: Boolean },
-  // 是否已经被标记删除
-  { name: 'deleted', type: Boolean },
-  // 创建时间范围的（闭区间）起始值
-  { name: 'createTimeStart', type: String },
-  // 创建时间范围的（闭区间）结束值
-  { name: 'createTimeEnd', type: String },
-  // 修改时间范围的（闭区间）起始值
-  { name: 'modifyTimeStart', type: String },
-  // 修改时间范围的（闭区间）结束值
-  { name: 'modifyTimeEnd', type: String },
-  // 标记删除时间范围的（闭区间）起始值
-  { name: 'deleteTimeStart', type: String },
-  // 标记删除时间范围的（闭区间）结束值
-  { name: 'deleteTimeEnd', type: String },
-];
+  getByKeyImpl,
+  getImpl,
+  getInfoByKeyImpl,
+  getInfoImpl,
+} from './impl/get-impl';
+import { listImpl, listInfoImpl } from './impl/list-impl';
+import { purgeAllImpl, purgeByKeyImpl, purgeImpl } from './impl/purge-impl';
+import { restoreByKeyImpl, restoreImpl } from './impl/restore-impl';
+import { updateByKeyImpl, updateImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Street`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class StreetApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Street;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = Info;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    // 所属区县的ID
+    { name: 'districtId', type: [String, Number, BigInt] },
+    // 所属区县的编码
+    { name: 'districtCode', type: String },
+    // 所属区县的名称中应包含的字符串
+    { name: 'districtName', type: String },
+    // 名称中应包含的字符串
+    { name: 'name', type: String },
+    // 电话区号
+    { name: 'phoneArea', type: String },
+    // 邮政编码
+    { name: 'postalcode', type: String },
+    // 级别
+    { name: 'level', type: Number },
+    // 是否是预定义数据
+    { name: 'predefined', type: Boolean },
+    // 是否已经被标记删除
+    { name: 'deleted', type: Boolean },
+    // 创建时间范围的（闭区间）起始值
+    { name: 'createTimeStart', type: String },
+    // 创建时间范围的（闭区间）结束值
+    { name: 'createTimeEnd', type: String },
+    // 修改时间范围的（闭区间）起始值
+    { name: 'modifyTimeStart', type: String },
+    // 修改时间范围的（闭区间）结束值
+    { name: 'modifyTimeEnd', type: String },
+    // 标记删除时间范围的（闭区间）起始值
+    { name: 'deleteTimeStart', type: String },
+    // 标记删除时间范围的（闭区间）结束值
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Street`对象。
    *
@@ -102,26 +115,7 @@ class StreetApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, STREET_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Street);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/street', {
-      params,
-    }).then((obj) => {
-      const page = Street.createPage(obj, assignOptions);
-      logger.info('Successfully list the Street.');
-      logger.debug('The page of Street is:', page);
-      return page;
-    });
+    return listImpl(this, '/street', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -158,26 +152,7 @@ class StreetApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, STREET_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Street);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/street/info', {
-      params,
-    }).then((obj) => {
-      const page = Info.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of Street.');
-      logger.debug('The page of infos of Street is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/street/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -193,17 +168,7 @@ class StreetApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/street/${stringifyId(id)}`).then((obj) => {
-      const result = Street.create(obj, assignOptions);
-      logger.info('Successfully get the Street by ID:', id);
-      logger.debug('The Street is:', result);
-      return result;
-    });
+    return getImpl(this, '/street/{id}', id, showLoading);
   }
 
   /**
@@ -219,17 +184,7 @@ class StreetApi {
    */
   @Log
   getByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/street/code/${code}`).then((obj) => {
-      const result = Street.create(obj, assignOptions);
-      logger.info('Successfully get the Street by code:', code);
-      logger.debug('The Street is:', result);
-      return result;
-    });
+    return getByKeyImpl(this, '/street/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -245,17 +200,7 @@ class StreetApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/street/${stringifyId(id)}/info`).then((obj) => {
-      const result = Info.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Street by ID:', id);
-      logger.debug('The info of the Street is:', result);
-      return result;
-    });
+    return getInfoImpl(this, '/street/{id}/info', id, showLoading);
   }
 
   /**
@@ -271,23 +216,13 @@ class StreetApi {
    */
   @Log
   getInfoByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/street/code/${code}/info`).then((obj) => {
-      const result = Info.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Street by code:', code);
-      logger.debug('The info of the Street is:', result);
-      return result;
-    });
+    return getInfoByKeyImpl(this, '/street/code/{code}/info', 'code', code, showLoading);
   }
 
   /**
    * 添加一个`Street`对象。
    *
-   * @param {Street|object} street
+   * @param {Street|object} entity
    *     要添加的`Street`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -296,25 +231,14 @@ class StreetApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(street, showLoading = true) {
-    checkArgumentType('street', street, [Street, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(street, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/street', data).then((obj) => {
-      const result = Street.create(obj, assignOptions);
-      logger.info('Successfully add the Street:', result.id);
-      logger.debug('The added Street is:', result);
-      return result;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/street', entity, showLoading);
   }
 
   /**
    * 根据ID，更新一个`Street`对象。
    *
-   * @param {Street|object} street
+   * @param {Street|object} entity
    *     要更新的`Street`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -323,26 +247,14 @@ class StreetApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(street, showLoading = true) {
-    checkArgumentType('street', street, [Street, Object]);
-    checkIdArgumentType(street.id, 'street.id');
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(street, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/street/${stringifyId(street.id)}`, data).then((obj) => {
-      const result = Street.create(obj, assignOptions);
-      logger.info('Successfully update the Street by ID %s at:', result.id, result.modifyTime);
-      logger.debug('The updated Street is:', result);
-      return result;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/street/{id}', entity, showLoading);
   }
 
   /**
    * 根据编码，更新一个`Street`对象。
    *
-   * @param {Street|object} street
+   * @param {Street|object} entity
    *     要更新的`Street`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -351,20 +263,8 @@ class StreetApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(street, showLoading = true) {
-    checkArgumentType('street', street, [Street, Object]);
-    checkArgumentType('street.code', street.code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(street, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/street/code/${street.code}`, data).then((obj) => {
-      const result = Street.create(obj, assignOptions);
-      logger.info('Successfully update the Street by code "%s" at:', result.code, result.modifyTime);
-      logger.debug('The updated Street is:', result);
-      return result;
-    });
+  updateByCode(entity, showLoading = true) {
+    return updateByKeyImpl(this, '/street/code/{code}', 'code', entity, showLoading);
   }
 
   /**
@@ -380,15 +280,7 @@ class StreetApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/street/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the Street by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/street/{id}', id, showLoading);
   }
 
   /**
@@ -404,15 +296,7 @@ class StreetApi {
    */
   @Log
   deleteByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/street/code/${code}`).then((timestamp) => {
-      logger.info('Successfully delete the Street by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return deleteByKeyImpl(this, '/street/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -428,13 +312,7 @@ class StreetApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/street/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the Street by ID:', id));
+    return restoreImpl(this, '/street/{id}', id, showLoading);
   }
 
   /**
@@ -450,13 +328,7 @@ class StreetApi {
    */
   @Log
   restoreByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/street/code/${code}`)
-      .then(() => logger.info('Successfully restore the Street by code:', code));
+    return restoreByKeyImpl(this, '/street/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -472,13 +344,7 @@ class StreetApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/street/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the Street by ID:', id));
+    return purgeImpl(this, '/street/{id}/purge', id, showLoading);
   }
 
   /**
@@ -494,17 +360,11 @@ class StreetApi {
    */
   @Log
   purgeByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/street/code/${code}/purge`)
-      .then(() => logger.info('Successfully purge the Street by code:', code));
+    return purgeByKeyImpl(this, '/street/code/{code}/purge', 'code', code, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Street`对象。
+   * 彻底清除全部已被标记删除的`Street`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -514,12 +374,7 @@ class StreetApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/street/purge')
-      .then(() => logger.info('Successfully purge all deleted Street.'));
+    return purgeAllImpl(this, '/street/purge', showLoading);
   }
 
   /**
@@ -558,22 +413,7 @@ class StreetApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, STREET_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Street);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/street/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Street to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/street/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 }
 

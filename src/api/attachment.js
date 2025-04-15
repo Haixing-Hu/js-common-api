@@ -6,73 +6,77 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import { Attachment, State } from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('AttachmentApi');
-
-/**
- * Attachment 类的查询条件定义
- *
- * @type {Array<Object>}
- */
-const ATTACHMENT_CRITERIA_DEFINITIONS = [
-  // 所属实体的类型
-  { name: 'ownerType', type: String },
-  // 所属实体的ID
-  { name: 'ownerId', type: [String, Number, BigInt] },
-  // 所属实体的属性的名称
-  { name: 'ownerProperty', type: String },
-  // 附件类型
-  { name: 'type', type: String },
-  // 所属类别的ID
-  { name: 'categoryId', type: [String, Number, BigInt] },
-  // 所属类别的编码
-  { name: 'categoryCode', type: String },
-  // 所属类别的名称包含的字符串
-  { name: 'categoryName', type: String },
-  // 标题所包含的字符串
-  { name: 'title', type: String },
-  // 所对应的上传的文件的ID
-  { name: 'attachmentId', type: [String, Number, BigInt] },
-  // 状态
-  { name: 'state', type: [State, String] },
-  // 是否可见
-  { name: 'visible', type: Boolean },
-  // 是否已经被标记删除
-  { name: 'deleted', type: Boolean },
-  // 创建时间范围的（闭区间）起始值
-  { name: 'createTimeStart', type: String },
-  // 创建时间范围的（闭区间）结束值
-  { name: 'createTimeEnd', type: String },
-  // 修改时间范围的（闭区间）起始值
-  { name: 'modifyTimeStart', type: String },
-  // 修改时间范围的（闭区间）结束值
-  { name: 'modifyTimeEnd', type: String },
-  // 标记删除时间范围的（闭区间）起始值
-  { name: 'deleteTimeStart', type: String },
-  // 标记删除时间范围的（闭区间）结束值
-  { name: 'deleteTimeEnd', type: String },
-  // 是否将返回对象中所有文件的存储路径转换为外链URL
-  { name: 'transformUrls', type: Boolean },
-];
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { batchDeleteImpl, deleteImpl } from './impl/delete-impl';
+import { batchEraseImpl, eraseImpl } from './impl/erase-impl';
+import { getImpl } from './impl/get-impl';
+import { listImpl } from './impl/list-impl';
+import { batchPurgeImpl, purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { batchRestoreImpl, restoreImpl } from './impl/restore-impl';
+import { updateImpl, updatePropertyImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Attachment`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class AttachmentApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Attachment;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    // 所属实体的类型
+    { name: 'ownerType', type: String },
+    // 所属实体的ID
+    { name: 'ownerId', type: [String, Number, BigInt] },
+    // 所属实体的属性的名称
+    { name: 'ownerProperty', type: String },
+    // 附件类型
+    { name: 'type', type: String },
+    // 所属类别的ID
+    { name: 'categoryId', type: [String, Number, BigInt] },
+    // 所属类别的编码
+    { name: 'categoryCode', type: String },
+    // 所属类别的名称包含的字符串
+    { name: 'categoryName', type: String },
+    // 标题所包含的字符串
+    { name: 'title', type: String },
+    // 所对应的上传的文件的ID
+    { name: 'uploadId', type: [String, Number, BigInt] },
+    // 状态
+    { name: 'state', type: [State, String] },
+    // 是否可见
+    { name: 'visible', type: Boolean },
+    // 是否已经被标记删除
+    { name: 'deleted', type: Boolean },
+    // 创建时间范围的（闭区间）起始值
+    { name: 'createTimeStart', type: String },
+    // 创建时间范围的（闭区间）结束值
+    { name: 'createTimeEnd', type: String },
+    // 修改时间范围的（闭区间）起始值
+    { name: 'modifyTimeStart', type: String },
+    // 修改时间范围的（闭区间）结束值
+    { name: 'modifyTimeEnd', type: String },
+    // 标记删除时间范围的（闭区间）起始值
+    { name: 'deleteTimeStart', type: String },
+    // 标记删除时间范围的（闭区间）结束值
+    { name: 'deleteTimeEnd', type: String },
+    // 是否将返回对象中所有文件的存储路径转换为外链URL
+    { name: 'transformUrls', type: Boolean },
+  ];
+
   /**
    * 列出符合条件的`Attachment`对象。
    *
@@ -88,7 +92,7 @@ class AttachmentApi {
    *  - `categoryCode: string` 所属类别的编码；
    *  - `categoryName: string` 所属类别的名称包含的字符串；
    *  - `title: string` 标题所包含的字符串；
-   *  - `attachmentId: string|number|bigint` 所对应的上传的文件的ID；
+   *  - `uploadId: string|number|bigint` 所对应的上传的文件的ID；
    *  - `state: State|string` 状态；
    *  - `visible: boolean` 是否可见；
    *  - `deleted: boolean` 是否已经被标记删除；
@@ -111,26 +115,7 @@ class AttachmentApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, ATTACHMENT_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Attachment);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/attachment', {
-      params,
-    }).then((obj) => {
-      const page = Attachment.createPage(obj, assignOptions);
-      logger.info('Successfully list the Attachment.');
-      logger.debug('The page of Attachment is:', page);
-      return page;
-    });
+    return listImpl(this, '/attachment', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -138,35 +123,21 @@ class AttachmentApi {
    *
    * @param {string|number|bigint} id
    *     `Attachment`对象的ID。
-   * @param {boolean} transformUrls
-   *     是否转换URL。默认值为`true`。
    * @param {boolean} showLoading
-   *     是否显示加载提示。默认值为`true`。
+   *     是否显示加载提示。
    * @return {Promise<Attachment|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Attachment`对象；
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  get(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    const params = transformUrls ? { transformUrls } : {};
-    return http.get(`/attachment/${stringifyId(id)}`, { params }).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully get the Attachment by ID:', id);
-      logger.debug('The Attachment is:', result);
-      return result;
-    });
+  get(id, showLoading = true) {
+    return getImpl(this, '/attachment/{id}', id, showLoading);
   }
 
   /**
    * 添加一个`Attachment`对象。
    *
-   * @param {Attachment|object} attachment
+   * @param {Attachment|object} entity
    *     要添加的`Attachment`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -175,25 +146,14 @@ class AttachmentApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(attachment, showLoading = true) {
-    checkArgumentType('attachment', attachment, [Attachment, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(attachment, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/attachment', data).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully add the Attachment:', result.id);
-      logger.debug('The added Attachment is:', result);
-      return result;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/attachment', entity, showLoading);
   }
 
   /**
    * 根据ID，更新一个`Attachment`对象。
    *
-   * @param {Attachment|object} attachment
+   * @param {Attachment|object} entity
    *     要更新的`Attachment`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -202,21 +162,8 @@ class AttachmentApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(attachment, showLoading = true) {
-    checkArgumentType('attachment', attachment, [Attachment, Object]);
-    checkIdArgumentType(attachment.id, 'attachment.id');
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(attachment.id);
-    const data = toJSON(attachment, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/attachment/${id}`, data).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully update the Attachment by ID %s at:', id, result.modifyTime);
-      logger.debug('The updated Attachment is:', result);
-      return result;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/attachment/{id}', entity, showLoading);
   }
 
   /**
@@ -234,17 +181,7 @@ class AttachmentApi {
    */
   @Log
   updateState(id, state, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('state', state, [State, String]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(state, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/attachment/${stringifyId(id)}/state`, data).then((timestamp) => {
-      logger.info('Successfully update the state of the Attachment by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/attachment/{id}/state', id, 'state', State, state, showLoading);
   }
 
   /**
@@ -262,17 +199,7 @@ class AttachmentApi {
    */
   @Log
   updateVisible(id, visible, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('visible', visible, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(visible, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/attachment/${stringifyId(id)}/visible`, data).then((timestamp) => {
-      logger.info('Successfully update the visibility of the Attachment by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/attachment/{id}/visible', id, 'visible', Boolean, visible, showLoading);
   }
 
   /**
@@ -288,15 +215,7 @@ class AttachmentApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/attachment/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the Attachment by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/attachment/{id}', id, showLoading);
   }
 
   /**
@@ -312,18 +231,7 @@ class AttachmentApi {
    */
   @Log
   batchDelete(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete('/attachment/batch', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch delete %d Attachment(s).', count);
-      return count;
-    });
+    return batchDeleteImpl(this, '/attachment/batch', ids, showLoading);
   }
 
   /**
@@ -339,13 +247,7 @@ class AttachmentApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/attachment/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the Attachment by ID:', id));
+    return restoreImpl(this, '/attachment/{id}', id, showLoading);
   }
 
   /**
@@ -361,16 +263,7 @@ class AttachmentApi {
    */
   @Log
   batchRestore(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch('/attachment/batch', data).then((count) => {
-      logger.info('Successfully batch restore %d Attachment(s).', count);
-      return count;
-    });
+    return batchRestoreImpl(this, '/attachment/batch', ids, showLoading);
   }
 
   /**
@@ -386,17 +279,11 @@ class AttachmentApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/attachment/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the Attachment by ID:', id));
+    return purgeImpl(this, '/attachment/{id}/purge', id, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Attachment`对象。
+   * 彻底清除全部已被标记删除的`Attachment`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -406,12 +293,7 @@ class AttachmentApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/attachment/purge')
-      .then(() => logger.info('Successfully purge all deleted Attachment.'));
+    return purgeAllImpl(this, '/attachment/purge', showLoading);
   }
 
   /**
@@ -427,18 +309,7 @@ class AttachmentApi {
    */
   @Log
   batchPurge(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/attachment/batch/purge', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch purge %d Attachment(s).', count);
-      return count;
-    });
+    return batchPurgeImpl(this, '/attachment/batch/purge', ids, showLoading);
   }
 
   /**
@@ -454,13 +325,7 @@ class AttachmentApi {
    */
   @Log
   erase(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/attachment/${stringifyId(id)}/erase`)
-      .then(() => logger.info('Successfully erase the Attachment by ID:', id));
+    return eraseImpl(this, '/attachment/{id}/erase', id, showLoading);
   }
 
   /**
@@ -476,18 +341,7 @@ class AttachmentApi {
    */
   @Log
   batchErase(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/attachment/batch/erase', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch erase %d Attachment(s).', count);
-      return count;
-    });
+    return batchEraseImpl(this, '/attachment/batch/erase', ids, showLoading);
   }
 }
 

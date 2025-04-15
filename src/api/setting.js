@@ -6,36 +6,42 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { toJSON } from '@qubit-ltd/common-decorator';
-import {
-  Setting,
-  CommonMimeType,
-} from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('SettingApi');
-
-const SETTING_CRITERIA_DEFINITIONS = [
-  { name: 'name', type: String },
-  { name: 'readonly', type: Boolean },
-  { name: 'nullable', type: Boolean },
-  { name: 'multiple', type: Boolean },
-  { name: 'encrypted', type: Boolean },
-];
+import { Setting } from '@qubit-ltd/common-model';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import exportImpl from './impl/export-impl';
+import { getImpl } from './impl/get-impl';
+import importImpl from './impl/import-impl';
+import { listImpl } from './impl/list-impl';
+import { updatePropertyImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Setting`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class SettingApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Setting;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    { name: 'name', type: String },
+    { name: 'readonly', type: Boolean },
+    { name: 'nullable', type: Boolean },
+    { name: 'multiple', type: Boolean },
+    { name: 'encrypted', type: Boolean },
+  ];
+
   /**
    * 列出符合条件的`Setting`对象。
    *
@@ -60,26 +66,7 @@ class SettingApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, SETTING_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Setting);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/setting', {
-      params,
-    }).then((obj) => {
-      const page = Setting.createPage(obj, assignOptions);
-      logger.info('Successfully list the Setting.');
-      logger.debug('The page of Setting is:', page);
-      return page;
-    });
+    return listImpl(this, '/setting', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -95,17 +82,7 @@ class SettingApi {
    */
   @Log
   get(name, showLoading = true) {
-    checkArgumentType('name', name, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/setting/${name}`).then((obj) => {
-      const result = Setting.create(obj, assignOptions);
-      logger.info('Successfully get the Setting:', name);
-      logger.debug('The Setting is:', result);
-      return result;
-    });
+    return getImpl(this, '/setting/{id}', name, showLoading);
   }
 
   /**
@@ -121,18 +98,7 @@ class SettingApi {
    */
   @Log
   add(setting, showLoading = true) {
-    checkArgumentType('setting', setting, [Setting, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(setting, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/setting', data).then((obj) => {
-      const result = Setting.create(obj, assignOptions);
-      logger.info('Successfully add the Setting:', result.id);
-      logger.debug('The added Setting is:', result);
-      return result;
-    });
+    return addImpl(this, '/setting', setting, showLoading);
   }
 
   /**
@@ -150,17 +116,7 @@ class SettingApi {
    */
   @Log
   update(name, value, showLoading = true) {
-    checkArgumentType('name', name, String);
-    checkArgumentType('value', value, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(value, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/setting/${name}`, data).then((timestamp) => {
-      logger.info('Successfully update the Setting "%s" at:', name, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/setting/{id}', name, 'value', String, value, showLoading);
   }
 
   /**
@@ -189,22 +145,7 @@ class SettingApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, SETTING_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Setting);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/setting/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Setting to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/setting/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -233,22 +174,7 @@ class SettingApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, SETTING_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Setting);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.JSON;
-    return http.download('/setting/export/json', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Setting to JSON:', result);
-      return result;
-    });
+    return exportImpl(this, '/setting/export/json', 'JSON', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -277,22 +203,7 @@ class SettingApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, SETTING_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Setting);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.EXCEL;
-    return http.download('/setting/export/excel', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Setting to Excel:', result);
-      return result;
-    });
+    return exportImpl(this, '/setting/export/excel', 'EXCEL', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -321,22 +232,7 @@ class SettingApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, SETTING_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Setting);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.CSV;
-    return http.download('/setting/export/csv', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Setting to CSV:', result);
-      return result;
-    });
+    return exportImpl(this, '/setting/export/csv', 'CSV', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -357,25 +253,7 @@ class SettingApi {
    */
   @Log
   importXml(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, [File, Blob]);
-    checkArgumentType('parallel', parallel, Boolean);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', String(parallel));
-    }
-    if (threads !== null) {
-      formData.append('threads', String(threads));
-    }
-    if (showLoading) {
-      loading.showUploading();
-    }
-    return http.post('/setting/import/xml', formData).then((count) => {
-      logger.info('Successfully import %d Settings from the XML file.', count);
-      return count;
-    });
+    return importImpl(this, '/setting/import/xml', 'XML', file, parallel, threads, showLoading);
   }
 
   /**
@@ -396,25 +274,7 @@ class SettingApi {
    */
   @Log
   importJson(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, [File, Blob]);
-    checkArgumentType('parallel', parallel, Boolean);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', String(parallel));
-    }
-    if (threads !== null) {
-      formData.append('threads', String(threads));
-    }
-    if (showLoading) {
-      loading.showUploading();
-    }
-    return http.post('/setting/import/json', formData).then((count) => {
-      logger.info('Successfully import %d Settings from the JSON file.', count);
-      return count;
-    });
+    return importImpl(this, '/setting/import/json', 'JSON', file, parallel, threads, showLoading);
   }
 
   /**
@@ -435,25 +295,7 @@ class SettingApi {
    */
   @Log
   importExcel(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, [File, Blob]);
-    checkArgumentType('parallel', parallel, Boolean);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', String(parallel));
-    }
-    if (threads !== null) {
-      formData.append('threads', String(threads));
-    }
-    if (showLoading) {
-      loading.showUploading();
-    }
-    return http.post('/setting/import/excel', formData).then((count) => {
-      logger.info('Successfully import %d Settings from the Excel file.', count);
-      return count;
-    });
+    return importImpl(this, '/setting/import/excel', 'EXCEL', file, parallel, threads, showLoading);
   }
 
   /**
@@ -474,25 +316,7 @@ class SettingApi {
    */
   @Log
   importCsv(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, [File, Blob]);
-    checkArgumentType('parallel', parallel, Boolean);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', String(parallel));
-    }
-    if (threads !== null) {
-      formData.append('threads', String(threads));
-    }
-    if (showLoading) {
-      loading.showUploading();
-    }
-    return http.post('/setting/import/csv', formData).then((count) => {
-      logger.info('Successfully import %d Settings from the CSV file.', count);
-      return count;
-    });
+    return importImpl(this, '/setting/import/csv', 'CSV', file, parallel, threads, showLoading);
   }
 }
 

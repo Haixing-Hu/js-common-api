@@ -6,73 +6,132 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   Attachment,
   Contact,
-  CommonMimeType,
   InfoWithEntity,
   Person,
   PersonInfo,
 } from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('PersonApi');
-
-const PERSON_CRITERIA_DEFINITIONS = [
-  { name: 'name', type: String },
-  { name: 'username', type: String },
-  { name: 'gender', type: [Object, String] },
-  { name: 'birthdayStart', type: String },
-  { name: 'birthdayEnd', type: String },
-  { name: 'credentialType', type: [Object, String] },
-  { name: 'credentialNumber', type: String },
-  { name: 'hasMedicare', type: Boolean },
-  { name: 'medicareType', type: [Object, String] },
-  { name: 'medicareCityId', type: [String, Number, BigInt] },
-  { name: 'medicareCityCode', type: String },
-  { name: 'medicareCityName', type: String },
-  { name: 'hasSocialSecurity', type: Boolean },
-  { name: 'socialSecurityCityId', type: [String, Number, BigInt] },
-  { name: 'socialSecurityCityCode', type: String },
-  { name: 'socialSecurityCityName', type: String },
-  { name: 'sourceId', type: [String, Number, BigInt] },
-  { name: 'sourceCode', type: String },
-  { name: 'sourceName', type: String },
-  { name: 'categoryId', type: [String, Number, BigInt] },
-  { name: 'categoryCode', type: String },
-  { name: 'categoryName', type: String },
-  { name: 'phone', type: String },
-  { name: 'mobile', type: String },
-  { name: 'email', type: String },
-  { name: 'guardianId', type: [String, Number, BigInt] },
-  { name: 'organizationId', type: [String, Number, BigInt] },
-  { name: 'organizationCode', type: String },
-  { name: 'organizationName', type: String },
-  { name: 'test', type: Boolean },
-  { name: 'deleted', type: Boolean },
-  { name: 'createTimeStart', type: String },
-  { name: 'createTimeEnd', type: String },
-  { name: 'modifyTimeStart', type: String },
-  { name: 'modifyTimeEnd', type: String },
-  { name: 'deleteTimeStart', type: String },
-  { name: 'deleteTimeEnd', type: String },
-];
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { deleteImpl } from './impl/delete-impl';
+import exportImpl from './impl/export-impl';
+import {
+  getByKeyImpl,
+  getImpl,
+  getInfoByKeyImpl,
+  getInfoImpl,
+  getPropertyImpl,
+} from './impl/get-impl';
+import { listImpl, listInfoImpl } from './impl/list-impl';
+import { purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { restoreImpl } from './impl/restore-impl';
+import { updateImpl, updatePropertyImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Person`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class PersonApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Person;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = PersonInfo;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    // 姓名中应包含的字符串
+    { name: 'name', type: String },
+    // 对应的用户的用户名
+    { name: 'username', type: String },
+    // 性别
+    { name: 'gender', type: [Object, String] },
+    // 生日范围的（闭区间）起始值
+    { name: 'birthdayStart', type: String },
+    // 生日范围的（闭区间）结束值
+    { name: 'birthdayEnd', type: String },
+    // 证件类型
+    { name: 'credentialType', type: [Object, String] },
+    // 证件号码
+    { name: 'credentialNumber', type: String },
+    // 是否有医保
+    { name: 'hasMedicare', type: Boolean },
+    // 医保类型
+    { name: 'medicareType', type: [Object, String] },
+    // 医保所在城市的ID
+    { name: 'medicareCityId', type: [String, Number, BigInt] },
+    // 医保所在城市的编码
+    { name: 'medicareCityCode', type: String },
+    // 医保所在城市名称中应包含的字符串
+    { name: 'medicareCityName', type: String },
+    // 是否有社保
+    { name: 'hasSocialSecurity', type: Boolean },
+    // 社保所在城市的ID
+    { name: 'socialSecurityCityId', type: [String, Number, BigInt] },
+    // 社保所在城市的编码
+    { name: 'socialSecurityCityCode', type: String },
+    // 社保所在城市名称中应包含的字符串
+    { name: 'socialSecurityCityName', type: String },
+    // 数据来源渠道的ID
+    { name: 'sourceId', type: [String, Number, BigInt] },
+    // 数据来源渠道的编码
+    { name: 'sourceCode', type: String },
+    // 数据来源渠道的名称中应包含的字符串
+    { name: 'sourceName', type: String },
+    // 所属类别的ID
+    { name: 'categoryId', type: [String, Number, BigInt] },
+    // 所属类别的编码
+    { name: 'categoryCode', type: String },
+    // 所属类别的名称包含的字符串
+    { name: 'categoryName', type: String },
+    // 座机号码
+    { name: 'phone', type: String },
+    // 手机号码
+    { name: 'mobile', type: String },
+    // 电子邮件地址中应包含的字符串
+    { name: 'email', type: String },
+    // 监护人的ID
+    { name: 'guardianId', type: [String, Number, BigInt] },
+    // 所属机构的ID
+    { name: 'organizationId', type: [String, Number, BigInt] },
+    // 所属机构的编码
+    { name: 'organizationCode', type: String },
+    // 所属机构名称中应包含的字符串
+    { name: 'organizationName', type: String },
+    // 是否是测试数据
+    { name: 'test', type: Boolean },
+    // 是否已经被标记删除
+    { name: 'deleted', type: Boolean },
+    // 创建时间范围的（闭区间）起始值
+    { name: 'createTimeStart', type: String },
+    // 创建时间范围的（闭区间）结束值
+    { name: 'createTimeEnd', type: String },
+    // 修改时间范围的（闭区间）起始值
+    { name: 'modifyTimeStart', type: String },
+    // 修改时间范围的（闭区间）结束值
+    { name: 'modifyTimeEnd', type: String },
+    // 标记删除时间范围的（闭区间）起始值
+    { name: 'deleteTimeStart', type: String },
+    // 标记删除时间范围的（闭区间）结束值
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Person`对象。
    *
@@ -131,28 +190,7 @@ class PersonApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, PERSON_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Person);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-      transformUrls,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/person', {
-      params,
-    }).then((obj) => {
-      const page = Person.createPage(obj, assignOptions);
-      logger.info('Successfully list the Person.');
-      logger.debug('The page of Person is:', page);
-      return page;
-    });
+    return listImpl(this, '/person', pageRequest, criteria, sortRequest, showLoading, { transformUrls });
   }
 
   /**
@@ -211,26 +249,7 @@ class PersonApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, PERSON_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Person);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/person/info', {
-      params,
-    }).then((obj) => {
-      const page = PersonInfo.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of Person.');
-      logger.debug('The page of infos of Person is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/person/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -248,19 +267,7 @@ class PersonApi {
    */
   @Log
   get(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/person/${stringifyId(id)}`, { params }).then((obj) => {
-      const person = Person.create(obj, assignOptions);
-      logger.info('Successfully get the Person by ID:', id);
-      logger.debug('The Person is:', person);
-      return person;
-    });
+    return getImpl(this, '/person/{id}', id, showLoading, { transformUrls });
   }
 
   /**
@@ -278,19 +285,7 @@ class PersonApi {
    */
   @Log
   getByUsername(username, transformUrls = true, showLoading = true) {
-    checkArgumentType('username', username, String);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/person/username/${username}`, { params }).then((obj) => {
-      const person = Person.create(obj, assignOptions);
-      logger.info('Successfully get the Person by username:', username);
-      logger.debug('The Person is:', person);
-      return person;
-    });
+    return getByKeyImpl(this, '/person/username/{username}', 'username', username, showLoading, { transformUrls });
   }
 
   /**
@@ -306,17 +301,7 @@ class PersonApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/person/${stringifyId(id)}/info`).then((obj) => {
-      const info = PersonInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Person by ID:', id);
-      logger.debug('The info of the Person is:', info);
-      return info;
-    });
+    return getInfoImpl(this, '/person/{id}/info', id, showLoading);
   }
 
   /**
@@ -332,17 +317,7 @@ class PersonApi {
    */
   @Log
   getInfoByUsername(username, showLoading = true) {
-    checkArgumentType('username', username, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/person/username/${username}/info`).then((obj) => {
-      const info = PersonInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Person by username:', username);
-      logger.debug('The info of the Person is:', info);
-      return info;
-    });
+    return getInfoByKeyImpl(this, '/person/username/{username}/info', 'username', username, showLoading);
   }
 
   /**
@@ -359,17 +334,7 @@ class PersonApi {
    */
   @Log
   getCategory(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/person/${stringifyId(id)}/category`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the category of the Person by ID:', id);
-      logger.debug('The category of the Person is:', result);
-      return result;
-    });
+    return getPropertyImpl(this, '/person/{id}/category', 'category', InfoWithEntity, id, showLoading);
   }
 
   /**
@@ -387,25 +352,13 @@ class PersonApi {
    */
   @Log
   getPhoto(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/person/${stringifyId(id)}/photo`, { params }).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully get the photo of the Person by ID:', id);
-      logger.debug('The photo of the Person is:', result);
-      return result;
-    });
+    return getPropertyImpl(this, '/person/{id}/photo', 'photo', Attachment, id, showLoading, { transformUrls });
   }
 
   /**
    * 添加一个`Person`对象。
    *
-   * @param {Person|object} person
+   * @param {Person|object} entity
    *     要添加的`Person`对象。
    * @param {boolean} withUser
    *     是否同时添加新`Person`对象所绑定的用户对象`User`。默认值为`false`。
@@ -418,28 +371,14 @@ class PersonApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(person, withUser = false, transformUrls = true, showLoading = true) {
-    checkArgumentType('person', person, [Person, Object]);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser, transformUrls }, toJsonOptions);
-    const data = toJSON(person, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/person', data, { params }).then((obj) => {
-      const person = Person.create(obj, assignOptions);
-      logger.info('Successfully add the Person:', person.id);
-      logger.debug('The added Person is:', person);
-      return person;
-    });
+  add(entity, withUser = false, transformUrls = true, showLoading = true) {
+    return addImpl(this, '/person', entity, showLoading, { withUser, transformUrls });
   }
 
   /**
    * 根据ID，更新一个`Person`对象。
    *
-   * @param {Person|object} person
+   * @param {Person|object} entity
    *     要更新的`Person`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Person`对象所绑定的用户对象`User`。默认值为`false`。
@@ -450,23 +389,8 @@ class PersonApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(person, withUser = false, showLoading = true) {
-    checkArgumentType('person', person, [Person, Object]);
-    checkIdArgumentType(person.id, 'person.id');
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(person.id);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(person, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/person/${id}`, data, { params }).then((obj) => {
-      const person = Person.create(obj, assignOptions);
-      logger.info('Successfully update the Person by ID %s at:', id, person.modifyTime);
-      logger.debug('The updated Person is:', person);
-      return person;
-    });
+  update(entity, withUser = false, showLoading = true) {
+    return updateImpl(this, '/person/{id}', entity, showLoading, { withUser });
   }
 
   /**
@@ -486,19 +410,7 @@ class PersonApi {
    */
   @Log
   updateContact(id, contact, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('contact', contact, [Contact, Object]);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(contact, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/person/${stringifyId(id)}/contact`, data, { params }).then((timestamp) => {
-      logger.info('Successfully update the Contact of a Person by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/person/{id}/contact', id, 'contact', Contact, contact, showLoading, { withUser });
   }
 
   /**
@@ -518,19 +430,7 @@ class PersonApi {
    */
   @Log
   updateComment(id, comment, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('comment', comment, String);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(comment, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/person/${stringifyId(id)}/comment`, data, { params }).then((timestamp) => {
-      logger.info('Successfully update the comment of a Person by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/person/{id}/comment', id, 'comment', String, comment, showLoading, { withUser });
   }
 
   /**
@@ -551,21 +451,7 @@ class PersonApi {
    */
   @Log
   updatePhoto(id, photo, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('photo', photo, [Attachment, Object]);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    const data = toJSON(photo, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/person/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully update the photo of the Person by ID:', id);
-      logger.debug('The updated photo of the Person is:', result);
-      return result;
-    });
+    return updatePropertyImpl(this, '/person/{id}/photo', id, 'photo', Attachment, photo, showLoading, { transformUrls });
   }
 
   /**
@@ -583,17 +469,7 @@ class PersonApi {
    */
   @Log
   delete(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/person/${stringifyId(id)}`, { params }).then((timestamp) => {
-      logger.info('Successfully delete the Person by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/person/{id}', id, showLoading, { withUser });
   }
 
   /**
@@ -613,15 +489,7 @@ class PersonApi {
    */
   @Log
   restore(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/person/${stringifyId(id)}`, undefined, { params })
-      .then(() => logger.info('Successfully restore the Person by ID:', id));
+    return restoreImpl(this, '/person/{id}', id, showLoading, { withUser });
   }
 
   /**
@@ -641,19 +509,11 @@ class PersonApi {
    */
   @Log
   purge(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/person/${stringifyId(id)}/purge`, { params })
-      .then(() => logger.info('Successfully purge the Person by ID:', id));
+    return purgeImpl(this, '/person/{id}/purge', id, showLoading, { withUser });
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Person`对象。
+   * 彻底清除全部已被标记删除的`Person`对象。
    *
    * @param {boolean} withUser
    *     是否同时彻底清除所有已被标记删除的`Person`对象所绑定的已被标记标记删除的用户对象`User`。
@@ -667,66 +527,18 @@ class PersonApi {
    */
   @Log
   purgeAll(withUser = false, showLoading = true) {
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/person/purge', { params })
-      .then(() => logger.info('Successfully purge all deleted Person.'));
+    return purgeAllImpl(this, '/person/purge', showLoading, { withUser });
   }
 
   /**
    * 导出符合条件的`Person`对象为XML文件。
    *
    * @param {object} criteria
-   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *  - `name: string` 姓名中应包含的字符串；
-   *  - `username: string` 对应的用户的用户名；
-   *  - `gender: Gender|string` 性别；
-   *  - `birthdayStart: string` 生日范围的（闭区间）起始值；
-   *  - `birthdayEnd: string` 生日范围的（闭区间）结束值；
-   *  - `credentialType: CredentialType|string` 证件类型；
-   *  - `credentialNumber: string` 证件号码；
-   *  - `hasMedicare: boolean` 是否有医保；
-   *  - `medicareType: MedicareType|string` 医保类型；
-   *  - `medicareCityId: string|number|bigint` 医保所在城市的ID；
-   *  - `medicareCityCode: string` 医保所在城市的编码；
-   *  - `medicareCityName: string` 医保所在城市名称中应包含的字符串；
-   *  - `hasSocialSecurity: boolean` 是否有社保；
-   *  - `socialSecurityCityId: string|number|bigint` 社保所在城市的ID；
-   *  - `socialSecurityCityCode: string` 社保所在城市的编码；
-   *  - `socialSecurityCityName: string` 社保所在城市名称中应包含的字符串；
-   *  - `sourceId: string|number|bigint` 数据来源渠道的ID；
-   *  - `sourceCode: string` 数据来源渠道的编码；
-   *  - `sourceName: string` 数据来源渠道的名称中应包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
-   *  - `phone: string` 座机号码；
-   *  - `mobile: string` 手机号码；
-   *  - `email: string` 电子邮件地址中应包含的字符串；
-   *  - `guardianId: string|number|bigint` 监护人的ID；
-   *  - `organizationId: string|number|bigint` 所属机构的ID；
-   *  - `organizationCode: string` 所属机构的编码；
-   *  - `organizationName: string` 所属机构名称中应包含的字符串；
-   *  - `test: boolean` 是否是测试数据；
-   *  - `deleted: boolean` 是否已经被标记删除；
-   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
-   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
-   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
-   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
-   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
-   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   *     查询条件参数，所有条件之间用`AND`连接。
    * @param {object} sortRequest
-   *     排序参数，指定按照哪个属性排序。允许的条件包括：
-   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
-   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   *     排序参数，指定按照哪个属性排序。
    * @param {boolean} autoDownload
    *     是否自动下载文件。默认值为`true`。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<string|null|ErrorInfo>}
@@ -737,22 +549,7 @@ class PersonApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, PERSON_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Person);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/person/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Person to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/person/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 }
 

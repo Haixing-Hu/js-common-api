@@ -6,61 +6,102 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
-import { Category, InfoWithEntity, CommonMimeType } from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('CategoryApi');
-
-/**
- * Category 类的查询条件定义
- *
- * @type {Array<Object>}
- */
-const CATEGORY_CRITERIA_DEFINITIONS = [
-  // 所属实体名称
-  { name: 'entity', type: String },
-  // 名称中应包含的字符串
-  { name: 'name', type: String },
-  // 所属父类别的ID
-  { name: 'parentId', type: [String, Number, BigInt] },
-  // 所属父类别的编码
-  { name: 'parentCode', type: String },
-  // 所属父类别名称中应包含的字符串
-  { name: 'parentName', type: String },
-  // 是否是预定义数据
-  { name: 'predefined', type: Boolean },
-  // 是否已经被标记删除
-  { name: 'deleted', type: Boolean },
-  // 创建时间范围的（闭区间）起始值
-  { name: 'createTimeStart', type: String },
-  // 创建时间范围的（闭区间）结束值
-  { name: 'createTimeEnd', type: String },
-  // 修改时间范围的（闭区间）起始值
-  { name: 'modifyTimeStart', type: String },
-  // 修改时间范围的（闭区间）结束值
-  { name: 'modifyTimeEnd', type: String },
-  // 标记删除时间范围的（闭区间）起始值
-  { name: 'deleteTimeStart', type: String },
-  // 标记删除时间范围的（闭区间）结束值
-  { name: 'deleteTimeEnd', type: String },
-];
+import { Category, InfoWithEntity } from '@qubit-ltd/common-model';
+import { Log, HasLogger } from '@qubit-ltd/logging';
+import {
+  listImpl,
+  listInfoImpl,
+} from './impl/list-impl';
+import {
+  getImpl,
+  getByKeyImpl,
+  getInfoImpl,
+  getInfoByKeyImpl,
+} from './impl/get-impl';
+import addImpl from './impl/add-impl';
+import {
+  updateImpl,
+  updateByKeyImpl,
+} from './impl/update-impl';
+import {
+  deleteImpl,
+  deleteByKeyImpl,
+  batchDeleteImpl,
+} from './impl/delete-impl';
+import {
+  restoreImpl,
+  restoreByKeyImpl,
+  batchRestoreImpl,
+} from './impl/restore-impl';
+import {
+  purgeImpl,
+  purgeByKeyImpl,
+  purgeAllImpl,
+  batchPurgeImpl,
+} from './impl/purge-impl';
+import {
+  eraseImpl,
+  eraseByKeyImpl,
+  batchEraseImpl,
+} from './impl/erase-impl';
+import exportImpl from './impl/export-impl';
+import importImpl from './impl/import-impl';
 
 /**
  * 提供管理`Category`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class CategoryApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Category;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = InfoWithEntity;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    // 所属实体名称
+    { name: 'entity', type: String },
+    // 名称中应包含的字符串
+    { name: 'name', type: String },
+    // 所属父类别的ID
+    { name: 'parentId', type: [String, Number, BigInt] },
+    // 所属父类别的编码
+    { name: 'parentCode', type: String },
+    // 所属父类别名称中应包含的字符串
+    { name: 'parentName', type: String },
+    // 是否是预定义数据
+    { name: 'predefined', type: Boolean },
+    // 是否已经被标记删除
+    { name: 'deleted', type: Boolean },
+    // 创建时间范围的（闭区间）起始值
+    { name: 'createTimeStart', type: String },
+    // 创建时间范围的（闭区间）结束值
+    { name: 'createTimeEnd', type: String },
+    // 修改时间范围的（闭区间）起始值
+    { name: 'modifyTimeStart', type: String },
+    // 修改时间范围的（闭区间）结束值
+    { name: 'modifyTimeEnd', type: String },
+    // 标记删除时间范围的（闭区间）起始值
+    { name: 'deleteTimeStart', type: String },
+    // 标记删除时间范围的（闭区间）结束值
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Category`对象。
    *
@@ -93,26 +134,7 @@ class CategoryApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Category);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/category', {
-      params,
-    }).then((obj) => {
-      const page = Category.createPage(obj, assignOptions);
-      logger.info('Successfully list the Category.');
-      logger.debug('The page of Category is:', page);
-      return page;
-    });
+    return listImpl(this, '/category', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -147,30 +169,11 @@ class CategoryApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Category);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/category/info', {
-      params,
-    }).then((obj) => {
-      const page = InfoWithEntity.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of Category.');
-      logger.debug('The page of infos of Category is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/category/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
-   * 获取指定的`Category`对象。
+   * 根据ID，获取指定的`Category`对象。
    *
    * @param {string|number|bigint} id
    *     `Category`对象的ID。
@@ -182,21 +185,11 @@ class CategoryApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/category/${stringifyId(id)}`).then((obj) => {
-      const result = Category.create(obj, assignOptions);
-      logger.info('Successfully get the Category by ID:', id);
-      logger.debug('The Category is:', result);
-      return result;
-    });
+    return getImpl(this, '/category/{id}', id, showLoading);
   }
 
   /**
-   * 获取指定的`Category`对象。
+   * 根据代码，获取指定的`Category`对象。
    *
    * @param {string} code
    *     `Category`对象的编码。
@@ -208,21 +201,11 @@ class CategoryApi {
    */
   @Log
   getByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/category/code/${code}`).then((obj) => {
-      const result = Category.create(obj, assignOptions);
-      logger.info('Successfully get the Category by code:', code);
-      logger.debug('The Category is:', result);
-      return result;
-    });
+    return getByKeyImpl(this, '/category/code/{code}', 'code', code, showLoading);
   }
 
   /**
-   * 获取指定的`Category`对象的基本信息。
+   * 根据ID，获取指定的`Category`对象的基本信息。
    *
    * @param {string|number|bigint} id
    *     `Category`对象的ID。
@@ -234,21 +217,11 @@ class CategoryApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/category/${stringifyId(id)}/info`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Category by ID:', id);
-      logger.debug('The info of the Category is:', result);
-      return result;
-    });
+    return getInfoImpl(this, '/category/{id}/info', id, showLoading);
   }
 
   /**
-   * 获取指定的`Category`对象的基本信息。
+   * 根据代码，获取指定的`Category`对象的基本信息。
    *
    * @param {string} code
    *     `Category`对象的编码。
@@ -260,23 +233,13 @@ class CategoryApi {
    */
   @Log
   getInfoByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/category/code/${code}/info`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Category by code:', code);
-      logger.debug('The info of the Category is:', result);
-      return result;
-    });
+    return getInfoByKeyImpl(this, '/category/code/{code}/info', 'code', code, showLoading);
   }
 
   /**
    * 添加一个`Category`对象。
    *
-   * @param {Category|object} category
+   * @param {Category|object} entity
    *     要添加的`Category`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -285,25 +248,14 @@ class CategoryApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(category, showLoading = true) {
-    checkArgumentType('category', category, [Category, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(category, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/category', data).then((obj) => {
-      const result = Category.create(obj, assignOptions);
-      logger.info('Successfully add the Category:', result.id);
-      logger.debug('The added Category is:', result);
-      return result;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/category', entity, showLoading);
   }
 
   /**
    * 根据ID，更新一个`Category`对象。
    *
-   * @param {Category} category
+   * @param {Category|object} entity
    *     要更新的`Category`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -312,27 +264,14 @@ class CategoryApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(category, showLoading = true) {
-    checkArgumentType('category', category, [Category, Object]);
-    checkIdArgumentType(category.id, 'category.id');
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(category.id);
-    const data = toJSON(category, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/category/${id}`, data).then((obj) => {
-      const result = Category.create(obj, assignOptions);
-      logger.info('Successfully update the Category by ID %s at:', id, result.modifyTime);
-      logger.debug('The updated Category is:', result);
-      return result;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/category/{id}', entity, showLoading);
   }
 
   /**
    * 根据编码，更新一个`Category`对象。
    *
-   * @param {Category} category
+   * @param {Category} entity
    *     要更新的`Category`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -341,20 +280,8 @@ class CategoryApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(category, showLoading = true) {
-    checkArgumentType('category', category, [Category, Object]);
-    checkArgumentType('category.code', category.code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(category, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/category/code/${category.code}`, data).then((obj) => {
-      const result = Category.create(obj, assignOptions);
-      logger.info('Successfully update the Category by code "%s" at:', result.code, result.modifyTime);
-      logger.debug('The updated Category is:', result);
-      return result;
-    });
+  updateByCode(entity, showLoading = true) {
+    return updateByKeyImpl(this, '/category/code/{code}', 'code', entity, showLoading);
   }
 
   /**
@@ -370,15 +297,7 @@ class CategoryApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/category/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the Category by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/category/{id}', id, showLoading);
   }
 
   /**
@@ -394,15 +313,7 @@ class CategoryApi {
    */
   @Log
   deleteByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/category/code/${code}`).then((timestamp) => {
-      logger.info('Successfully delete the Category by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return deleteByKeyImpl(this, '/category/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -418,18 +329,7 @@ class CategoryApi {
    */
   @Log
   batchDelete(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete('/category/batch', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch delete %d Category(s).', count);
-      return count;
-    });
+    return batchDeleteImpl(this, '/category/batch', ids, showLoading);
   }
 
   /**
@@ -445,13 +345,7 @@ class CategoryApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/category/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the Category by ID:', id));
+    return restoreImpl(this, '/category/{id}', id, showLoading);
   }
 
   /**
@@ -467,13 +361,7 @@ class CategoryApi {
    */
   @Log
   restoreByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/category/code/${code}`)
-      .then(() => logger.info('Successfully restore the Category by code:', code));
+    return restoreByKeyImpl(this, '/category/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -489,16 +377,7 @@ class CategoryApi {
    */
   @Log
   batchRestore(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch('/category/batch', data).then((count) => {
-      logger.info('Successfully batch restore %d Category(s).', count);
-      return count;
-    });
+    return batchRestoreImpl(this, '/category/batch', ids, showLoading);
   }
 
   /**
@@ -514,13 +393,7 @@ class CategoryApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/category/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the Category by ID:', id));
+    return purgeImpl(this, '/category/{id}/purge', id, showLoading);
   }
 
   /**
@@ -536,17 +409,11 @@ class CategoryApi {
    */
   @Log
   purgeByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/category/code/${code}/purge`)
-      .then(() => logger.info('Successfully purge the Category by code:', code));
+    return purgeByKeyImpl(this, '/category/code/{code}/purge', 'code', code, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Category`对象。
+   * 彻底清除全部已被标记删除的`Category`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -556,12 +423,7 @@ class CategoryApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/category/purge')
-      .then(() => logger.info('Successfully purge all deleted Category.'));
+    return purgeAllImpl(this, '/category/purge', showLoading);
   }
 
   /**
@@ -577,18 +439,7 @@ class CategoryApi {
    */
   @Log
   batchPurge(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/category/batch/purge', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch purge %d Category(s).', count);
-      return count;
-    });
+    return batchPurgeImpl(this, '/category/batch/purge', ids, showLoading);
   }
 
   /**
@@ -604,13 +455,7 @@ class CategoryApi {
    */
   @Log
   erase(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/category/${stringifyId(id)}/erase`)
-      .then(() => logger.info('Successfully erase the Category by ID:', id));
+    return eraseImpl(this, '/category/{id}/erase', id, showLoading);
   }
 
   /**
@@ -626,13 +471,7 @@ class CategoryApi {
    */
   @Log
   eraseByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/category/code/${code}/erase`)
-      .then(() => logger.info('Successfully erase the Category by code:', code));
+    return eraseByKeyImpl(this, '/category/code/{code}/erase', 'code', code, showLoading);
   }
 
   /**
@@ -648,170 +487,7 @@ class CategoryApi {
    */
   @Log
   batchErase(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/category/batch/erase', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch erase %d Category(s).', count);
-      return count;
-    });
-  }
-
-  /**
-   * 从XML文件导入`Category`对象。
-   *
-   * @param {File} file
-   *     要导入的XML文件。
-   * @param {boolean} parallel
-   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
-   * @param {number} threads
-   *     并行导入的线程数。若`parallel`为`false`，此参数无效。默认值为`null`，表示使用默认线程数。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
-   * @return {Promise<number|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
-   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
-   */
-  @Log
-  importXml(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showImporting();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', parallel);
-    }
-    if (threads !== null) {
-      formData.append('threads', threads);
-    }
-    return http.post('/category/import/xml', formData).then((count) => {
-      logger.info('Successfully import %d Category(s) from XML file.', count);
-      return count;
-    });
-  }
-
-  /**
-   * 从JSON文件导入`Category`对象。
-   *
-   * @param {File} file
-   *     要导入的JSON文件。
-   * @param {boolean} parallel
-   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
-   * @param {number} threads
-   *     并行导入的线程数。若`parallel`为`false`，此参数无效。默认值为`null`，表示使用默认线程数。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
-   * @return {Promise<number|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
-   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
-   */
-  @Log
-  importJson(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showImporting();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', parallel);
-    }
-    if (threads !== null) {
-      formData.append('threads', threads);
-    }
-    return http.post('/category/import/json', formData).then((count) => {
-      logger.info('Successfully import %d Category(s) from JSON file.', count);
-      return count;
-    });
-  }
-
-  /**
-   * 从Excel文件导入`Category`对象。
-   *
-   * @param {File} file
-   *     要导入的Excel文件。
-   * @param {boolean} parallel
-   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
-   * @param {number} threads
-   *     并行导入的线程数。若`parallel`为`false`，此参数无效。默认值为`null`，表示使用默认线程数。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
-   * @return {Promise<number|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
-   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
-   */
-  @Log
-  importExcel(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showImporting();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', parallel);
-    }
-    if (threads !== null) {
-      formData.append('threads', threads);
-    }
-    return http.post('/category/import/excel', formData).then((count) => {
-      logger.info('Successfully import %d Category(s) from Excel file.', count);
-      return count;
-    });
-  }
-
-  /**
-   * 从CSV文件导入`Category`对象。
-   *
-   * @param {File} file
-   *     要导入的CSV文件。
-   * @param {boolean} parallel
-   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
-   * @param {number} threads
-   *     并行导入的线程数。若`parallel`为`false`，此参数无效。默认值为`null`，表示使用默认线程数。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
-   * @return {Promise<number|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
-   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
-   */
-  @Log
-  importCsv(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showImporting();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    if (parallel !== null) {
-      formData.append('parallel', parallel);
-    }
-    if (threads !== null) {
-      formData.append('threads', threads);
-    }
-    return http.post('/category/import/csv', formData).then((count) => {
-      logger.info('Successfully import %d Category(s) from CSV file.', count);
-      return count;
-    });
+    return batchEraseImpl(this, '/category/batch/erase', ids, showLoading);
   }
 
   /**
@@ -848,22 +524,7 @@ class CategoryApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Category);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/category/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Category to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/category/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -900,22 +561,7 @@ class CategoryApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Category);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.JSON;
-    return http.download('/category/export/json', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Category to JSON:', result);
-      return result;
-    });
+    return exportImpl(this, '/category/export/json', 'JSON', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -952,22 +598,7 @@ class CategoryApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Category);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.EXCEL;
-    return http.download('/category/export/excel', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Category to Excel:', result);
-      return result;
-    });
+    return exportImpl(this, '/category/export/excel', 'Excel', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -1004,22 +635,91 @@ class CategoryApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, CATEGORY_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Category);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.CSV;
-    return http.download('/category/export/csv', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Category to CSV:', result);
-      return result;
-    });
+    return exportImpl(this, '/category/export/csv', 'CSV', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 从XML文件导入`Category`对象。
+   *
+   * @param {File} file
+   *     XML文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importXml(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/category/import/xml', 'XML', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从JSON文件导入`Category`对象。
+   *
+   * @param {File} file
+   *     JSON文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importJson(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/category/import/json', 'JSON', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从Excel文件导入`Category`对象。
+   *
+   * @param {File} file
+   *     Excel文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importExcel(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/category/import/excel', 'Excel', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从CSV文件导入`Category`对象。
+   *
+   * @param {File} file
+   *     CSV文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Category`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importCsv(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/category/import/csv', 'CSV', file, parallel, threads, showLoading);
   }
 }
 

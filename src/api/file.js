@@ -45,7 +45,7 @@ class FileApi {
   @Log
   upload(filename, file, contentType = undefined, onUploadProgress = undefined, showLoading = true) {
     checkArgumentType('filename', filename, String);
-    checkArgumentType('file', file, [Blob, File]);
+    checkArgumentType('file', file, File);
     checkArgumentType('contentType', contentType, String, true);
     checkArgumentType('onUploadProgress', onUploadProgress, Function, true);
     const headers = {

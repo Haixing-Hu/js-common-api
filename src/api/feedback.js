@@ -1,4 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
+import { http } from '@qubit-ltd/common-app';
+import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 //
 //    Copyright (c) 2022 - 2024.
 //    Haixing Hu, Qubit Co. Ltd.
@@ -6,51 +8,62 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   Feedback,
   FeedbackAction,
+  FeedbackStatus,
   FeedbackTrack,
   FeedbackType,
-  FeedbackStatus,
-  PageRequest,
 } from '@qubit-ltd/common-model';
 import { loading } from '@qubit-ltd/common-ui';
 import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { batchDeleteImpl, deleteImpl } from './impl/delete-impl';
+import { batchEraseImpl, eraseImpl } from './impl/erase-impl';
+import { getImpl } from './impl/get-impl';
+import { listImpl } from './impl/list-impl';
 import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('FeedbackApi');
-
-const FEEDBACK_CRITERIA_DEFINITIONS = [
-  { name: 'appId', type: [String, Number, BigInt] },
-  { name: 'appCode', type: String },
-  { name: 'appName', type: String },
-  { name: 'type', type: [FeedbackType, String] },
-  { name: 'category', type: String },
-  { name: 'submitterId', type: [String, Number, BigInt] },
-  { name: 'submitterUsername', type: String },
-  { name: 'status', type: [FeedbackStatus, String] },
-  { name: 'deleted', type: Boolean },
-  { name: 'createTimeStart', type: String },
-  { name: 'createTimeEnd', type: String },
-  { name: 'modifyTimeStart', type: String },
-  { name: 'modifyTimeEnd', type: String },
-  { name: 'deleteTimeStart', type: String },
-  { name: 'deleteTimeEnd', type: String },
-];
+import { batchPurgeImpl, purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { batchRestoreImpl, restoreImpl } from './impl/restore-impl';
 
 /**
  * 提供管理`Feedback`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class FeedbackApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Feedback;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    { name: 'appId', type: [String, Number, BigInt] },
+    { name: 'appCode', type: String },
+    { name: 'appName', type: String },
+    { name: 'type', type: [FeedbackType, String] },
+    { name: 'category', type: String },
+    { name: 'submitterId', type: [String, Number, BigInt] },
+    { name: 'submitterUsername', type: String },
+    { name: 'status', type: [FeedbackStatus, String] },
+    { name: 'deleted', type: Boolean },
+    { name: 'createTimeStart', type: String },
+    { name: 'createTimeEnd', type: String },
+    { name: 'modifyTimeStart', type: String },
+    { name: 'modifyTimeEnd', type: String },
+    { name: 'deleteTimeStart', type: String },
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Feedback`对象。
    *
@@ -87,28 +100,7 @@ class FeedbackApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, FEEDBACK_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Feedback);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-      transformUrls,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/feedback', {
-      params,
-    }).then((obj) => {
-      const page = Feedback.createPage(obj, assignOptions);
-      logger.info('Successfully list the Feedback.');
-      logger.debug('The page of Feedback is:', page);
-      return page;
-    });
+    return listImpl(this, '/feedback', pageRequest, criteria, sortRequest, showLoading, { transformUrls });
   }
 
   /**
@@ -126,21 +118,7 @@ class FeedbackApi {
    */
   @Log
   get(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      transformUrls,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/feedback/${stringifyId(id)}`, { params }).then((obj) => {
-      const result = Feedback.create(obj, assignOptions);
-      logger.info('Successfully get the Feedback by ID:', id);
-      logger.debug('The Feedback is:', result);
-      return result;
-    });
+    return getImpl(this, '/feedback/{id}', id, showLoading, { transformUrls });
   }
 
   /**
@@ -158,7 +136,7 @@ class FeedbackApi {
    */
   @Log
   getTracks(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
+    checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('transformUrls', transformUrls, Boolean);
     checkArgumentType('showLoading', showLoading, Boolean);
     const params = toJSON({
@@ -169,8 +147,8 @@ class FeedbackApi {
     }
     return http.get(`/feedback/${stringifyId(id)}/track`, { params }).then((obj) => {
       const result = FeedbackTrack.createArray(obj, assignOptions);
-      logger.info('Successfully get all tracks of Feedback by ID:', id);
-      logger.debug('The FeedbackTrack is:', result);
+      this.logger.info('Successfully get all tracks of Feedback by ID:', id);
+      this.logger.debug('The FeedbackTrack is:', result);
       return result;
     });
   }
@@ -178,7 +156,7 @@ class FeedbackApi {
   /**
    * 添加一个`Feedback`对象。
    *
-   * @param {Feedback|object} feedback
+   * @param {Feedback|object} entity
    *     要添加的`Feedback`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -187,19 +165,8 @@ class FeedbackApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(feedback, showLoading = true) {
-    checkArgumentType('feedback', feedback, [Feedback, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(feedback, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/feedback', data).then((obj) => {
-      const result = Feedback.create(obj, assignOptions);
-      logger.info('Successfully add the Feedback:', result.id);
-      logger.debug('The added Feedback is:', result);
-      return result;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/feedback', entity, showLoading);
   }
 
   /**
@@ -219,7 +186,7 @@ class FeedbackApi {
    */
   @Log
   performAction(id, action, track, showLoading = true) {
-    checkIdArgumentType(id);
+    checkArgumentType('id', id, [String, Number, BigInt]);
     checkArgumentType('action', action, [FeedbackAction, String]);
     checkArgumentType('track', track, FeedbackTrack);
     checkArgumentType('showLoading', showLoading, Boolean);
@@ -230,10 +197,152 @@ class FeedbackApi {
     }
     return http.put(url, data).then((obj) => {
       const result = FeedbackTrack.create(obj, assignOptions);
-      logger.info('Successfully perform the action %s to the Feedback:', action, id);
-      logger.debug('The added FeedbackTrack is:', result);
+      this.logger.info('Successfully perform the action %s to the Feedback:', action, id);
+      this.logger.debug('The added FeedbackTrack is:', result);
       return result;
     });
+  }
+
+  /**
+   * 标记删除指定的`Feedback`对象。
+   *
+   * @param {string|number|bigint} id
+   *     指定的`Feedback`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除时的时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  delete(id, showLoading = true) {
+    return deleteImpl(this, '/feedback/{id}', id, showLoading);
+  }
+
+  /**
+   * 批量标记删除指定的`Feedback`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     指定的`Feedback`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, showLoading = true) {
+    return batchDeleteImpl(this, '/feedback/batch', ids, showLoading);
+  }
+
+  /**
+   * 恢复指定的已被标记删除的`Feedback`对象。
+   *
+   * @param {string|number|bigint} id
+   *     指定的已被标记删除的`Feedback`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  restore(id, showLoading = true) {
+    return restoreImpl(this, '/feedback/{id}', id, showLoading);
+  }
+
+  /**
+   * 批量恢复指定的已被标记删除的`Feedback`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     指定的已被标记删除的`Feedback`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回恢复的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, showLoading = true) {
+    return batchRestoreImpl(this, '/feedback/batch', ids, showLoading);
+  }
+
+  /**
+   * 彻底清除指定的已被标记删除的`Feedback`对象。
+   *
+   * @param {string|number|bigint} id
+   *     指定的已被标记删除的`Feedback`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purge(id, showLoading = true) {
+    return purgeImpl(this, '/feedback/{id}/purge', id, showLoading);
+  }
+
+  /**
+   * 彻底清除全部已被标记删除的`Feedback`对象。
+   *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被清除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purgeAll(showLoading = true) {
+    return purgeAllImpl(this, '/feedback/purge', showLoading);
+  }
+
+  /**
+   * 批量彻底清除指定的已被标记删除的`Feedback`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     指定的已被标记删除的`Feedback`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被清除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, showLoading = true) {
+    return batchPurgeImpl(this, '/feedback/batch/purge', ids, showLoading);
+  }
+
+  /**
+   * 彻底清除指定的`Feedback`对象。
+   *
+   * @param {string|number|bigint} id
+   *     指定的`Feedback`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, showLoading = true) {
+    return eraseImpl(this, '/feedback/{id}/erase', id, showLoading);
+  }
+
+  /**
+   * 批量彻底清除指定的`Feedback`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     指定的`Feedback`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被清除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, showLoading = true) {
+    return batchEraseImpl(this, '/feedback/batch/erase', ids, showLoading);
   }
 }
 

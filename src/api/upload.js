@@ -6,41 +6,44 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
-import {
-  Upload,
-  PageRequest,
-} from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('UploadApi');
-
-// 定义 Upload 类的查询条件
-const UPLOAD_CRITERIA_DEFINITIONS = [
-  { name: 'type', type: String },
-  { name: 'deleted', type: Boolean },
-  { name: 'createTimeStart', type: String },
-  { name: 'createTimeEnd', type: String },
-  { name: 'modifyTimeStart', type: String },
-  { name: 'modifyTimeEnd', type: String },
-  { name: 'deleteTimeStart', type: String },
-  { name: 'deleteTimeEnd', type: String },
-];
+import { AttachmentType, Upload } from '@qubit-ltd/common-model';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import { deleteImpl } from './impl/delete-impl';
+import { getImpl } from './impl/get-impl';
+import { listImpl } from './impl/list-impl';
+import { purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { restoreImpl } from './impl/restore-impl';
 
 /**
  * 提供管理`Upload`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class UploadApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Upload;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    { name: 'type', type: [AttachmentType, String] },
+    { name: 'deleted', type: Boolean },
+    { name: 'createTimeStart', type: String },
+    { name: 'createTimeEnd', type: String },
+    { name: 'modifyTimeStart', type: String },
+    { name: 'modifyTimeEnd', type: String },
+    { name: 'deleteTimeStart', type: String },
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Upload`对象。
    *
@@ -48,7 +51,7 @@ class UploadApi {
    *     分页请求。
    * @param {object} criteria
    *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
-   *  - `type: string` 附件类型；
+   *  - `type: AttachmentType|string` 附件类型；
    *  - `deleted: boolean` 是否已经被标记删除；
    *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
    *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
@@ -68,26 +71,7 @@ class UploadApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, UPLOAD_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Upload);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/upload', {
-      params,
-    }).then((obj) => {
-      const page = Upload.createPage(obj, assignOptions);
-      logger.info('Successfully list the Upload.');
-      logger.debug('The page of Upload is:', page);
-      return page;
-    });
+    return listImpl(this, '/upload', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -103,17 +87,7 @@ class UploadApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/upload/${stringifyId(id)}`).then((obj) => {
-      const result = Upload.create(obj, assignOptions);
-      logger.info('Successfully get the Upload by ID:', id);
-      logger.debug('The Upload is:', result);
-      return result;
-    });
+    return getImpl(this, '/upload/{id}', id, showLoading);
   }
 
   /**
@@ -129,15 +103,7 @@ class UploadApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/upload/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the Upload by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/upload/{id}', id, showLoading);
   }
 
   /**
@@ -153,13 +119,7 @@ class UploadApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/upload/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the Upload by ID:', id));
+    return restoreImpl(this, '/upload/{id}', id, showLoading);
   }
 
   /**
@@ -175,17 +135,11 @@ class UploadApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/upload/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the Upload by ID:', id));
+    return purgeImpl(this, '/upload/{id}/purge', id, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Upload`对象。
+   * 彻底清除全部已被标记删除的`Upload`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -195,12 +149,7 @@ class UploadApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/upload/purge')
-      .then(() => logger.info('Successfully purge all deleted Upload.'));
+    return purgeAllImpl(this, '/upload/purge', showLoading);
   }
 }
 

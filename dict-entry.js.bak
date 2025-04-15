@@ -1,0 +1,1122 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+//    Copyright (c) 2022 - 2024.
+//    Haixing Hu, Qubit Co. Ltd.
+//
+//    All rights reserved.
+//
+////////////////////////////////////////////////////////////////////////////////
+import { http } from '@qubit-ltd/common-app';
+import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
+import {
+  DictEntry,
+  DictEntryInfo,
+  PageRequest,
+} from '@qubit-ltd/common-model';
+import { loading } from '@qubit-ltd/common-ui';
+import { checkArgumentType } from '@qubit-ltd/common-util';
+import { Log, Logger } from '@qubit-ltd/logging';
+import checkObjectArgument from '../utils/check-object-argument';
+import checkIdArgumentType from '../utils/check-id-argument-type';
+import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
+import checkPageRequestArgument from '../utils/check-page-request-argument';
+import checkSortRequestArgument from '../utils/check-sort-request-argument';
+import { assignOptions, toJsonOptions } from './impl/options';
+
+const logger = Logger.getLogger('DictEntryApi');
+
+const DICT_ENTRY_CRITERIA_DEFINITIONS = [
+  { name: 'name', type: String },
+  { name: 'dictId', type: [String, Number, BigInt] },
+  { name: 'dictCode', type: String },
+  { name: 'dictName', type: String },
+  { name: 'parentId', type: [String, Number, BigInt] },
+  { name: 'parentCode', type: String },
+  { name: 'parentName', type: String },
+  { name: 'deleted', type: Boolean },
+  { name: 'createTimeStart', type: String },
+  { name: 'createTimeEnd', type: String },
+  { name: 'modifyTimeStart', type: String },
+  { name: 'modifyTimeEnd', type: String },
+  { name: 'deleteTimeStart', type: String },
+  { name: 'deleteTimeEnd', type: String },
+];
+
+/**
+ * 提供管理`DictEntry`对象的API。
+ *
+ * @author 胡海星
+ */
+class DictEntryApi {
+  /**
+   * 列出符合条件的`DictEntry`对象。
+   *
+   * @param {PageRequest|object} pageRequest
+   *     分页请求。
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `dictId: string|number|bigint` 所属字典的ID；
+   *  - `dictCode: string` 所属字典的编码；
+   *  - `dictName: string` 所属字典的名称包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父字典项的ID；
+   *  - `parentCode: string` 所属父字典项的编码；
+   *  - `parentName: string` 所属父字典项名称中应包含的字符串；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Page<DictEntry>|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
+   *     件的`DictEntry`对象的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, DictEntry);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...pageRequest,
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get('/dict/entry', {
+      params,
+    }).then((obj) => {
+      const page = DictEntry.createPage(obj, assignOptions);
+      logger.info('Successfully list the DictEntry.');
+      logger.debug('The page of DictEntry is:', page);
+      return page;
+    });
+  }
+
+  /**
+   * 列出符合条件的`DictEntry`对象的基本信息。
+   *
+   * @param {PageRequest|object} pageRequest
+   *     分页请求。
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `dictId: string|number|bigint` 所属字典的ID；
+   *  - `dictCode: string` 所属字典的编码；
+   *  - `dictName: string` 所属字典的名称包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父字典项的ID；
+   *  - `parentCode: string` 所属父字典项的编码；
+   *  - `parentName: string` 所属父字典项名称中应包含的字符串；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Page<DictEntryInfo>|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Page`对象，包含符合条
+   *     件的`DictEntry`对象的基本信息的分页数据；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
+    checkPageRequestArgument(pageRequest);
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, DictEntry);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...pageRequest,
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get('/dict/entry/info', {
+      params,
+    }).then((obj) => {
+      const page = DictEntryInfo.createPage(obj, assignOptions);
+      logger.info('Successfully list the infos of DictEntry.');
+      logger.debug('The page of infos of DictEntry is:', page);
+      return page;
+    });
+  }
+
+  /**
+   * 获取指定的`DictEntry`对象。
+   *
+   * @param {string|number|bigint} id
+   *     `DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntry|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntry`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  get(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/dict/entry/${stringifyId(id)}`).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
+      logger.info('Successfully get the DictEntry by ID:', id);
+      logger.debug('The DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`DictEntry`对象。
+   *
+   * @param {string} dictCode
+   *     `Dict`对象的编码。
+   * @param {string} code
+   *     `DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntry|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntry`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getByCode(dictCode, code, showLoading = true) {
+    checkArgumentType('dictCode', dictCode, String);
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/dict/entry/code/${code}`, {
+      params: { dictCode },
+    }).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
+      logger.info('Successfully get the DictEntry by code:', code);
+      logger.debug('The DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`DictEntry`对象的基本信息。
+   *
+   * @param {string|number|bigint} id
+   *     `DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntryInfo|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntryInfo`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getInfo(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/dict/entry/${stringifyId(id)}/info`).then((obj) => {
+      const result = DictEntryInfo.create(obj, assignOptions);
+      logger.info('Successfully get the info of the DictEntry by ID:', id);
+      logger.debug('The info of the DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 获取指定的`DictEntry`对象的基本信息。
+   *
+   * @param {string} dictCode
+   *     `Dict`对象的编码。
+   * @param {string} code
+   *     `DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntryInfo|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`DictEntryInfo`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getInfoByCode(dictCode, code, showLoading = true) {
+    checkArgumentType('dictCode', dictCode, String);
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showGetting();
+    }
+    return http.get(`/dict/entry/code/${code}/info`, {
+      params: { dictCode },
+    }).then((obj) => {
+      const result = DictEntryInfo.create(obj, assignOptions);
+      logger.info('Successfully get the info of the DictEntry by code:', code);
+      logger.debug('The info of the DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 添加一个`DictEntry`对象。
+   *
+   * @param {DictEntry|object} entry
+   *     要添加的`DictEntry`对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntry|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回新增的`DictEntry`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  add(entry, showLoading = true) {
+    checkArgumentType('entry', entry, [DictEntry, Object]);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(entry, toJsonOptions);
+    if (showLoading) {
+      loading.showAdding();
+    }
+    return http.post('/dict/entry', data).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
+      logger.info('Successfully add the DictEntry:', result.id);
+      logger.debug('The added DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 根据ID，更新一个`DictEntry`对象。
+   *
+   * @param {DictEntry|object} entry
+   *     要更新的`DictEntry`对象的数据，根据其ID确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntry|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  update(entry, showLoading = true) {
+    checkArgumentType('entry', entry, [DictEntry, Object]);
+    checkIdArgumentType(entry.id, 'entry.id');
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const id = stringifyId(entry.id);
+    const data = toJSON(entry, toJsonOptions);
+    if (showLoading) {
+      loading.showUpdating();
+    }
+    return http.put(`/dict/entry/${id}`, data).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
+      logger.info('Successfully update the DictEntry by ID %s at:', id, result.modifyTime);
+      logger.debug('The updated DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 根据编码，更新一个`DictEntry`对象。
+   *
+   * @param {DictEntry|object} entry
+   *     要更新的`DictEntry`对象的数据，根据其编码确定要更新的对象。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<DictEntry|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的`DictEntry`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateByCode(entry, showLoading = true) {
+    checkArgumentType('entry', entry, [DictEntry, Object]);
+    checkArgumentType('entry.code', entry.code, String);
+    checkArgumentType('entry.dict', entry.dict, Object);
+    checkIdArgumentType(entry.dict.id, 'entry.dict.id');
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(entry, toJsonOptions);
+    if (showLoading) {
+      loading.showUpdating();
+    }
+    return http.put(`/dict/entry/code/${entry.code}?dictId=${entry.dict.id}`, data).then((obj) => {
+      const result = DictEntry.create(obj, assignOptions);
+      logger.info('Successfully update the DictEntry by code "%s" at:', result.code, result.modifyTime);
+      logger.debug('The updated DictEntry is:', result);
+      return result;
+    });
+  }
+
+  /**
+   * 根据ID，标记删除一个`DictEntry`对象。
+   *
+   * @param {string|number|bigint} id
+   *     要标记删除的`DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
+   *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  delete(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
+    return http.delete(`/dict/entry/${stringifyId(id)}`).then((timestamp) => {
+      logger.info('Successfully delete the DictEntry by ID %s at:', id, timestamp);
+      return timestamp;
+    });
+  }
+
+  /**
+   * 根据编码，标记删除一个`DictEntry`对象。
+   *
+   * @param {number|string|bigint} dictId
+   *     所属字典的ID。
+   * @param {string} code
+   *     要标记删除的`DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回数据被标记删除的UTC时间戳，
+   *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  deleteByCode(dictId, code, showLoading = true) {
+    checkIdArgumentType(dictId, 'dictId');
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showDeleting();
+    }
+    return http.delete(`/dict/entry/code/${code}?dictId=${stringifyId(dictId)}`).then((timestamp) => {
+      logger.info('Successfully delete the DictEntry by code "%s" at:', code, timestamp);
+      return timestamp;
+    });
+  }
+
+  /**
+   * 根据ID，恢复一个被标记删除的`DictEntry`对象。
+   *
+   * @param {string|number|bigint} id
+   *     要恢复的`DictEntry`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  restore(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
+    return http.patch(`/dict/entry/${stringifyId(id)}`)
+      .then(() => logger.info('Successfully restore the DictEntry by ID:', id));
+  }
+
+  /**
+   * 根据编码，恢复一个被标记删除的`DictEntry`对象。
+   *
+   * @param {number|string|bigint} dictId
+   *     所属字典的ID。
+   * @param {string} code
+   *     要恢复的`DictEntry`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  restoreByCode(dictId, code, showLoading = true) {
+    checkIdArgumentType(dictId, 'dictId');
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showRestoring();
+    }
+    return http.patch(`/dict/entry/code/${code}?dictId=${stringifyId(dictId)}`)
+      .then(() => logger.info('Successfully restore the DictEntry by code:', code));
+  }
+
+  /**
+   * 根据ID，清除一个被标记删除的`DictEntry`对象。
+   *
+   * @param {string|number|bigint} id
+   *     要清除的`DictEntry`对象的ID，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purge(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete(`/dict/entry/${stringifyId(id)}/purge`)
+      .then(() => logger.info('Successfully purge the DictEntry by ID:', id));
+  }
+
+  /**
+   * 根据编码，清除一个被标记删除的`DictEntry`对象。
+   *
+   * @param {number|string|bigint} dictId
+   *     所属字典的ID。
+   * @param {string} code
+   *     要清除的`DictEntry`对象的编码，该对象必须已经被标记删除。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purgeByCode(dictId, code, showLoading = true) {
+    checkIdArgumentType(dictId, 'dictId');
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete(`/dict/entry/code/${code}/purge?dictId=${stringifyId(dictId)}`)
+      .then(() => logger.info('Successfully purge the DictEntry by code:', code));
+  }
+
+  /**
+   * 彻底清除全部已被标记删除的`DictEntry`对象。
+   *
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被清除的数据数量；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  purgeAll(showLoading = true) {
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete('/dict/entry/purge')
+      .then((count) => {
+        logger.info('Successfully purge all deleted DictEntry, count:', count);
+        return count;
+      });
+  }
+
+  /**
+   * 批量标记删除`DictEntry`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量删除的`DictEntry`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, showLoading = true) {
+    checkIdArrayArgumentType(ids);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showDeleting();
+    }
+    return http.delete('/dict/entry/batch', { data }).then((count) => {
+      logger.info('Successfully batch delete %d DictEntries:', count, ids);
+      return count;
+    });
+  }
+
+  /**
+   * 批量恢复已被标记删除的`DictEntry`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量恢复的已被标记删除的`DictEntry`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际恢复的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, showLoading = true) {
+    checkIdArrayArgumentType(ids);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showRestoring();
+    }
+    return http.patch('/dict/entry/batch', data).then((count) => {
+      logger.info('Successfully batch restore %d DictEntries:', count, ids);
+      return count;
+    });
+  }
+
+  /**
+   * 批量彻底清除已被标记删除的`DictEntry`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的已被标记删除的`DictEntry`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际被彻底清除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, showLoading = true) {
+    checkIdArrayArgumentType(ids);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showPurging();
+    }
+    return http.delete('/dict/entry/batch/purge', { data }).then((count) => {
+      logger.info('Successfully batch purge %d DictEntries:', count, ids);
+      return count;
+    });
+  }
+
+  /**
+   * 根据ID，彻底擦除一个`DictEntry`对象。
+   *
+   * @param {string|number|bigint} id
+   *     要擦除的`DictEntry`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, showLoading = true) {
+    checkIdArgumentType(id);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showErasing();
+    }
+    return http.delete(`/dict/entry/${stringifyId(id)}/erase`)
+      .then(() => logger.info('Successfully erase the DictEntry by ID:', id));
+  }
+
+  /**
+   * 根据编码，彻底擦除一个`DictEntry`对象。
+   *
+   * @param {number|string|bigint} dictId
+   *     所属字典的ID。
+   * @param {string} code
+   *     要擦除的`DictEntry`对象的编码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  eraseByCode(dictId, code, showLoading = true) {
+    checkIdArgumentType(dictId, 'dictId');
+    checkArgumentType('code', code, String);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    if (showLoading) {
+      loading.showErasing();
+    }
+    return http.delete(`/dict/entry/code/${code}/erase?dictId=${stringifyId(dictId)}`)
+      .then(() => logger.info('Successfully erase the DictEntry by code:', code));
+  }
+
+  /**
+   * 批量彻底擦除`DictEntry`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底擦除的`DictEntry`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际被彻底擦除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, showLoading = true) {
+    checkIdArrayArgumentType(ids);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const data = toJSON(ids, toJsonOptions);
+    if (showLoading) {
+      loading.showErasing();
+    }
+    return http.delete('/dict/entry/batch/erase', { data }).then((count) => {
+      logger.info('Successfully batch erase %d DictEntries:', count, ids);
+      return count;
+    });
+  }
+
+  /**
+   * 导出符合条件的`DictEntry`对象为XML格式。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `dictId: string|number|bigint` 所属字典的ID；
+   *  - `dictCode: string` 所属字典的编码；
+   *  - `dictName: string` 所属字典的名称包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父字典项的ID；
+   *  - `parentCode: string` 所属父字典项的编码；
+   *  - `parentName: string` 所属父字典项名称中应包含的字符串；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Blob|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Blob`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, DictEntry);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    const filename = `dict-entries_${Date.now()}.xml`;
+    if (showLoading) {
+      loading.showExporting();
+    }
+    return http.get('/dict/entry/export/xml', {
+      params,
+      responseType: 'blob',
+    }).then((blob) => {
+      if (autoDownload) {
+        // Use utility to download the file
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+      }
+      logger.info('Successfully export the DictEntry as XML format:', filename);
+      return blob;
+    });
+  }
+
+  /**
+   * 导出符合条件的`DictEntry`对象为JSON格式。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `dictId: string|number|bigint` 所属字典的ID；
+   *  - `dictCode: string` 所属字典的编码；
+   *  - `dictName: string` 所属字典的名称包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父字典项的ID；
+   *  - `parentCode: string` 所属父字典项的编码；
+   *  - `parentName: string` 所属父字典项名称中应包含的字符串；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Blob|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Blob`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, DictEntry);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    const filename = `dict-entries_${Date.now()}.json`;
+    if (showLoading) {
+      loading.showExporting();
+    }
+    return http.get('/dict/entry/export/json', {
+      params,
+      responseType: 'blob',
+    }).then((blob) => {
+      if (autoDownload) {
+        // Use utility to download the file
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+      }
+      logger.info('Successfully export the DictEntry as JSON format:', filename);
+      return blob;
+    });
+  }
+
+  /**
+   * 导出符合条件的`DictEntry`对象为Excel格式。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `dictId: string|number|bigint` 所属字典的ID；
+   *  - `dictCode: string` 所属字典的编码；
+   *  - `dictName: string` 所属字典的名称包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父字典项的ID；
+   *  - `parentCode: string` 所属父字典项的编码；
+   *  - `parentName: string` 所属父字典项名称中应包含的字符串；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Blob|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Blob`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, DictEntry);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    const filename = `dict-entries_${Date.now()}.xlsx`;
+    if (showLoading) {
+      loading.showExporting();
+    }
+    return http.get('/dict/entry/export/excel', {
+      params,
+      responseType: 'blob',
+    }).then((blob) => {
+      if (autoDownload) {
+        // Use utility to download the file
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+      }
+      logger.info('Successfully export the DictEntry as Excel format:', filename);
+      return blob;
+    });
+  }
+
+  /**
+   * 导出符合条件的`DictEntry`对象为CSV格式。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `name: string` 名称中应包含的字符串；
+   *  - `dictId: string|number|bigint` 所属字典的ID；
+   *  - `dictCode: string` 所属字典的编码；
+   *  - `dictName: string` 所属字典的名称包含的字符串；
+   *  - `parentId: string|number|bigint` 所属父字典项的ID；
+   *  - `parentCode: string` 所属父字典项的编码；
+   *  - `parentName: string` 所属父字典项名称中应包含的字符串；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Blob|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回一个`Blob`对象；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    checkObjectArgument('criteria', criteria, DICT_ENTRY_CRITERIA_DEFINITIONS);
+    checkSortRequestArgument(sortRequest, DictEntry);
+    checkArgumentType('autoDownload', autoDownload, Boolean);
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const params = toJSON({
+      ...criteria,
+      ...sortRequest,
+    }, toJsonOptions);
+    const filename = `dict-entries_${Date.now()}.csv`;
+    if (showLoading) {
+      loading.showExporting();
+    }
+    return http.get('/dict/entry/export/csv', {
+      params,
+      responseType: 'blob',
+    }).then((blob) => {
+      if (autoDownload) {
+        // Use utility to download the file
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+      }
+      logger.info('Successfully export the DictEntry as CSV format:', filename);
+      return blob;
+    });
+  }
+
+  /**
+   * 从XML文件导入`DictEntry`对象。
+   *
+   * @param {File} file
+   *     包含`DictEntry`对象数据的XML文件。
+   * @param {boolean} parallel
+   *     是否并行导入数据，默认为false。
+   * @param {number|null} threads
+   *     并行导入时的线程数，默认为null，表示使用系统默认值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importXml(file, parallel = false, threads = null, showLoading = true) {
+    checkArgumentType('file', file, File);
+    checkArgumentType('parallel', parallel, Boolean);
+    if (threads !== null) {
+      checkArgumentType('threads', threads, Number);
+    }
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const formData = new FormData();
+    formData.append('file', file);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      params: {},
+    };
+    if (parallel) {
+      config.params.parallel = true;
+    }
+    if (threads !== null) {
+      config.params.threads = threads;
+    }
+    if (showLoading) {
+      loading.showImporting();
+    }
+    return http.post('/dict/entry/import/xml', formData, config).then((count) => {
+      logger.info('Successfully import %d DictEntry from XML file:', count, file.name);
+      return count;
+    });
+  }
+
+  /**
+   * 从JSON文件导入`DictEntry`对象。
+   *
+   * @param {File} file
+   *     包含`DictEntry`对象数据的JSON文件。
+   * @param {boolean} parallel
+   *     是否并行导入数据，默认为false。
+   * @param {number|null} threads
+   *     并行导入时的线程数，默认为null，表示使用系统默认值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importJson(file, parallel = false, threads = null, showLoading = true) {
+    checkArgumentType('file', file, File);
+    checkArgumentType('parallel', parallel, Boolean);
+    if (threads !== null) {
+      checkArgumentType('threads', threads, Number);
+    }
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const formData = new FormData();
+    formData.append('file', file);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      params: {},
+    };
+    if (parallel) {
+      config.params.parallel = true;
+    }
+    if (threads !== null) {
+      config.params.threads = threads;
+    }
+    if (showLoading) {
+      loading.showImporting();
+    }
+    return http.post('/dict/entry/import/json', formData, config).then((count) => {
+      logger.info('Successfully import %d DictEntry from JSON file:', count, file.name);
+      return count;
+    });
+  }
+
+  /**
+   * 从Excel文件导入`DictEntry`对象。
+   *
+   * @param {File} file
+   *     包含`DictEntry`对象数据的Excel文件。
+   * @param {boolean} parallel
+   *     是否并行导入数据，默认为false。
+   * @param {number|null} threads
+   *     并行导入时的线程数，默认为null，表示使用系统默认值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importExcel(file, parallel = false, threads = null, showLoading = true) {
+    checkArgumentType('file', file, File);
+    checkArgumentType('parallel', parallel, Boolean);
+    if (threads !== null) {
+      checkArgumentType('threads', threads, Number);
+    }
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const formData = new FormData();
+    formData.append('file', file);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      params: {},
+    };
+    if (parallel) {
+      config.params.parallel = true;
+    }
+    if (threads !== null) {
+      config.params.threads = threads;
+    }
+    if (showLoading) {
+      loading.showImporting();
+    }
+    return http.post('/dict/entry/import/excel', formData, config).then((count) => {
+      logger.info('Successfully import %d DictEntry from Excel file:', count, file.name);
+      return count;
+    });
+  }
+
+  /**
+   * 从CSV文件导入`DictEntry`对象。
+   *
+   * @param {File} file
+   *     包含`DictEntry`对象数据的CSV文件。
+   * @param {boolean} parallel
+   *     是否并行导入数据，默认为false。
+   * @param {number|null} threads
+   *     并行导入时的线程数，默认为null，表示使用系统默认值。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回导入的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importCsv(file, parallel = false, threads = null, showLoading = true) {
+    checkArgumentType('file', file, File);
+    checkArgumentType('parallel', parallel, Boolean);
+    if (threads !== null) {
+      checkArgumentType('threads', threads, Number);
+    }
+    checkArgumentType('showLoading', showLoading, Boolean);
+    const formData = new FormData();
+    formData.append('file', file);
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      params: {},
+    };
+    if (parallel) {
+      config.params.parallel = true;
+    }
+    if (threads !== null) {
+      config.params.threads = threads;
+    }
+    if (showLoading) {
+      loading.showImporting();
+    }
+    return http.post('/dict/entry/import/csv', formData, config).then((count) => {
+      logger.info('Successfully import %d DictEntry from CSV file:', count, file.name);
+      return count;
+    });
+  }
+}
+
+const dictEntryApi = new DictEntryApi();
+
+export default dictEntryApi;

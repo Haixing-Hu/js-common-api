@@ -6,56 +6,73 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
+import { State, StatefulInfo, User, UserInfo } from '@qubit-ltd/common-model';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { deleteImpl } from './impl/delete-impl';
+import exportImpl from './impl/export-impl';
 import {
-  CommonMimeType,
-  State,
-  User,
-  UserInfo,
-  StatefulInfo,
-} from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('UserApi');
-
-const USER_CRITERIA_DEFINITIONS = [
-  { name: 'name', type: String },
-  { name: 'nickname', type: String },
-  { name: 'organizationId', type: [String, Number, BigInt] },
-  { name: 'organizationCode', type: String },
-  { name: 'organizationName', type: String },
-  { name: 'state', type: [State, String] },
-  { name: 'lastLoginTimeStart', type: String },
-  { name: 'lastLoginTimeEnd', type: String },
-  { name: 'validTimeStart', type: String },
-  { name: 'validTimeEnd', type: String },
-  { name: 'expiredTimeStart', type: String },
-  { name: 'expiredTimeEnd', type: String },
-  { name: 'predefined', type: Boolean },
-  { name: 'test', type: Boolean },
-  { name: 'deleted', type: Boolean },
-  { name: 'createTimeStart', type: String },
-  { name: 'createTimeEnd', type: String },
-  { name: 'modifyTimeStart', type: String },
-  { name: 'modifyTimeEnd', type: String },
-  { name: 'deleteTimeStart', type: String },
-  { name: 'deleteTimeEnd', type: String },
-];
+  getByKeyImpl,
+  getImpl,
+  getInfoByKeyImpl,
+  getInfoImpl,
+  getPropertyImpl,
+} from './impl/get-impl';
+import { listImpl, listInfoImpl } from './impl/list-impl';
+import { purgeAllImpl, purgeImpl } from './impl/purge-impl';
+import { restoreImpl } from './impl/restore-impl';
+import { updateImpl, updatePropertyImpl } from './impl/update-impl';
 
 /**
  * 提供管理`User`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class UserApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = User;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = UserInfo;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    { name: 'name', type: String },
+    { name: 'nickname', type: String },
+    { name: 'organizationId', type: [String, Number, BigInt] },
+    { name: 'organizationCode', type: String },
+    { name: 'organizationName', type: String },
+    { name: 'state', type: [State, String] },
+    { name: 'lastLoginTimeStart', type: String },
+    { name: 'lastLoginTimeEnd', type: String },
+    { name: 'validTimeStart', type: String },
+    { name: 'validTimeEnd', type: String },
+    { name: 'expiredTimeStart', type: String },
+    { name: 'expiredTimeEnd', type: String },
+    { name: 'predefined', type: Boolean },
+    { name: 'test', type: Boolean },
+    { name: 'deleted', type: Boolean },
+    { name: 'createTimeStart', type: String },
+    { name: 'createTimeEnd', type: String },
+    { name: 'modifyTimeStart', type: String },
+    { name: 'modifyTimeEnd', type: String },
+    { name: 'deleteTimeStart', type: String },
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`User`对象。
    *
@@ -98,28 +115,7 @@ class UserApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, USER_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, User);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-      transformUrls,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/user', {
-      params,
-    }).then((obj) => {
-      const page = User.createPage(obj, assignOptions);
-      logger.info('Successfully list the User.');
-      logger.debug('The page of User is:', page);
-      return page;
-    });
+    return listImpl(this, '/user', pageRequest, criteria, sortRequest, showLoading, { transformUrls });
   }
 
   /**
@@ -162,26 +158,7 @@ class UserApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, USER_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, User);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/user/info', {
-      params,
-    }).then((obj) => {
-      const page = UserInfo.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of User.');
-      logger.debug('The page of infos of User is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/user/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -199,19 +176,7 @@ class UserApi {
    */
   @Log
   get(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/user/${stringifyId(id)}`, { params }).then((obj) => {
-      const user = User.create(obj, assignOptions);
-      logger.info('Successfully get the User by ID:', id);
-      logger.debug('The User is:', user);
-      return user;
-    });
+    return getImpl(this, '/user/{id}', id, showLoading, { transformUrls });
   }
 
   /**
@@ -229,19 +194,7 @@ class UserApi {
    */
   @Log
   getByUsername(username, transformUrls = true, showLoading = true) {
-    checkArgumentType('username', username, String);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/user/username/${username}`, { params }).then((obj) => {
-      const user = User.create(obj, assignOptions);
-      logger.info('Successfully get the User by username:', username);
-      logger.debug('The User is:', user);
-      return user;
-    });
+    return getByKeyImpl(this, '/user/username/{username}', 'username', username, showLoading, { transformUrls });
   }
 
   /**
@@ -257,17 +210,7 @@ class UserApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/user/${stringifyId(id)}/info`).then((obj) => {
-      const info = UserInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the User by ID:', id);
-      logger.debug('The info of the User is:', info);
-      return info;
-    });
+    return getInfoImpl(this, '/user/{id}/info', id, showLoading);
   }
 
   /**
@@ -283,17 +226,7 @@ class UserApi {
    */
   @Log
   getInfoByUsername(username, showLoading = true) {
-    checkArgumentType('username', username, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/user/username/${username}/info`).then((obj) => {
-      const info = UserInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the User by username:', username);
-      logger.debug('The info of the User is:', info);
-      return info;
-    });
+    return getInfoByKeyImpl(this, '/user/username/{username}/info', 'username', username, showLoading);
   }
 
   /**
@@ -310,28 +243,14 @@ class UserApi {
    */
   @Log
   getOrganization(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/user/${stringifyId(id)}/organization`).then((obj) => {
-      const info = StatefulInfo.create(obj, assignOptions);
-      logger.info('Successfully get the organization info of the User by ID:', id);
-      logger.debug('The organization info of the User is:', info);
-      return info;
-    });
+    return getPropertyImpl(this, '/user/{id}/organization', 'organization', StatefulInfo, id, showLoading);
   }
 
   /**
    * 添加一个`User`对象。
    *
-   * @param {User|object} user
+   * @param {User|object} entity
    *     要添加的`User`对象。
-   * @param {boolean} withUser
-   *     是否同时添加新`User`对象所绑定的用户对象`User`。默认值为`false`。
-   * @param {boolean} transformUrls
-   *     是否转换附件中的URL地址。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<User|ErrorInfo>}
@@ -339,31 +258,15 @@ class UserApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(user, withUser = false, transformUrls = true, showLoading = true) {
-    checkArgumentType('user', user, [User, Object]);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser, transformUrls }, toJsonOptions);
-    const data = toJSON(user, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/user', data, { params }).then((obj) => {
-      const user = User.create(obj, assignOptions);
-      logger.info('Successfully add the User:', user.id);
-      logger.debug('The added User is:', user);
-      return user;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/user', entity, showLoading);
   }
 
   /**
    * 根据ID，更新一个`User`对象。
    *
-   * @param {User|object} user
+   * @param {User|object} entity
    *     要更新的`User`对象的数据，根据其ID确定要更新的对象。
-   * @param {boolean} withUser
-   *     是否同时更新`User`对象所绑定的用户对象`User`。默认值为`false`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<User|ErrorInfo>}
@@ -371,23 +274,8 @@ class UserApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(user, withUser = false, showLoading = true) {
-    checkArgumentType('user', user, [User, Object]);
-    checkIdArgumentType(user.id, 'user.id');
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(user.id);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(user, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${id}`, data, { params }).then((obj) => {
-      const user = User.create(obj, assignOptions);
-      logger.info('Successfully update the User by ID %s at:', id, user.modifyTime);
-      logger.debug('The updated User is:', user);
-      return user;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/user/{id}', entity, showLoading);
   }
 
   /**
@@ -405,17 +293,7 @@ class UserApi {
    */
   @Log
   updateUsername(id, username, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('username', username, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(username, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${stringifyId(id)}/username`, data).then((timestamp) => {
-      logger.info('Successfully update the username of a User by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/user/{id}/username', id, 'username', String, username, showLoading);
   }
 
   /**
@@ -433,17 +311,7 @@ class UserApi {
    */
   @Log
   updatePassword(id, password, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('password', password, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(password, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${stringifyId(id)}/password`, data).then((timestamp) => {
-      logger.info('Successfully update the password of a User by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/user/{id}/password', id, 'password', String, password, showLoading);
   }
 
   /**
@@ -461,17 +329,7 @@ class UserApi {
    */
   @Log
   updateEmail(id, email, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('email', email, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(email, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${stringifyId(id)}/email`, data).then((timestamp) => {
-      logger.info('Successfully update the email of a User by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/user/{id}/email', id, 'email', String, email, showLoading);
   }
 
   /**
@@ -489,17 +347,7 @@ class UserApi {
    */
   @Log
   updateMobile(id, mobile, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('mobile', mobile, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(mobile, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${stringifyId(id)}/mobile`, data).then((timestamp) => {
-      logger.info('Successfully update the mobile of a User by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/user/{id}/mobile', id, 'mobile', String, mobile, showLoading);
   }
 
   /**
@@ -517,17 +365,7 @@ class UserApi {
    */
   @Log
   updateComment(id, comment, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('comment', comment, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(comment, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${stringifyId(id)}/comment`, data).then((timestamp) => {
-      logger.info('Successfully update the comment of a User by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/user/{id}/comment', id, 'comment', String, comment, showLoading);
   }
 
   /**
@@ -545,17 +383,7 @@ class UserApi {
    */
   @Log
   updateState(id, state, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('state', state, [String, State]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(state, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/user/${stringifyId(id)}/state`, data).then((timestamp) => {
-      logger.info('Successfully update the state of a User by ID "%s" at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/user/{id}/state', id, 'state', [State, String], state, showLoading);
   }
 
   /**
@@ -563,8 +391,6 @@ class UserApi {
    *
    * @param {string} id
    *     要标记删除的`User`对象的ID。
-   * @param {boolean} withUser
-   *     是否同时标记删除`User`对象所绑定的用户对象`User`。默认值为`false`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
@@ -572,18 +398,8 @@ class UserApi {
    *     以ISO-8601格式表示为字符串；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  delete(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/user/${stringifyId(id)}`, { params }).then((timestamp) => {
-      logger.info('Successfully delete the User by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+  delete(id, showLoading = true) {
+    return deleteImpl(this, '/user/{id}', id, showLoading);
   }
 
   /**
@@ -591,10 +407,6 @@ class UserApi {
    *
    * @param {string} id
    *     要恢复的`User`对象的ID，该对象必须已经被标记删除。
-   * @param {boolean} withUser
-   *     是否同时恢复`User`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
-   *     `User`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
-   *     对象做操作。此参数默认值为`false`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -602,16 +414,8 @@ class UserApi {
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  restore(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/user/${stringifyId(id)}`, undefined, { params })
-      .then(() => logger.info('Successfully restore the User by ID:', id));
+  restore(id, showLoading = true) {
+    return restoreImpl(this, '/user/{id}', id, showLoading);
   }
 
   /**
@@ -619,10 +423,6 @@ class UserApi {
    *
    * @param {string} id
    *     要清除的`User`对象的ID，该对象必须已经被标记删除。
-   * @param {boolean} withUser
-   *     是否同时彻底清除`User`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
-   *     `User`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
-   *     对象做操作。此参数默认值为`false`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -630,25 +430,13 @@ class UserApi {
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purge(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/user/${stringifyId(id)}/purge`, { params })
-      .then(() => logger.info('Successfully purge the User by ID:', id));
+  purge(id, showLoading = true) {
+    return purgeImpl(this, '/user/{id}/purge', id, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`User`对象。
+   * 彻底清除全部已被标记删除的`User`对象。
    *
-   * @param {boolean} withUser
-   *     是否同时彻底清除所有已被标记删除的`User`对象所绑定的已被标记标记删除的用户对象`User`。
-   *     若某个已被标记删除的`User`对象未绑定`User`对象，或其绑定的`User`对象未被标记
-   *     删除，则不对该`User`对象做操作。此参数默认值为`false`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -656,15 +444,8 @@ class UserApi {
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  purgeAll(withUser = false, showLoading = true) {
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/user/purge', { params })
-      .then(() => logger.info('Successfully purge all deleted User.'));
+  purgeAll(showLoading = true) {
+    return purgeAllImpl(this, '/user/purge', showLoading);
   }
 
   /**
@@ -701,8 +482,6 @@ class UserApi {
    *     是否自动下载文件。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
    * @return {Promise<string|null|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
    *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
@@ -711,22 +490,7 @@ class UserApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, USER_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, User);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/user/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the User to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/user/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 }
 

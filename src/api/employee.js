@@ -6,65 +6,108 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   Attachment,
   Employee,
   EmployeeInfo,
-  CommonMimeType,
   InfoWithEntity,
   State,
 } from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('EmployeeApi');
-
-const EMPLOYEE_CRITERIA_DEFINITIONS = [
-  { name: 'username', type: String },
-  { name: 'personId', type: [String, Number, BigInt] },
-  { name: 'internalCode', type: String },
-  { name: 'name', type: String },
-  { name: 'gender', type: [Object, String] },
-  { name: 'credentialType', type: [Object, String] },
-  { name: 'credentialNumber', type: String },
-  { name: 'categoryId', type: [String, Number, BigInt] },
-  { name: 'categoryCode', type: String },
-  { name: 'categoryName', type: String },
-  { name: 'organizationId', type: [String, Number, BigInt] },
-  { name: 'organizationCode', type: String },
-  { name: 'organizationName', type: String },
-  { name: 'departmentId', type: [String, Number, BigInt] },
-  { name: 'departmentCode', type: String },
-  { name: 'departmentName', type: String },
-  { name: 'phone', type: String },
-  { name: 'mobile', type: String },
-  { name: 'email', type: String },
-  { name: 'jobTitle', type: String },
-  { name: 'state', type: [Object, String] },
-  { name: 'test', type: Boolean },
-  { name: 'deleted', type: Boolean },
-  { name: 'createTimeStart', type: String },
-  { name: 'createTimeEnd', type: String },
-  { name: 'modifyTimeStart', type: String },
-  { name: 'modifyTimeEnd', type: String },
-  { name: 'deleteTimeStart', type: String },
-  { name: 'deleteTimeEnd', type: String },
-];
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import {
+  batchDeleteImpl,
+  deleteByKeyImpl,
+  deleteImpl,
+} from './impl/delete-impl';
+import { batchEraseImpl, eraseByKeyImpl, eraseImpl } from './impl/erase-impl';
+import exportImpl from './impl/export-impl';
+import {
+  getByKeyImpl,
+  getImpl,
+  getInfoByKeyImpl,
+  getInfoImpl,
+  getPropertyByKeyImpl,
+  getPropertyImpl,
+} from './impl/get-impl';
+import importImpl from './impl/import-impl';
+import { listImpl, listInfoImpl } from './impl/list-impl';
+import {
+  batchPurgeImpl,
+  purgeAllImpl,
+  purgeByKeyImpl,
+  purgeImpl,
+} from './impl/purge-impl';
+import {
+  batchRestoreImpl,
+  restoreByKeyImpl,
+  restoreImpl,
+} from './impl/restore-impl';
+import {
+  updateByKeyImpl,
+  updateImpl,
+  updatePropertyByKeyImpl,
+  updatePropertyImpl,
+} from './impl/update-impl';
 
 /**
  * 提供管理`Employee`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class EmployeeApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Employee;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = EmployeeInfo;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    { name: 'username', type: String },
+    { name: 'personId', type: [String, Number, BigInt] },
+    { name: 'internalCode', type: String },
+    { name: 'name', type: String },
+    { name: 'gender', type: [Object, String] },
+    { name: 'credentialType', type: [Object, String] },
+    { name: 'credentialNumber', type: String },
+    { name: 'categoryId', type: [String, Number, BigInt] },
+    { name: 'categoryCode', type: String },
+    { name: 'categoryName', type: String },
+    { name: 'organizationId', type: [String, Number, BigInt] },
+    { name: 'organizationCode', type: String },
+    { name: 'organizationName', type: String },
+    { name: 'departmentId', type: [String, Number, BigInt] },
+    { name: 'departmentCode', type: String },
+    { name: 'departmentName', type: String },
+    { name: 'phone', type: String },
+    { name: 'mobile', type: String },
+    { name: 'email', type: String },
+    { name: 'jobTitle', type: String },
+    { name: 'state', type: [Object, String] },
+    { name: 'test', type: Boolean },
+    { name: 'deleted', type: Boolean },
+    { name: 'createTimeStart', type: String },
+    { name: 'createTimeEnd', type: String },
+    { name: 'modifyTimeStart', type: String },
+    { name: 'modifyTimeEnd', type: String },
+    { name: 'deleteTimeStart', type: String },
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Employee`对象。
    *
@@ -115,28 +158,7 @@ class EmployeeApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, transformUrls = true, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Employee);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-      transformUrls,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/employee', {
-      params,
-    }).then((obj) => {
-      const page = Employee.createPage(obj, assignOptions);
-      logger.info('Successfully list the Employee.');
-      logger.debug('The page of Employee is:', page);
-      return page;
-    });
+    return listImpl(this, '/employee', pageRequest, criteria, sortRequest, showLoading, { transformUrls });
   }
 
   /**
@@ -187,30 +209,11 @@ class EmployeeApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Employee);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/employee/info', {
-      params,
-    }).then((obj) => {
-      const page = EmployeeInfo.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of Employee.');
-      logger.debug('The page of infos of Employee is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/employee/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
-   * 获取指定的`Employee`对象。
+   * 根据ID，获取指定的`Employee`对象。
    *
    * @param {string|number|bigint} id
    *     `Employee`对象的ID。
@@ -224,26 +227,14 @@ class EmployeeApi {
    */
   @Log
   get(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/${stringifyId(id)}`, { params }).then((obj) => {
-      const result = Employee.create(obj, assignOptions);
-      logger.info('Successfully get the Employee by ID:', id);
-      logger.debug('The Employee is:', result);
-      return result;
-    });
+    return getImpl(this, '/employee/{id}', id, showLoading, { transformUrls });
   }
 
   /**
-   * 获取指定的`Employee`对象。
+   * 根据代码，获取指定的`Employee`对象。
    *
    * @param {string} code
-   *     `Employee`对象的编码。
+   *     `Employee`对象的代码。
    * @param {boolean} transformUrls
    *     是否转换附件中的URL地址。默认值为`true`。
    * @param {boolean} showLoading
@@ -254,23 +245,11 @@ class EmployeeApi {
    */
   @Log
   getByCode(code, transformUrls = true, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/code/${code}`, { params }).then((obj) => {
-      const result = Employee.create(obj, assignOptions);
-      logger.info('Successfully get the Employee by code:', code);
-      logger.debug('The Employee is:', result);
-      return result;
-    });
+    return getByKeyImpl(this, '/employee/code/{code}', 'code', code, showLoading, { transformUrls });
   }
 
   /**
-   * 获取指定的`Employee`对象的基本信息。
+   * 根据ID，获取指定的`Employee`对象的基本信息。
    *
    * @param {string|number|bigint} id
    *     `Employee`对象的ID。
@@ -282,24 +261,14 @@ class EmployeeApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/${stringifyId(id)}/info`).then((obj) => {
-      const result = EmployeeInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Employee by ID:', id);
-      logger.debug('The info of the Employee is:', result);
-      return result;
-    });
+    return getInfoImpl(this, '/employee/{id}/info', id, showLoading);
   }
 
   /**
-   * 获取指定的`Employee`对象的基本信息。
+   * 根据代码，获取指定的`Employee`对象的基本信息。
    *
    * @param {string} code
-   *     `Employee`对象的编码。
+   *     `Employee`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<EmployeeInfo|ErrorInfo>}
@@ -308,21 +277,11 @@ class EmployeeApi {
    */
   @Log
   getInfoByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/code/${code}/info`).then((obj) => {
-      const result = EmployeeInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Employee by code:', code);
-      logger.debug('The info of the Employee is:', result);
-      return result;
-    });
+    return getInfoByKeyImpl(this, '/employee/code/{code}/info', 'code', code, showLoading);
   }
 
   /**
-   * 获取指定的`Employee`对象所属分类的基本信息。
+   * 根据ID，获取指定的`Employee`对象所属分类的基本信息。
    *
    * @param {string|number|bigint} id
    *     `Employee`对象的ID。
@@ -335,21 +294,11 @@ class EmployeeApi {
    */
   @Log
   getCategory(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/${stringifyId(id)}/category`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the category of the Employee by ID:', id);
-      logger.debug('The category of the Employee is:', result);
-      return result;
-    });
+    return getPropertyImpl(this, '/employee/{id}/category', 'category', InfoWithEntity, id, showLoading);
   }
 
   /**
-   * 获取指定的`Employee`对象所属分类的基本信息。
+   * 根据代码，获取指定的`Employee`对象所属分类的基本信息。
    *
    * @param {string} code
    *     `Employee`对象的代码。
@@ -362,17 +311,7 @@ class EmployeeApi {
    */
   @Log
   getCategoryByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/code/${code}/category`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the category of the Employee by code:', code);
-      logger.debug('The category of the Employee is:', result);
-      return result;
-    });
+    return getPropertyByKeyImpl(this, '/employee/code/{code}/category', 'category', InfoWithEntity, 'code', code, showLoading);
   }
 
   /**
@@ -390,25 +329,13 @@ class EmployeeApi {
    */
   @Log
   getPhoto(id, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/employee/${stringifyId(id)}/photo`, { params }).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully get the photo of the Employee by ID:', id);
-      logger.debug('The photo of the Employee is:', result);
-      return result;
-    });
+    return getPropertyImpl(this, '/employee/{id}/photo', 'photo', Attachment, id, showLoading, { transformUrls });
   }
 
   /**
    * 添加一个`Employee`对象。
    *
-   * @param {Employee|object} employee
+   * @param {Employee|object} entity
    *     要添加的`Employee`对象。
    * @param {boolean} withUser
    *     是否同时添加新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
@@ -421,28 +348,14 @@ class EmployeeApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(employee, withUser = false, transformUrls = true, showLoading = true) {
-    checkArgumentType('employee', employee, [Employee, Object]);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser, transformUrls }, toJsonOptions);
-    const data = toJSON(employee, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/employee', data, { params }).then((obj) => {
-      const result = Employee.create(obj, assignOptions);
-      logger.info('Successfully add the Employee:', result.id);
-      logger.debug('The added Employee is:', result);
-      return result;
-    });
+  add(entity, withUser = false, transformUrls = true, showLoading = true) {
+    return addImpl(this, '/employee', entity, showLoading, { withUser, transformUrls });
   }
 
   /**
    * 根据ID，更新一个`Employee`对象。
    *
-   * @param {Employee|object} employee
+   * @param {Employee|object} entity
    *     要更新的`Employee`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
@@ -453,30 +366,15 @@ class EmployeeApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(employee, withUser = false, showLoading = true) {
-    checkArgumentType('employee', employee, [Employee, Object]);
-    checkIdArgumentType(employee.id, 'employee.id');
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(employee.id);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(employee, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/employee/${id}`, data, { params }).then((obj) => {
-      const result = Employee.create(obj, assignOptions);
-      logger.info('Successfully update the Employee by ID %s at:', id, result.modifyTime);
-      logger.debug('The updated Employee is:', result);
-      return result;
-    });
+  update(entity, withUser = false, showLoading = true) {
+    return updateImpl(this, '/employee/{id}', entity, showLoading, { withUser });
   }
 
   /**
-   * 根据编码，更新一个`Employee`对象。
+   * 根据代码，更新一个`Employee`对象。
    *
-   * @param {Employee|object} employee
-   *     要更新的`Employee`对象的数据，根据其编码确定要更新的对象。
+   * @param {Employee} entity
+   *     要更新的`Employee`对象的数据，根据其代码确定要更新的对象。
    * @param {boolean} withUser
    *     是否同时更新`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @param {boolean} showLoading
@@ -486,22 +384,8 @@ class EmployeeApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(employee, withUser = false, showLoading = true) {
-    checkArgumentType('employee', employee, [Employee, Object]);
-    checkArgumentType('employee.code', employee.code, String);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(employee, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/employee/code/${employee.code}`, data, { params }).then((obj) => {
-      const result = Employee.create(obj, assignOptions);
-      logger.info('Successfully update the Employee by code "%s" at:', result.code, result.modifyTime);
-      logger.debug('The updated Employee is:', result);
-      return result;
-    });
+  updateByCode(entity, withUser = false, showLoading = true) {
+    return updateByKeyImpl(this, '/employee/code/{code}', 'code', entity, showLoading, { withUser });
   }
 
   /**
@@ -521,26 +405,14 @@ class EmployeeApi {
    */
   @Log
   updateState(id, state, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('state', state, [State, String]);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(state, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/employee/${stringifyId(id)}/state`, data, { params }).then((timestamp) => {
-      logger.info('Successfully update the state of the Employee by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/employee/{id}/state', id, 'state', State, state, showLoading, { withUser });
   }
 
   /**
-   * 根据编码，更新一个`Employee`对象的状态。
+   * 根据代码，更新一个`Employee`对象的状态。
    *
    * @param {string} code
-   *     要更新的`Employee`对象的编码。
+   *     要更新的`Employee`对象的代码。
    * @param {State|string} state
    *     要更新的`Employee`对象的状态，必须是`State`枚举类型或表示其值的字符串。
    * @param {boolean} withUser
@@ -553,19 +425,7 @@ class EmployeeApi {
    */
   @Log
   updateStateByCode(code, state, withUser = false, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('state', state, [State, String]);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    const data = toJSON(state, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/employee/code/${code}/state`, data, { params }).then((timestamp) => {
-      logger.info('Successfully update the state of the Employee by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return updatePropertyByKeyImpl(this, '/employee/code/{code}/state', 'code', code, 'state', State, state, showLoading, { withUser });
   }
 
   /**
@@ -586,21 +446,7 @@ class EmployeeApi {
    */
   @Log
   updatePhoto(id, photo, transformUrls = true, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('photo', photo, Attachment);
-    checkArgumentType('transformUrls', transformUrls, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ transformUrls }, toJsonOptions);
-    const data = toJSON(photo, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/employee/${stringifyId(id)}/photo`, data, { params }).then((obj) => {
-      const result = Attachment.create(obj, assignOptions);
-      logger.info('Successfully update the photo of the Employee by ID:', id);
-      logger.debug('The updated photo of the Employee is:', result);
-      return result;
-    });
+    return updatePropertyImpl(this, '/employee/{id}/photo', id, 'photo', Attachment, photo, showLoading, { transformUrls });
   }
 
   /**
@@ -618,24 +464,14 @@ class EmployeeApi {
    */
   @Log
   delete(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/employee/${stringifyId(id)}`, { params }).then((timestamp) => {
-      logger.info('Successfully delete the Employee by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/employee/{id}', id, showLoading, { withUser });
   }
 
   /**
-   * 根据编码，标记删除一个`Employee`对象。
+   * 根据代码，标记删除一个`Employee`对象。
    *
    * @param {string} code
-   *     要标记删除的`Employee`对象的编码。
+   *     要标记删除的`Employee`对象的代码。
    * @param {boolean} withUser
    *     是否同时标记删除`Employee`对象所绑定的用户对象`User`。默认值为`false`。
    * @param {boolean} showLoading
@@ -646,17 +482,25 @@ class EmployeeApi {
    */
   @Log
   deleteByCode(code, withUser = false, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/employee/code/${code}`, { params }).then((timestamp) => {
-      logger.info('Successfully delete the Employee by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return deleteByKeyImpl(this, '/employee/code/{code}', 'code', code, showLoading, { withUser });
+  }
+
+  /**
+   * 批量标记删除指定的`Employee`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量删除的`Employee`对象的ID列表。
+   * @param {boolean} withUser
+   *     是否同时标记删除`Employee`对象所绑定的用户对象`User`。默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回被标记删除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchDelete(ids, withUser = false, showLoading = true) {
+    return batchDeleteImpl(this, '/employee/batch', ids, showLoading, { withUser });
   }
 
   /**
@@ -676,22 +520,14 @@ class EmployeeApi {
    */
   @Log
   restore(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/employee/${stringifyId(id)}`, undefined, { params })
-      .then(() => logger.info('Successfully restore the Employee by ID:', id));
+    return restoreImpl(this, '/employee/{id}', id, showLoading, { withUser });
   }
 
   /**
-   * 根据编码，恢复一个被标记删除的`Employee`对象。
+   * 根据代码，恢复一个被标记删除的`Employee`对象。
    *
    * @param {string} code
-   *     要恢复的`Employee`对象的编码，该对象必须已经被标记删除。
+   *     要恢复的`Employee`对象的代码，该对象必须已经被标记删除。
    * @param {boolean} withUser
    *     是否同时恢复`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
    *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
@@ -704,15 +540,27 @@ class EmployeeApi {
    */
   @Log
   restoreByCode(code, withUser = false, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/employee/code/${code}`, undefined, { params })
-      .then(() => logger.info('Successfully restore the Employee by code:', code));
+    return restoreByKeyImpl(this, '/employee/code/{code}', 'code', code, showLoading, { withUser });
+  }
+
+  /**
+   * 批量恢复已被标记删除的`Employee`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量恢复的已被标记删除的`Employee`对象的ID列表。
+   * @param {boolean} withUser
+   *     是否同时恢复`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际恢复的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchRestore(ids, withUser = false, showLoading = true) {
+    return batchRestoreImpl(this, '/employee/batch', ids, showLoading, { withUser });
   }
 
   /**
@@ -732,22 +580,14 @@ class EmployeeApi {
    */
   @Log
   purge(id, withUser = false, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/employee/${stringifyId(id)}/purge`, { params })
-      .then(() => logger.info('Successfully purge the Employee by ID:', id));
+    return purgeImpl(this, '/employee/{id}/purge', id, showLoading, { withUser });
   }
 
   /**
-   * 根据编码，清除一个被标记删除的`Employee`对象。
+   * 根据代码，清除一个被标记删除的`Employee`对象。
    *
    * @param {string} code
-   *     要清除的`Employee`对象的编码，该对象必须已经被标记删除。
+   *     要清除的`Employee`对象的代码，该对象必须已经被标记删除。
    * @param {boolean} withUser
    *     是否同时彻底清除`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
    *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
@@ -760,19 +600,11 @@ class EmployeeApi {
    */
   @Log
   purgeByCode(code, withUser = false, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/employee/code/${code}/purge`, { params })
-      .then(() => logger.info('Successfully purge the Employee by code:', code));
+    return purgeByKeyImpl(this, '/employee/code/{code}/purge', 'code', code, showLoading, { withUser });
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Employee`对象。
+   * 彻底清除全部已被标记删除的`Employee`对象。
    *
    * @param {boolean} withUser
    *     是否同时彻底清除所有已被标记删除的`Employee`对象所绑定的已被标记标记删除的用户对象`User`。
@@ -786,14 +618,81 @@ class EmployeeApi {
    */
   @Log
   purgeAll(withUser = false, showLoading = true) {
-    checkArgumentType('withUser', withUser, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({ withUser }, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/employee/purge', { params })
-      .then(() => logger.info('Successfully purge all deleted Employee.'));
+    return purgeAllImpl(this, '/employee/purge', showLoading, { withUser });
+  }
+
+  /**
+   * 批量清除多个被标记删除的`Employee`对象。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     要清除的`Employee`对象的ID列表，这些对象必须已经被标记删除。
+   * @param {boolean} withUser
+   *     是否同时彻底清除`Employee`对象所绑定的已被标记标记删除的用户对象`User`。若指定的
+   *     `Employee`对象未绑定`User`对象，或其绑定的`User`对象未被标记删除，则不对该`User`
+   *     对象做操作。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功清除的记录数；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchPurge(ids, withUser = false, showLoading = true) {
+    return batchPurgeImpl(this, '/employee/batch/purge', ids, showLoading, { withUser });
+  }
+
+  /**
+   * 彻底清除指定的`Employee`对象（无论其是否被标记删除）。
+   *
+   * @param {string|number|bigint} id
+   *     要彻底清除的`Employee`对象的ID。
+   * @param {boolean} withUser
+   *     是否同时永久删除`Employee`对象所绑定的用户对象`User`。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, withUser = false, showLoading = true) {
+    return eraseImpl(this, '/employee/{id}/erase', id, showLoading, { withUser });
+  }
+
+  /**
+   * 根据代码，彻底清除指定的`Employee`对象（无论其是否被标记删除）。
+   *
+   * @param {string} code
+   *     要彻底清除的`Employee`对象的代码。
+   * @param {boolean} withUser
+   *     是否同时永久删除`Employee`对象所绑定的用户对象`User`。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  eraseByCode(code, withUser = false, showLoading = true) {
+    return eraseByKeyImpl(this, '/employee/code/{code}/erase', 'code', code, showLoading, { withUser });
+  }
+
+  /**
+   * 批量彻底清除指定的`Employee`对象（无论其是否被标记删除）。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的`Employee`对象的ID列表。
+   * @param {boolean} withUser
+   *     是否同时永久删除`Employee`对象所绑定的用户对象`User`。此参数默认值为`false`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际删除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, withUser = false, showLoading = true) {
+    return batchEraseImpl(this, '/employee/batch/erase', ids, showLoading, { withUser });
   }
 
   /**
@@ -838,6 +737,57 @@ class EmployeeApi {
    *     是否自动下载文件。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/employee/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Employee`对象为JSON文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `username: string` 对应的用户的用户名；
+   *  - `personId: string|number|bigint` 对应的个人信息的ID；
+   *  - `internalCode: string` 内部编码中应包含的字符串；
+   *  - `name: string` 姓名中应包含的字符串；
+   *  - `gender: Gender|string` 性别；
+   *  - `credentialType: CredentialType|string` 证件类型；
+   *  - `credentialNumber: string` 证件号码；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `organizationId: string|number|bigint` 所属机构的ID；
+   *  - `organizationCode: string` 所属机构的编码；
+   *  - `organizationName: string` 所属机构名称中应包含的字符串；
+   *  - `departmentId: string|number|bigint` 所属部门的ID；
+   *  - `departmentCode: string` 所属部门的编码；
+   *  - `departmentName: string` 所属部门名称中应包含的字符串；
+   *  - `phone: string` 座机号码；
+   *  - `mobile: string` 手机号码；
+   *  - `email: string` 电子邮件地址中应包含的字符串；
+   *  - `jobTitle: string` 职称中应包含的字符串；
+   *  - `state: State|string` 状态；
+   *  - `test: boolean` 是否是测试数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<string|null|ErrorInfo>}
@@ -847,23 +797,198 @@ class EmployeeApi {
    *     则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, EMPLOYEE_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Employee);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/employee/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Employee to XML:', result);
-      return result;
-    });
+  exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/employee/export/json', 'JSON', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Employee`对象为Excel文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `username: string` 对应的用户的用户名；
+   *  - `personId: string|number|bigint` 对应的个人信息的ID；
+   *  - `internalCode: string` 内部编码中应包含的字符串；
+   *  - `name: string` 姓名中应包含的字符串；
+   *  - `gender: Gender|string` 性别；
+   *  - `credentialType: CredentialType|string` 证件类型；
+   *  - `credentialNumber: string` 证件号码；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `organizationId: string|number|bigint` 所属机构的ID；
+   *  - `organizationCode: string` 所属机构的编码；
+   *  - `organizationName: string` 所属机构名称中应包含的字符串；
+   *  - `departmentId: string|number|bigint` 所属部门的ID；
+   *  - `departmentCode: string` 所属部门的编码；
+   *  - `departmentName: string` 所属部门名称中应包含的字符串；
+   *  - `phone: string` 座机号码；
+   *  - `mobile: string` 手机号码；
+   *  - `email: string` 电子邮件地址中应包含的字符串；
+   *  - `jobTitle: string` 职称中应包含的字符串；
+   *  - `state: State|string` 状态；
+   *  - `test: boolean` 是否是测试数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/employee/export/excel', 'Excel', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 导出符合条件的`Employee`对象为CSV文件。
+   *
+   * @param {object} criteria
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
+   *  - `username: string` 对应的用户的用户名；
+   *  - `personId: string|number|bigint` 对应的个人信息的ID；
+   *  - `internalCode: string` 内部编码中应包含的字符串；
+   *  - `name: string` 姓名中应包含的字符串；
+   *  - `gender: Gender|string` 性别；
+   *  - `credentialType: CredentialType|string` 证件类型；
+   *  - `credentialNumber: string` 证件号码；
+   *  - `categoryId: string|number|bigint` 所属类别的ID；
+   *  - `categoryCode: string` 所属类别的编码；
+   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `organizationId: string|number|bigint` 所属机构的ID；
+   *  - `organizationCode: string` 所属机构的编码；
+   *  - `organizationName: string` 所属机构名称中应包含的字符串；
+   *  - `departmentId: string|number|bigint` 所属部门的ID；
+   *  - `departmentCode: string` 所属部门的编码；
+   *  - `departmentName: string` 所属部门名称中应包含的字符串；
+   *  - `phone: string` 座机号码；
+   *  - `mobile: string` 手机号码；
+   *  - `email: string` 电子邮件地址中应包含的字符串；
+   *  - `jobTitle: string` 职称中应包含的字符串；
+   *  - `state: State|string` 状态；
+   *  - `test: boolean` 是否是测试数据；
+   *  - `deleted: boolean` 是否已经被标记删除；
+   *  - `createTimeStart: string`创建时间范围的（闭区间）起始值；
+   *  - `createTimeEnd: string` 创建时间范围的（闭区间）结束值；
+   *  - `modifyTimeStart: string` 修改时间范围的（闭区间）起始值；
+   *  - `modifyTimeEnd: string` 修改时间范围的（闭区间）结束值；
+   *  - `deleteTimeStart: string` 标记删除时间范围的（闭区间）起始值；
+   *  - `deleteTimeEnd: string` 标记删除时间范围的（闭区间）结束值；
+   * @param {object} sortRequest
+   *     排序参数，指定按照哪个属性排序。允许的条件包括：
+   *  - `sortField: string` 用于排序的属性名称（CamelCase形式）；
+   *  - `sortOrder: SortOrder` 指定是正序还是倒序。
+   * @param {boolean} autoDownload
+   *     是否自动下载文件。默认值为`true`。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<string|null|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
+   *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
+   *     这个Blob URL稍后需要通过`window.URL.revokeObjectURL(url)`释放）；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
+    return exportImpl(this, '/employee/export/csv', 'CSV', criteria, sortRequest, autoDownload, showLoading);
+  }
+
+  /**
+   * 从XML文件导入`Employee`对象。
+   *
+   * @param {File} file
+   *     XML文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Employee`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importXml(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/employee/import/xml', 'XML', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从JSON文件导入`Employee`对象。
+   *
+   * @param {File} file
+   *     JSON文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Employee`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importJson(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/employee/import/json', 'JSON', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从Excel文件导入`Employee`对象。
+   *
+   * @param {File} file
+   *     Excel文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Employee`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importExcel(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/employee/import/excel', 'Excel', file, parallel, threads, showLoading);
+  }
+
+  /**
+   * 从CSV文件导入`Employee`对象。
+   *
+   * @param {File} file
+   *     CSV文件对象。
+   * @param {boolean} parallel
+   *     是否并行导入。如果为`true`，则并行导入；否则，单线程导入。默认值为`false`。
+   * @param {number} threads
+   *     并行导入的线程数。若`parallel`为`false`，此参数无效。若此参数为`null`，
+   *     则使用默认线程数。默认线程数由当前系统的CPU核心数决定。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回成功导入的`Employee`对象的数量；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  importCsv(file, parallel = false, threads = null, showLoading = true) {
+    return importImpl(this, '/employee/import/csv', 'CSV', file, parallel, threads, showLoading);
   }
 }
 

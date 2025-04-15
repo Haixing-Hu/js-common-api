@@ -6,75 +6,119 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
 import {
   App,
-  CommonMimeType,
   InfoWithEntity,
   State,
   StatefulInfo,
 } from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkIdArrayArgumentType from '../utils/check-id-array-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('AppApi');
-
-/**
- * App 类的查询条件定义
- *
- * @type {Array<Object>}
- */
-const APP_CRITERIA_DEFINITIONS = [
-  // 名称中应包含的字符串
-  { name: 'name', type: String },
-  // 所属机构的ID
-  { name: 'organizationId', type: [String, Number, BigInt] },
-  // 所属机构的名称包含的字符串
-  { name: 'organizationName', type: String },
-  // 所属类别的ID
-  { name: 'categoryId', type: [String, Number, BigInt] },
-  // 所属类别的编码
-  { name: 'categoryCode', type: String },
-  // 所属类别的名称包含的字符串
-  { name: 'categoryName', type: String },
-  // 状态
-  { name: 'state', type: [State, String] },
-  // 最后一次认证时间范围的（闭区间）起始值
-  { name: 'lastAuthorizeTimeStart', type: String },
-  // 最后一次认证时间范围的（闭区间）结束值
-  { name: 'lastAuthorizeTimeEnd', type: String },
-  // 是否是预定义数据
-  { name: 'predefined', type: Boolean },
-  // 是否已经被标记删除
-  { name: 'deleted', type: Boolean },
-  // 创建时间范围的（闭区间）起始值
-  { name: 'createTimeStart', type: String },
-  // 创建时间范围的（闭区间）结束值
-  { name: 'createTimeEnd', type: String },
-  // 修改时间范围的（闭区间）起始值
-  { name: 'modifyTimeStart', type: String },
-  // 修改时间范围的（闭区间）结束值
-  { name: 'modifyTimeEnd', type: String },
-  // 标记删除时间范围的（闭区间）起始值
-  { name: 'deleteTimeStart', type: String },
-  // 标记删除时间范围的（闭区间）结束值
-  { name: 'deleteTimeEnd', type: String },
-];
+import { Log, HasLogger } from '@qubit-ltd/logging';
+import {
+  listImpl,
+  listInfoImpl,
+} from './impl/list-impl';
+import {
+  getImpl,
+  getByKeyImpl,
+  getInfoImpl,
+  getInfoByKeyImpl,
+  getPropertyImpl,
+  getPropertyByKeyImpl,
+} from './impl/get-impl';
+import addImpl from './impl/add-impl';
+import {
+  updateImpl,
+  updateByKeyImpl,
+  updatePropertyImpl,
+  updatePropertyByKeyImpl,
+} from './impl/update-impl';
+import {
+  deleteImpl,
+  deleteByKeyImpl,
+  batchDeleteImpl,
+} from './impl/delete-impl';
+import {
+  restoreImpl,
+  restoreByKeyImpl,
+  batchRestoreImpl,
+} from './impl/restore-impl';
+import {
+  purgeImpl,
+  purgeByKeyImpl,
+  purgeAllImpl,
+  batchPurgeImpl,
+} from './impl/purge-impl';
+import {
+  eraseImpl,
+  eraseByKeyImpl,
+  batchEraseImpl,
+} from './impl/erase-impl';
+import exportImpl from './impl/export-impl';
+import importImpl from './impl/import-impl';
 
 /**
  * 提供管理`App`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class AppApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = App;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = StatefulInfo;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    // 名称中应包含的字符串
+    { name: 'name', type: String },
+    // 所属机构的ID
+    { name: 'organizationId', type: [String, Number, BigInt] },
+    // 所属机构的名称包含的字符串
+    { name: 'organizationName', type: String },
+    // 所属类别的ID
+    { name: 'appId', type: [String, Number, BigInt] },
+    // 所属类别的代码
+    { name: 'appCode', type: String },
+    // 所属类别的名称包含的字符串
+    { name: 'appName', type: String },
+    // 状态
+    { name: 'state', type: [State, String] },
+    // 最后一次认证时间范围的（闭区间）起始值
+    { name: 'lastAuthorizeTimeStart', type: String },
+    // 最后一次认证时间范围的（闭区间）结束值
+    { name: 'lastAuthorizeTimeEnd', type: String },
+    // 是否是预定义数据
+    { name: 'predefined', type: Boolean },
+    // 是否已经被标记删除
+    { name: 'deleted', type: Boolean },
+    // 创建时间范围的（闭区间）起始值
+    { name: 'createTimeStart', type: String },
+    // 创建时间范围的（闭区间）结束值
+    { name: 'createTimeEnd', type: String },
+    // 修改时间范围的（闭区间）起始值
+    { name: 'modifyTimeStart', type: String },
+    // 修改时间范围的（闭区间）结束值
+    { name: 'modifyTimeEnd', type: String },
+    // 标记删除时间范围的（闭区间）起始值
+    { name: 'deleteTimeStart', type: String },
+    // 标记删除时间范围的（闭区间）结束值
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`App`对象。
    *
@@ -85,9 +129,9 @@ class AppApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationName: string` 所属机构的名称包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `appId: string|number|bigint` 所属类别的ID；
+   *  - `appCode: string` 所属类别的代码；
+   *  - `appName: string` 所属类别的名称包含的字符串；
    *  - `state: State|string` 状态；
    *  - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *  - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
@@ -111,26 +155,7 @@ class AppApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, App);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/app', {
-      params,
-    }).then((obj) => {
-      const page = App.createPage(obj, assignOptions);
-      logger.info('Successfully list the App.');
-      logger.debug('The page of App is:', page);
-      return page;
-    });
+    return listImpl(this, '/app', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -143,9 +168,9 @@ class AppApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationName: string` 所属机构的名称包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `appId: string|number|bigint` 所属类别的ID；
+   *  - `appCode: string` 所属类别的代码；
+   *  - `appName: string` 所属类别的名称包含的字符串；
    *  - `state: State|string` 状态；
    *  - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *  - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
@@ -169,30 +194,11 @@ class AppApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, App);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/app/info', {
-      params,
-    }).then((obj) => {
-      const page = StatefulInfo.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of App.');
-      logger.debug('The page of infos of App is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/app/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
-   * 获取指定的`App`对象。
+   * 根据ID，获取指定的`App`对象。
    *
    * @param {string|number|bigint} id
    *     `App`对象的ID。
@@ -204,24 +210,14 @@ class AppApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/app/${stringifyId(id)}`).then((obj) => {
-      const result = App.create(obj, assignOptions);
-      logger.info('Successfully get the App by ID:', id);
-      logger.debug('The App is:', result);
-      return result;
-    });
+    return getImpl(this, '/app/{id}', id, showLoading);
   }
 
   /**
-   * 获取指定的`App`对象。
+   * 根据代码，获取指定的`App`对象。
    *
    * @param {string} code
-   *     `App`对象的编码。
+   *     `App`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<App|ErrorInfo>}
@@ -230,21 +226,11 @@ class AppApi {
    */
   @Log
   getByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/app/code/${code}`).then((obj) => {
-      const result = App.create(obj, assignOptions);
-      logger.info('Successfully get the App by code:', code);
-      logger.debug('The App is:', result);
-      return result;
-    });
+    return getByKeyImpl(this, '/app/code/{code}', 'code', code, showLoading);
   }
 
   /**
-   * 获取指定的`App`对象的基本信息。
+   * 根据ID，获取指定的`App`对象的基本信息。
    *
    * @param {string|number|bigint} id
    *     `App`对象的ID。
@@ -256,24 +242,14 @@ class AppApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/app/${stringifyId(id)}/info`).then((obj) => {
-      const result = StatefulInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the App by ID:', id);
-      logger.debug('The info of the App is:', result);
-      return result;
-    });
+    return getInfoImpl(this, '/app/{id}/info', id, showLoading);
   }
 
   /**
-   * 获取指定的`App`对象的基本信息。
+   * 根据代码，获取指定的`App`对象的基本信息。
    *
    * @param {string} code
-   *     `App`对象的编码。
+   *     `App`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<StatefulInfo|ErrorInfo>}
@@ -282,21 +258,11 @@ class AppApi {
    */
   @Log
   getInfoByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/app/code/${code}/info`).then((obj) => {
-      const result = StatefulInfo.create(obj, assignOptions);
-      logger.info('Successfully get the info of the App by code:', code);
-      logger.debug('The info of the App is:', result);
-      return result;
-    });
+    return getInfoByKeyImpl(this, '/app/code/{code}/info', 'code', code, showLoading);
   }
 
   /**
-   * 获取指定的`App`对象所属分类的基本信息。
+   * 根据ID，获取指定的`App`对象所属分类的基本信息。
    *
    * @param {string|number|bigint} id
    *     `App`对象的ID。
@@ -309,50 +275,29 @@ class AppApi {
    */
   @Log
   getCategory(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/app/${stringifyId(id)}/category`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the category of the App by ID:', id);
-      logger.debug('The category of the App is:', result);
-      return result;
-    });
+    return getPropertyImpl(this, '/app/{id}/category', 'category', InfoWithEntity, id, showLoading);
   }
 
   /**
-   * 获取指定的`App`对象所属分类的基本信息。
+   * 根据代码，获取指定的`App`对象所属分类的基本信息。
    *
    * @param {string} code
    *     `App`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<InfoWithEntity|null|ErrorInfo>}
-   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`App`对象
-   *     所属分类的基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个
-   *     `ErrorInfo`对象。
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`App`对象所属分类的
+   *     基本信息，或`null`若该对象没有所属分类；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
   getCategoryByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/app/code/${code}/category`).then((obj) => {
-      const result = InfoWithEntity.create(obj, assignOptions);
-      logger.info('Successfully get the category of the App by code:', code);
-      logger.debug('The category of the App is:', result);
-      return result;
-    });
+    return getPropertyByKeyImpl(this, '/app/code/{code}/category', 'category', InfoWithEntity, 'code', code, showLoading);
   }
 
   /**
    * 添加一个`App`对象。
    *
-   * @param {App|object} app
+   * @param {App|object} entity
    *     要添加的`App`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -361,25 +306,14 @@ class AppApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(app, showLoading = true) {
-    checkArgumentType('app', app, [App, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(app, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/app', data).then((obj) => {
-      const result = App.create(obj, assignOptions);
-      logger.info('Successfully add the App:', result.id);
-      logger.debug('The added App is:', result);
-      return result;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/app', entity, showLoading);
   }
 
   /**
    * 根据ID，更新一个`App`对象。
    *
-   * @param {App|object} app
+   * @param {App|object} entity
    *     要更新的`App`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -388,28 +322,15 @@ class AppApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(app, showLoading = true) {
-    checkArgumentType('app', app, [App, Object]);
-    checkIdArgumentType(app.id, 'app.id');
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(app.id);
-    const data = toJSON(app, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/app/${id}`, data).then((obj) => {
-      const result = App.create(obj, assignOptions);
-      logger.info('Successfully update the App by ID %s at:', id, result.modifyTime);
-      logger.debug('The updated App is:', result);
-      return result;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/app/{id}', entity, showLoading);
   }
 
   /**
-   * 根据编码，更新一个`App`对象。
+   * 根据代码，更新一个`App`对象。
    *
-   * @param {App} app
-   *     要更新的`App`对象的数据，根据其编码确定要更新的对象。
+   * @param {App} entity
+   *     要更新的`App`对象的数据，根据其代码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<App|ErrorInfo>}
@@ -417,20 +338,8 @@ class AppApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(app, showLoading = true) {
-    checkArgumentType('app', app, App);
-    checkArgumentType('app.code', app.code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(app, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/app/code/${app.code}`, data).then((obj) => {
-      const result = App.create(obj, assignOptions);
-      logger.info('Successfully update the App by code "%s" at:', result.code, result.modifyTime);
-      logger.debug('The updated App is:', result);
-      return result;
-    });
+  updateByCode(entity, showLoading = true) {
+    return updateByKeyImpl(this, '/app/code/{code}', 'code', entity, showLoading);
   }
 
   /**
@@ -448,24 +357,14 @@ class AppApi {
    */
   @Log
   updateState(id, state, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('state', state, [State, String]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(state, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/app/${stringifyId(id)}/state`, data).then((timestamp) => {
-      logger.info('Successfully update the state of the App by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/app/{id}/state', id, 'state', State, state, showLoading);
   }
 
   /**
-   * 根据编码，更新一个`App`对象的状态。
+   * 根据代码，更新一个`App`对象的状态。
    *
    * @param {string} code
-   *     要更新的`App`对象的编码。
+   *     要更新的`App`对象的代码。
    * @param {State|string} state
    *     要更新的`App`对象的状态，必须是`State`枚举类型或表示其值的字符串。
    * @param {boolean} showLoading
@@ -476,17 +375,7 @@ class AppApi {
    */
   @Log
   updateStateByCode(code, state, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('state', state, [State, String]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(state, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/app/code/${code}/state`, data).then((timestamp) => {
-      logger.info('Successfully update the state of the App by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return updatePropertyByKeyImpl(this, '/app/code/{code}/state', 'code', code, 'state', State, state, showLoading);
   }
 
   /**
@@ -504,24 +393,14 @@ class AppApi {
    */
   @Log
   updateComment(id, comment, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('comment', comment, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(comment, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/app/${stringifyId(id)}/comment`, data).then((timestamp) => {
-      logger.info('Successfully update the comment of the App by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return updatePropertyImpl(this, '/app/{id}/comment', id, 'comment', String, comment, showLoading);
   }
 
   /**
-   * 根据编码，更新一个`App`对象的备注。
+   * 根据代码，更新一个`App`对象的备注。
    *
    * @param {string} code
-   *     要更新的`App`对象的编码。
+   *     要更新的`App`对象的代码。
    * @param {string} comment
    *     要更新的`App`对象的备注。
    * @param {boolean} showLoading
@@ -532,17 +411,7 @@ class AppApi {
    */
   @Log
   updateCommentByCode(code, comment, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('comment', comment, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(comment, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/app/code/${code}/comment`, data).then((timestamp) => {
-      logger.info('Successfully update the comment of the App by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return updatePropertyByKeyImpl(this, '/app/code/{code}/comment', 'code', code, 'comment', String, comment, showLoading);
   }
 
   /**
@@ -558,22 +427,14 @@ class AppApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/app/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the App by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/app/{id}', id, showLoading);
   }
 
   /**
-   * 根据编码，标记删除一个`App`对象。
+   * 根据代码，标记删除一个`App`对象。
    *
    * @param {string} code
-   *     要标记删除的`App`对象的编码。
+   *     要标记删除的`App`对象的代码。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<string|ErrorInfo>}
@@ -582,15 +443,7 @@ class AppApi {
    */
   @Log
   deleteByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/app/code/${code}`).then((timestamp) => {
-      logger.info('Successfully delete the App by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return deleteByKeyImpl(this, '/app/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -606,18 +459,7 @@ class AppApi {
    */
   @Log
   batchDelete(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete('/app/batch', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch delete %d App(s).', count);
-      return count;
-    });
+    return batchDeleteImpl(this, '/app/batch', ids, showLoading);
   }
 
   /**
@@ -633,20 +475,14 @@ class AppApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/app/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the App by ID:', id));
+    return restoreImpl(this, '/app/{id}', id, showLoading);
   }
 
   /**
-   * 根据编码，恢复一个被标记删除的`App`对象。
+   * 根据代码，恢复一个被标记删除的`App`对象。
    *
    * @param {string} code
-   *     要恢复的`App`对象的编码，该对象必须已经被标记删除。
+   *     要恢复的`App`对象的代码，该对象必须已经被标记删除。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -655,13 +491,7 @@ class AppApi {
    */
   @Log
   restoreByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/app/code/${code}`)
-      .then(() => logger.info('Successfully restore the App by code:', code));
+    return restoreByKeyImpl(this, '/app/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -677,16 +507,7 @@ class AppApi {
    */
   @Log
   batchRestore(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch('/app/batch', data).then((count) => {
-      logger.info('Successfully batch restore the %d App(s).', count);
-      return count;
-    });
+    return batchRestoreImpl(this, '/app/batch', ids, showLoading);
   }
 
   /**
@@ -702,20 +523,14 @@ class AppApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/app/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the App by ID:', id));
+    return purgeImpl(this, '/app/{id}/purge', id, showLoading);
   }
 
   /**
-   * 根据编码，清除一个被标记删除的`App`对象。
+   * 根据代码，清除一个被标记删除的`App`对象。
    *
    * @param {string} code
-   *     要清除的`App`对象的编码，该对象必须已经被标记删除。
+   *     要清除的`App`对象的代码，该对象必须已经被标记删除。
    * @param {boolean} showLoading
    *     是否显示加载提示。
    * @return {Promise<void|ErrorInfo>}
@@ -724,17 +539,11 @@ class AppApi {
    */
   @Log
   purgeByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/app/code/${code}/purge`)
-      .then(() => logger.info('Successfully purge the App by code:', code));
+    return purgeByKeyImpl(this, '/app/code/{code}/purge', 'code', code, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`App`对象。
+   * 彻底清除全部已被标记删除的`App`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -744,12 +553,55 @@ class AppApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/app/purge')
-      .then(() => logger.info('Successfully purge all deleted App.'));
+    return purgeAllImpl(this, '/app/purge', showLoading);
+  }
+
+  /**
+   * 彻底清除指定的`App`对象（无论其是否被标记删除）。
+   *
+   * @param {string|number|bigint} id
+   *     要彻底清除的`App`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  erase(id, showLoading = true) {
+    return eraseImpl(this, '/app/{id}/erase', id, showLoading);
+  }
+
+  /**
+   * 根据代码，彻底清除指定的`App`对象（无论其是否被标记删除）。
+   *
+   * @param {string} code
+   *     要彻底清除的`App`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<void|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功且没有返回值；若操作失败，
+   *     则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  eraseByCode(code, showLoading = true) {
+    return eraseByKeyImpl(this, '/app/code/{code}/erase', 'code', code, showLoading);
+  }
+
+  /**
+   * 批量彻底清除指定的`App`对象（无论其是否被标记删除）。
+   *
+   * @param {Array<string|number|bigint>} ids
+   *     待批量彻底清除的`App`对象的ID列表。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<number|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回实际删除的实体的数目；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  batchErase(ids, showLoading = true) {
+    return batchEraseImpl(this, '/app/batch/erase', ids, showLoading);
   }
 
   /**
@@ -765,18 +617,7 @@ class AppApi {
    */
   @Log
   batchPurge(ids, showLoading = true) {
-    checkIdArrayArgumentType(ids);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(ids, toJsonOptions);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/app/batch/purge', {
-      data,
-    }).then((count) => {
-      logger.info('Successfully batch purge %d App(s).', count);
-      return count;
-    });
+    return batchPurgeImpl(this, '/app/batch/purge', ids, showLoading);
   }
 
   /**
@@ -787,9 +628,9 @@ class AppApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationName: string` 所属机构的名称包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `appId: string|number|bigint` 所属类别的ID；
+   *  - `appCode: string` 所属类别的代码；
+   *  - `appName: string` 所属类别的名称包含的字符串；
    *  - `state: State|string` 状态；
    *  - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *  - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
@@ -817,22 +658,7 @@ class AppApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, App);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/app/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the App to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/app/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -843,9 +669,9 @@ class AppApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationName: string` 所属机构的名称包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `appId: string|number|bigint` 所属类别的ID；
+   *  - `appCode: string` 所属类别的代码；
+   *  - `appName: string` 所属类别的名称包含的字符串；
    *  - `state: State|string` 状态；
    *  - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *  - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
@@ -873,22 +699,7 @@ class AppApi {
    */
   @Log
   exportJson(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, App);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.JSON;
-    return http.download('/app/export/json', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the App to JSON:', result);
-      return result;
-    });
+    return exportImpl(this, '/app/export/json', 'JSON', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -899,9 +710,9 @@ class AppApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationName: string` 所属机构的名称包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `appId: string|number|bigint` 所属类别的ID；
+   *  - `appCode: string` 所属类别的代码；
+   *  - `appName: string` 所属类别的名称包含的字符串；
    *  - `state: State|string` 状态；
    *  - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *  - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
@@ -929,22 +740,7 @@ class AppApi {
    */
   @Log
   exportExcel(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, App);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.EXCEL;
-    return http.download('/app/export/excel', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the App to Excel:', result);
-      return result;
-    });
+    return exportImpl(this, '/app/export/excel', 'Excel', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -955,9 +751,9 @@ class AppApi {
    *  - `name: string` 名称中应包含的字符串；
    *  - `organizationId: string|number|bigint` 所属机构的ID；
    *  - `organizationName: string` 所属机构的名称包含的字符串；
-   *  - `categoryId: string|number|bigint` 所属类别的ID；
-   *  - `categoryCode: string` 所属类别的编码；
-   *  - `categoryName: string` 所属类别的名称包含的字符串；
+   *  - `appId: string|number|bigint` 所属类别的ID；
+   *  - `appCode: string` 所属类别的代码；
+   *  - `appName: string` 所属类别的名称包含的字符串；
    *  - `state: State|string` 状态；
    *  - `lastAuthorizeTimeStart: string` 最后一次认证时间范围的（闭区间）起始值；
    *  - `lastAuthorizeTimeEnd: string` 最后一次认证时间范围的（闭区间）结束值；
@@ -985,22 +781,7 @@ class AppApi {
    */
   @Log
   exportCsv(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, APP_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, App);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.CSV;
-    return http.download('/app/export/csv', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the App to CSV:', result);
-      return result;
-    });
+    return exportImpl(this, '/app/export/csv', 'CSV', criteria, sortRequest, autoDownload, showLoading);
   }
 
   /**
@@ -1021,28 +802,7 @@ class AppApi {
    */
   @Log
   importXml(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showUploading();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    const params = {};
-    if (parallel !== null) {
-      params.parallel = parallel;
-    }
-    if (threads !== null) {
-      params.threads = threads;
-    }
-    return http.post('/app/import/xml', formData, {
-      params,
-    }).then((count) => {
-      logger.info('Successfully import App from XML, count:', count);
-      return count;
-    });
+    return importImpl(this, '/app/import/xml', 'XML', file, parallel, threads, showLoading);
   }
 
   /**
@@ -1063,28 +823,7 @@ class AppApi {
    */
   @Log
   importJson(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showUploading();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    const params = {};
-    if (parallel !== null) {
-      params.parallel = parallel;
-    }
-    if (threads !== null) {
-      params.threads = threads;
-    }
-    return http.post('/app/import/json', formData, {
-      params,
-    }).then((count) => {
-      logger.info('Successfully import App from JSON, count:', count);
-      return count;
-    });
+    return importImpl(this, '/app/import/json', 'JSON', file, parallel, threads, showLoading);
   }
 
   /**
@@ -1105,28 +844,7 @@ class AppApi {
    */
   @Log
   importExcel(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showUploading();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    const params = {};
-    if (parallel !== null) {
-      params.parallel = parallel;
-    }
-    if (threads !== null) {
-      params.threads = threads;
-    }
-    return http.post('/app/import/excel', formData, {
-      params,
-    }).then((count) => {
-      logger.info('Successfully import App from Excel, count:', count);
-      return count;
-    });
+    return importImpl(this, '/app/import/excel', 'Excel', file, parallel, threads, showLoading);
   }
 
   /**
@@ -1147,28 +865,7 @@ class AppApi {
    */
   @Log
   importCsv(file, parallel = false, threads = null, showLoading = true) {
-    checkArgumentType('file', file, File);
-    checkArgumentType('parallel', parallel, Boolean, true);
-    checkArgumentType('threads', threads, Number, true);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showUploading();
-    }
-    const formData = new FormData();
-    formData.append('file', file);
-    const params = {};
-    if (parallel !== null) {
-      params.parallel = parallel;
-    }
-    if (threads !== null) {
-      params.threads = threads;
-    }
-    return http.post('/app/import/csv', formData, {
-      params,
-    }).then((count) => {
-      logger.info('Successfully import App from CSV, count:', count);
-      return count;
-    });
+    return importImpl(this, '/app/import/csv', 'CSV', file, parallel, threads, showLoading);
   }
 }
 

@@ -6,68 +6,81 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { http } from '@qubit-ltd/common-app';
-import { stringifyId, toJSON } from '@qubit-ltd/common-decorator';
+import { Info, Province } from '@qubit-ltd/common-model';
+import { HasLogger, Log } from '@qubit-ltd/logging';
+import addImpl from './impl/add-impl';
+import { deleteByKeyImpl, deleteImpl } from './impl/delete-impl';
+import exportImpl from './impl/export-impl';
 import {
-  Province,
-  Info,
-  CommonMimeType,
-} from '@qubit-ltd/common-model';
-import { loading } from '@qubit-ltd/common-ui';
-import { checkArgumentType } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import checkObjectArgument from '../utils/check-object-argument';
-import checkIdArgumentType from '../utils/check-id-argument-type';
-import checkPageRequestArgument from '../utils/check-page-request-argument';
-import checkSortRequestArgument from '../utils/check-sort-request-argument';
-import { assignOptions, toJsonOptions } from './impl/options';
-
-const logger = Logger.getLogger('ProvinceApi');
-
-/**
- * Province 类的查询条件定义
- *
- * @type {Array<Object>}
- */
-const PROVINCE_CRITERIA_DEFINITIONS = [
-  // 所属国家的ID
-  { name: 'countryId', type: [String, Number, BigInt] },
-  // 所属国家的编码
-  { name: 'countryCode', type: String },
-  // 所属国家的名称中应包含的字符串
-  { name: 'countryName', type: String },
-  // 名称中应包含的字符串
-  { name: 'name', type: String },
-  // 电话区号
-  { name: 'phoneArea', type: String },
-  // 邮政编码
-  { name: 'postalcode', type: String },
-  // 级别
-  { name: 'level', type: Number },
-  // 是否是预定义数据
-  { name: 'predefined', type: Boolean },
-  // 是否已经被标记删除
-  { name: 'deleted', type: Boolean },
-  // 创建时间范围的（闭区间）起始值
-  { name: 'createTimeStart', type: String },
-  // 创建时间范围的（闭区间）结束值
-  { name: 'createTimeEnd', type: String },
-  // 修改时间范围的（闭区间）起始值
-  { name: 'modifyTimeStart', type: String },
-  // 修改时间范围的（闭区间）结束值
-  { name: 'modifyTimeEnd', type: String },
-  // 标记删除时间范围的（闭区间）起始值
-  { name: 'deleteTimeStart', type: String },
-  // 标记删除时间范围的（闭区间）结束值
-  { name: 'deleteTimeEnd', type: String },
-];
+  getByKeyImpl,
+  getImpl,
+  getInfoByKeyImpl,
+  getInfoImpl,
+} from './impl/get-impl';
+import { listImpl, listInfoImpl } from './impl/list-impl';
+import { purgeAllImpl, purgeByKeyImpl, purgeImpl } from './impl/purge-impl';
+import { restoreByKeyImpl, restoreImpl } from './impl/restore-impl';
+import { updateByKeyImpl, updateImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Province`对象的API。
  *
  * @author 胡海星
  */
+@HasLogger
 class ProvinceApi {
+  /**
+   * 此API所管理的实体对象的类。
+   *
+   * @type {Function}
+   */
+  entityClass = Province;
+
+  /**
+   * 此API所管理的实体对象的基本信息的类。
+   *
+   * @type {Function}
+   */
+  entityInfoClass = Info;
+
+  /**
+   * 查询条件定义
+   *
+   * @type {Array<Object>}
+   */
+  CRITERIA_DEFINITIONS = [
+    // 所属国家的ID
+    { name: 'countryId', type: [String, Number, BigInt] },
+    // 所属国家的编码
+    { name: 'countryCode', type: String },
+    // 所属国家的名称中应包含的字符串
+    { name: 'countryName', type: String },
+    // 名称中应包含的字符串
+    { name: 'name', type: String },
+    // 电话区号
+    { name: 'phoneArea', type: String },
+    // 邮政编码
+    { name: 'postalcode', type: String },
+    // 级别
+    { name: 'level', type: Number },
+    // 是否是预定义数据
+    { name: 'predefined', type: Boolean },
+    // 是否已经被标记删除
+    { name: 'deleted', type: Boolean },
+    // 创建时间范围的（闭区间）起始值
+    { name: 'createTimeStart', type: String },
+    // 创建时间范围的（闭区间）结束值
+    { name: 'createTimeEnd', type: String },
+    // 修改时间范围的（闭区间）起始值
+    { name: 'modifyTimeStart', type: String },
+    // 修改时间范围的（闭区间）结束值
+    { name: 'modifyTimeEnd', type: String },
+    // 标记删除时间范围的（闭区间）起始值
+    { name: 'deleteTimeStart', type: String },
+    // 标记删除时间范围的（闭区间）结束值
+    { name: 'deleteTimeEnd', type: String },
+  ];
+
   /**
    * 列出符合条件的`Province`对象。
    *
@@ -102,26 +115,7 @@ class ProvinceApi {
    */
   @Log
   list(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, PROVINCE_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Province);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/province', {
-      params,
-    }).then((obj) => {
-      const page = Province.createPage(obj, assignOptions);
-      logger.info('Successfully list the Province.');
-      logger.debug('The page of Province is:', page);
-      return page;
-    });
+    return listImpl(this, '/province', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -158,26 +152,7 @@ class ProvinceApi {
    */
   @Log
   listInfo(pageRequest = {}, criteria = {}, sortRequest = {}, showLoading = true) {
-    checkPageRequestArgument(pageRequest);
-    checkObjectArgument('criteria', criteria, PROVINCE_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Province);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...pageRequest,
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get('/province/info', {
-      params,
-    }).then((obj) => {
-      const page = Info.createPage(obj, assignOptions);
-      logger.info('Successfully list the infos of Province.');
-      logger.debug('The page of infos of Province is:', page);
-      return page;
-    });
+    return listInfoImpl(this, '/province/info', pageRequest, criteria, sortRequest, showLoading);
   }
 
   /**
@@ -193,17 +168,7 @@ class ProvinceApi {
    */
   @Log
   get(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/province/${stringifyId(id)}`).then((obj) => {
-      const result = Province.create(obj, assignOptions);
-      logger.info('Successfully get the Province by ID:', id);
-      logger.debug('The Province is:', result);
-      return result;
-    });
+    return getImpl(this, '/province/{id}', id, showLoading);
   }
 
   /**
@@ -219,17 +184,7 @@ class ProvinceApi {
    */
   @Log
   getByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/province/code/${code}`).then((obj) => {
-      const result = Province.create(obj, assignOptions);
-      logger.info('Successfully get the Province by code:', code);
-      logger.debug('The Province is:', result);
-      return result;
-    });
+    return getByKeyImpl(this, '/province/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -245,17 +200,7 @@ class ProvinceApi {
    */
   @Log
   getInfo(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/province/${stringifyId(id)}/info`).then((obj) => {
-      const result = Info.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Province by ID:', id);
-      logger.debug('The info of the Province is:', result);
-      return result;
-    });
+    return getInfoImpl(this, '/province/{id}/info', id, showLoading);
   }
 
   /**
@@ -271,23 +216,13 @@ class ProvinceApi {
    */
   @Log
   getInfoByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showGetting();
-    }
-    return http.get(`/province/code/${code}/info`).then((obj) => {
-      const result = Info.create(obj, assignOptions);
-      logger.info('Successfully get the info of the Province by code:', code);
-      logger.debug('The info of the Province is:', result);
-      return result;
-    });
+    return getInfoByKeyImpl(this, '/province/code/{code}/info', 'code', code, showLoading);
   }
 
   /**
    * 添加一个`Province`对象。
    *
-   * @param {Province|object} province
+   * @param {Province|object} entity
    *     要添加的`Province`对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -296,25 +231,14 @@ class ProvinceApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  add(province, showLoading = true) {
-    checkArgumentType('province', province, [Province, Object]);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(province, toJsonOptions);
-    if (showLoading) {
-      loading.showAdding();
-    }
-    return http.post('/province', data).then((obj) => {
-      const result = Province.create(obj, assignOptions);
-      logger.info('Successfully add the Province:', result.id);
-      logger.debug('The added Province is:', result);
-      return result;
-    });
+  add(entity, showLoading = true) {
+    return addImpl(this, '/province', entity, showLoading);
   }
 
   /**
    * 根据ID，更新一个`Province`对象。
    *
-   * @param {Province|object} province
+   * @param {Province|object} entity
    *     要更新的`Province`对象的数据，根据其ID确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -323,27 +247,14 @@ class ProvinceApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  update(province, showLoading = true) {
-    checkArgumentType('province', province, [Province, Object]);
-    checkIdArgumentType(province.id, 'province.id');
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const id = stringifyId(province.id);
-    const data = toJSON(province, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/province/${id}`, data).then((obj) => {
-      const result = Province.create(obj, assignOptions);
-      logger.info('Successfully update the Province by ID %s at:', id, result.modifyTime);
-      logger.debug('The updated Province is:', result);
-      return result;
-    });
+  update(entity, showLoading = true) {
+    return updateImpl(this, '/province/{id}', entity, showLoading);
   }
 
   /**
    * 根据编码，更新一个`Province`对象。
    *
-   * @param {Province|object} province
+   * @param {Province|object} entity
    *     要更新的`Province`对象的数据，根据其编码确定要更新的对象。
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -352,20 +263,8 @@ class ProvinceApi {
    *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  updateByCode(province, showLoading = true) {
-    checkArgumentType('province', province, [Province, Object]);
-    checkArgumentType('province.code', province.code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const data = toJSON(province, toJsonOptions);
-    if (showLoading) {
-      loading.showUpdating();
-    }
-    return http.put(`/province/code/${province.code}`, data).then((obj) => {
-      const result = Province.create(obj, assignOptions);
-      logger.info('Successfully update the Province by code "%s" at:', result.code, result.modifyTime);
-      logger.debug('The updated Province is:', result);
-      return result;
-    });
+  updateByCode(entity, showLoading = true) {
+    return updateByKeyImpl(this, '/province/code/{code}', 'code', entity, showLoading);
   }
 
   /**
@@ -381,15 +280,7 @@ class ProvinceApi {
    */
   @Log
   delete(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/province/${stringifyId(id)}`).then((timestamp) => {
-      logger.info('Successfully delete the Province by ID %s at:', id, timestamp);
-      return timestamp;
-    });
+    return deleteImpl(this, '/province/{id}', id, showLoading);
   }
 
   /**
@@ -405,15 +296,7 @@ class ProvinceApi {
    */
   @Log
   deleteByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showDeleting();
-    }
-    return http.delete(`/province/code/${code}`).then((timestamp) => {
-      logger.info('Successfully delete the Province by code "%s" at:', code, timestamp);
-      return timestamp;
-    });
+    return deleteByKeyImpl(this, '/province/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -429,13 +312,7 @@ class ProvinceApi {
    */
   @Log
   restore(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/province/${stringifyId(id)}`)
-      .then(() => logger.info('Successfully restore the Province by ID:', id));
+    return restoreImpl(this, '/province/{id}', id, showLoading);
   }
 
   /**
@@ -451,13 +328,7 @@ class ProvinceApi {
    */
   @Log
   restoreByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showRestoring();
-    }
-    return http.patch(`/province/code/${code}`)
-      .then(() => logger.info('Successfully restore the Province by code:', code));
+    return restoreByKeyImpl(this, '/province/code/{code}', 'code', code, showLoading);
   }
 
   /**
@@ -473,13 +344,7 @@ class ProvinceApi {
    */
   @Log
   purge(id, showLoading = true) {
-    checkIdArgumentType(id);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/province/${stringifyId(id)}/purge`)
-      .then(() => logger.info('Successfully purge the Province by ID:', id));
+    return purgeImpl(this, '/province/{id}/purge', id, showLoading);
   }
 
   /**
@@ -495,17 +360,11 @@ class ProvinceApi {
    */
   @Log
   purgeByCode(code, showLoading = true) {
-    checkArgumentType('code', code, String);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete(`/province/code/${code}/purge`)
-      .then(() => logger.info('Successfully purge the Province by code:', code));
+    return purgeByKeyImpl(this, '/province/code/{code}/purge', 'code', code, showLoading);
   }
 
   /**
-   * 根彻底清除全部已被标记删除的`Province`对象。
+   * 彻底清除全部已被标记删除的`Province`对象。
    *
    * @param {boolean} showLoading
    *     是否显示加载提示。
@@ -515,12 +374,7 @@ class ProvinceApi {
    */
   @Log
   purgeAll(showLoading = true) {
-    checkArgumentType('showLoading', showLoading, Boolean);
-    if (showLoading) {
-      loading.showPurging();
-    }
-    return http.delete('/province/purge')
-      .then(() => logger.info('Successfully purge all deleted Province.'));
+    return purgeAllImpl(this, '/province/purge', showLoading);
   }
 
   /**
@@ -551,8 +405,6 @@ class ProvinceApi {
    *     是否自动下载文件。默认值为`true`。
    * @param {boolean} showLoading
    *     是否显示加载提示。
-   * @param {boolean} showLoading
-   *     是否显示加载提示。
    * @return {Promise<string|null|ErrorInfo>}
    *     此HTTP请求的`Promise`对象。若操作成功，则解析成功，如果`autoDownload`设置为`true`，
    *     浏览器会自动下载导出的文件，并返回`null`，否则返回导出的文件的 Blob URL（注意：
@@ -561,22 +413,7 @@ class ProvinceApi {
    */
   @Log
   exportXml(criteria = {}, sortRequest = {}, autoDownload = true, showLoading = true) {
-    checkObjectArgument('criteria', criteria, PROVINCE_CRITERIA_DEFINITIONS);
-    checkSortRequestArgument(sortRequest, Province);
-    checkArgumentType('autoDownload', autoDownload, Boolean);
-    checkArgumentType('showLoading', showLoading, Boolean);
-    const params = toJSON({
-      ...criteria,
-      ...sortRequest,
-    }, toJsonOptions);
-    if (showLoading) {
-      loading.showDownloading();
-    }
-    const mimeType = CommonMimeType.XML;
-    return http.download('/province/export/xml', params, mimeType, autoDownload).then((result) => {
-      logger.info('Successfully export the Province to XML:', result);
-      return result;
-    });
+    return exportImpl(this, '/province/export/xml', 'XML', criteria, sortRequest, autoDownload, showLoading);
   }
 }
 
