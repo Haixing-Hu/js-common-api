@@ -23,6 +23,64 @@ import employeeApi from './api/employee';
 import feedbackApi from './api/feedback';
 import fileApi from './api/file';
 import { assignOptions, toJsonOptions } from './api/impl/options';
+import addImpl from './api/impl/add-impl';
+import {
+  deleteImpl,
+  deleteByKeyImpl,
+  deleteAllImpl,
+  batchDeleteImpl,
+  deleteByParentAndKeyImpl,
+} from './api/impl/delete-impl';
+import {
+  eraseImpl,
+  eraseByKeyImpl,
+  eraseAllImpl,
+  batchEraseImpl,
+  eraseByParentAndKeyImpl,
+} from './api/impl/erase-impl';
+import {
+  existsImpl,
+  existsKeyImpl,
+  existsParentAndKeyImpl,
+} from './api/impl/exists-impl';
+import exportImpl from './api/impl/export-impl';
+import {
+  getImpl,
+  getByKeyImpl,
+  getInfoImpl,
+  getInfoByKeyImpl,
+  getPropertyImpl,
+  getPropertyByKeyImpl,
+  getByParentAndKeyImpl,
+  getInfoByParentAndKeyImpl,
+  getPropertyByParentAndKeyImpl,
+} from './api/impl/get-impl';
+import importImpl from './api/impl/import-impl';
+import {
+  listImpl,
+  listInfoImpl,
+} from './api/impl/list-impl';
+import {
+  purgeImpl,
+  purgeByKeyImpl,
+  purgeAllImpl,
+  batchPurgeImpl,
+  purgeByParentAndKeyImpl,
+} from './api/impl/purge-impl';
+import {
+  restoreImpl,
+  restoreByKeyImpl,
+  restoreAllImpl,
+  batchRestoreImpl,
+  restoreByParentAndKeyImpl,
+} from './api/impl/restore-impl';
+import {
+  updateImpl,
+  updateByKeyImpl,
+  updatePropertyImpl,
+  updatePropertyByKeyImpl,
+  updateByParentAndKeyImpl,
+} from './api/impl/update-impl';
 import organizationApi from './api/organization';
 import personApi from './api/person';
 import provinceApi from './api/province';
@@ -80,6 +138,48 @@ export {
   wechatApi,
   assignOptions,
   toJsonOptions,
+  addImpl,
+  deleteImpl,
+  deleteByKeyImpl,
+  deleteAllImpl,
+  batchDeleteImpl,
+  deleteByParentAndKeyImpl,
+  eraseImpl,
+  eraseByKeyImpl,
+  eraseAllImpl,
+  batchEraseImpl,
+  eraseByParentAndKeyImpl,
+  existsImpl,
+  existsKeyImpl,
+  existsParentAndKeyImpl,
+  exportImpl,
+  getImpl,
+  getByKeyImpl,
+  getInfoImpl,
+  getInfoByKeyImpl,
+  getPropertyImpl,
+  getPropertyByKeyImpl,
+  getByParentAndKeyImpl,
+  getInfoByParentAndKeyImpl,
+  getPropertyByParentAndKeyImpl,
+  importImpl,
+  listImpl,
+  listInfoImpl,
+  purgeImpl,
+  purgeByKeyImpl,
+  purgeAllImpl,
+  batchPurgeImpl,
+  purgeByParentAndKeyImpl,
+  restoreImpl,
+  restoreByKeyImpl,
+  restoreAllImpl,
+  batchRestoreImpl,
+  restoreByParentAndKeyImpl,
+  updateImpl,
+  updateByKeyImpl,
+  updatePropertyImpl,
+  updatePropertyByKeyImpl,
+  updateByParentAndKeyImpl,
   wechat,
   checkObjectArgument,
   checkIdArgumentType,
