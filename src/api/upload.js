@@ -9,7 +9,7 @@
 import { AttachmentType, Upload } from '@qubit-ltd/common-model';
 import { HasLogger, Log } from '@qubit-ltd/logging';
 import { batchDeleteImpl, deleteImpl } from './impl/delete-impl';
-import { eraseImpl, batchEraseImpl } from './impl/erase-impl';
+import { batchEraseImpl, eraseImpl } from './impl/erase-impl';
 import { getImpl } from './impl/get-impl';
 import { listImpl } from './impl/list-impl';
 import { batchPurgeImpl, purgeAllImpl, purgeImpl } from './impl/purge-impl';

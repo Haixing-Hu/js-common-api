@@ -1,4 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
+import { alert, loading } from '@qubit-ltd/common-ui';
 //
 //    Copyright (c) 2017 - 2024.
 //    Nanjing Smart Medical Investment Operation Service Co. Ltd.
@@ -6,10 +7,14 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { getSearchParam, removeSearchParam, redirect, isWechat } from '@qubit-ltd/common-util';
-import { Log, Logger } from '@qubit-ltd/logging';
-import { alert, loading } from '@qubit-ltd/common-ui';
+import {
+  getSearchParam,
+  isWechat,
+  redirect,
+  removeSearchParam,
+} from '@qubit-ltd/common-util';
 import config from '@qubit-ltd/config';
+import { Log, Logger } from '@qubit-ltd/logging';
 import wechatApi from '../api/wechat';
 
 /**

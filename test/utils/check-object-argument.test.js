@@ -6,7 +6,6 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-// import { expect } from 'chai';
 import { State } from '@qubit-ltd/common-model';
 import checkObjectArgument from '../../src/utils/check-object-argument';
 

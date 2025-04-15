@@ -18,9 +18,9 @@ import {
   dateToEndTimestamp,
   dateToStartTimestamp,
 } from '@qubit-ltd/common-filter';
+import { InfoWithEntity, TaskStatus } from '@qubit-ltd/common-model';
 import Normalizer from '@qubit-ltd/common-normalizer';
 import Validator from '@qubit-ltd/common-validator';
-import { InfoWithEntity, TaskStatus } from '@qubit-ltd/common-model';
 
 /**
  * 此模型表示任务过滤器。
@@ -206,7 +206,9 @@ class TaskFilter {
    */
   toCriteria() {
     return {
-      category: this.category,
+      categoryId: this.category?.id,
+      categoryCode: this.category?.code,
+      categoryName: this.category?.name,
       targetEntity: this.targetEntity,
       targetId: this.targetId,
       status: this.status,

@@ -6,8 +6,8 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { checkArgumentType } from '@qubit-ltd/common-util';
 import { PageRequest } from '@qubit-ltd/common-model';
+import { checkArgumentType } from '@qubit-ltd/common-util';
 
 /**
  * 检查指定的分页请求参数是否合法。

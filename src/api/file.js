@@ -9,9 +9,9 @@
 import { http } from '@qubit-ltd/common-app';
 import { toJSON } from '@qubit-ltd/common-decorator';
 import { Upload } from '@qubit-ltd/common-model';
-import { Log, Logger } from '@qubit-ltd/logging';
-import { checkArgumentType } from '@qubit-ltd/common-util';
 import { loading } from '@qubit-ltd/common-ui';
+import { checkArgumentType } from '@qubit-ltd/common-util';
+import { Log, Logger } from '@qubit-ltd/logging';
 import { assignOptions, toJsonOptions } from './impl/options';
 
 const logger = Logger.getLogger('FileApi');

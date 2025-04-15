@@ -7,45 +7,35 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 import { Category, InfoWithEntity } from '@qubit-ltd/common-model';
-import { Log, HasLogger } from '@qubit-ltd/logging';
-import {
-  listImpl,
-  listInfoImpl,
-} from './impl/list-impl';
-import {
-  getImpl,
-  getByKeyImpl,
-  getInfoImpl,
-  getInfoByKeyImpl,
-} from './impl/get-impl';
+import { HasLogger, Log } from '@qubit-ltd/logging';
 import addImpl from './impl/add-impl';
 import {
-  updateImpl,
-  updateByKeyImpl,
-} from './impl/update-impl';
-import {
-  deleteImpl,
-  deleteByKeyImpl,
   batchDeleteImpl,
+  deleteByKeyImpl,
+  deleteImpl,
 } from './impl/delete-impl';
+import { batchEraseImpl, eraseByKeyImpl, eraseImpl } from './impl/erase-impl';
+import exportImpl from './impl/export-impl';
 import {
-  restoreImpl,
-  restoreByKeyImpl,
-  batchRestoreImpl,
-} from './impl/restore-impl';
+  getByKeyImpl,
+  getImpl,
+  getInfoByKeyImpl,
+  getInfoImpl,
+} from './impl/get-impl';
+import importImpl from './impl/import-impl';
+import { listImpl, listInfoImpl } from './impl/list-impl';
 import {
-  purgeImpl,
-  purgeByKeyImpl,
-  purgeAllImpl,
   batchPurgeImpl,
+  purgeAllImpl,
+  purgeByKeyImpl,
+  purgeImpl,
 } from './impl/purge-impl';
 import {
-  eraseImpl,
-  eraseByKeyImpl,
-  batchEraseImpl,
-} from './impl/erase-impl';
-import exportImpl from './impl/export-impl';
-import importImpl from './impl/import-impl';
+  batchRestoreImpl,
+  restoreByKeyImpl,
+  restoreImpl,
+} from './impl/restore-impl';
+import { updateByKeyImpl, updateImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Category`对象的API。
