@@ -49,6 +49,7 @@
     "@qubit-ltd/common-decorator": "^3.10.2",
     "@qubit-ltd/common-filter": "^1.10.2",
     "@qubit-ltd/common-model": "^4.18.2",
+    "@qubit-ltd/common-normalizer": "^1.8.2",
     "@qubit-ltd/common-ui": "^1.14.2",
     "@qubit-ltd/common-util": "^5.4.1",
     "@qubit-ltd/config": "^1.2.1",
