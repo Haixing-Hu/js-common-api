@@ -106,7 +106,7 @@
     "jest-environment-jsdom-global": "^4.0.0",
     "jest-extended": "^4.0.2",
     "jsdoc": "^4.0.4",
-    "pinia": "^2.3.1",
+    "pinia": "^3.0.2",
     "rollup": "^4.40.2",
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "^5.14.0",
