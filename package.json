@@ -1,6 +1,6 @@
 {
   "name": "@qubit-ltd/common-api",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "A JavaScript library of encapsulation of common APIs",
   "author": "Haixing Hu (starfish.hu@gmail.com)",
   "license": "Apache-2.0",
@@ -95,6 +95,7 @@
     "babel-plugin-transform-object-hasown": "^1.1.0",
     "chai": "^5.2.0",
     "check-es-version": "^1.5.1",
+    "clean-jsdoc-theme": "^4.3.0",
     "core-js": "^3.42.0",
     "cross-env": "^7.0.3",
     "dayjs": "^1.11.13",
