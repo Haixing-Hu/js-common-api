@@ -108,17 +108,19 @@ function updateByKeyImpl(api, url, keyName, entity, showLoading, options = {}) {
  *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的实体对象；
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
-function updatePropertyImpl(api, url, id, propertyName, propertyClass, propertyValue, showLoading, options = {}) {
+function updatePropertyImpl(api, url, id, propertyName, propertyClass,
+    propertyValue, showLoading, options = {}) {
   checkIdArgumentType(id);
   checkArgumentType(propertyName, propertyValue, propertyClass);
   checkArgumentType('showLoading', showLoading, Boolean);
-  const data = toJSON({ [propertyName]: propertyValue }, toJsonOptions);
+  const data = toJSON(propertyValue, toJsonOptions);
   const params = toJSON({ ...options }, toJsonOptions);
   if (showLoading) {
     loading.showUpdating();
   }
   return http.put(url.replaceAll('{id}', stringifyId(id)), data, { params }).then((timestamp) => {
-    api.logger.info('Successfully update the %s of a %s by its ID "%s" at:', propertyName, api.entityClass.name, id, timestamp);
+    api.logger.info('Successfully update the %s of a %s by its ID "%s" at:',
+      propertyName, api.entityClass.name, id, timestamp);
     return timestamp;
   });
 }
@@ -148,17 +150,19 @@ function updatePropertyImpl(api, url, id, propertyName, propertyClass, propertyV
  *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的实体对象；
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
-function updatePropertyByKeyImpl(api, url, keyName, keyValue, propertyName, propertyClass, propertyValue, showLoading, options = {}) {
+function updatePropertyByKeyImpl(api, url, keyName, keyValue, propertyName,
+    propertyClass, propertyValue, showLoading, options = {}) {
   checkArgumentType(keyName, keyValue, String);
   checkArgumentType(propertyName, propertyValue, propertyClass);
   checkArgumentType('showLoading', showLoading, Boolean);
-  const data = toJSON({ [propertyName]: propertyValue }, toJsonOptions);
+  const data = toJSON(propertyValue, toJsonOptions);
   const params = toJSON({ ...options }, toJsonOptions);
   if (showLoading) {
     loading.showUpdating();
   }
   return http.put(url.replaceAll(`{${keyName}}`, keyValue), data, { params }).then((timestamp) => {
-    api.logger.info('Successfully update the %s of a %s by its %s "%s" at:', propertyName, api.entityClass.name, keyName, keyValue, timestamp);
+    api.logger.info('Successfully update the %s of a %s by its %s "%s" at:',
+      propertyName, api.entityClass.name, keyName, keyValue, timestamp);
     return timestamp;
   });
 }
@@ -186,7 +190,8 @@ function updatePropertyByKeyImpl(api, url, keyName, keyValue, propertyName, prop
  *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回更新后的实体对象；
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
-function updateByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName, entity, showLoading, options = {}) {
+function updateByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue,
+    keyName, entity, showLoading, options = {}) {
   checkArgumentType('entity', entity, [api.entityClass, Object]);
   checkArgumentType(`entity.${parentKeyName}`, parentKeyValue, [String, Number, BigInt]);
   checkArgumentType(`entity.${keyName}`, entity[keyName], String);
