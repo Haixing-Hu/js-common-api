@@ -39,7 +39,7 @@ function addImpl(api, url, entity, showLoading, options = {}) {
   }
   return http.post(url, data, { params }).then((obj) => {
     const result = api.entityClass.create(obj, assignOptions);
-    api.logger.info('Successfully add the %s:', api.entityClass.name, result.id);
+    api.logger.info('Successfully add the %s:', api.entityClass.name, entity.id);
     api.logger.debug('The added %s is:', api.entityClass.name, result);
     return result;
   });

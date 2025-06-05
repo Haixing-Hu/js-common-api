@@ -42,7 +42,7 @@ function updateImpl(api, url, entity, showLoading, options = {}) {
   }
   return http.put(url.replaceAll('{id}', stringifyId(entity.id)), data, { params }).then((obj) => {
     const result = api.entityClass.create(obj, assignOptions);
-    api.logger.info('Successfully update the %s by its ID:', api.entityClass.name, result.id);
+    api.logger.info('Successfully update the %s by its ID:', api.entityClass.name, entity.id);
     api.logger.debug('The updated %s is:', api.entityClass.name, result);
     return result;
   });
