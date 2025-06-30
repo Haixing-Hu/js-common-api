@@ -12,7 +12,9 @@
 - [安装](#安装)
 - [使用](#使用)
 - [功能特性](#功能特性)
+  - [API 基本模式](#api-基本模式)
   - [API 模块](#api-模块)
+  - [自定义 API 开发](#自定义-api-开发)
   - [实现工具](#实现工具)
   - [通用工具函数](#通用工具函数)
 - [贡献](#贡献)
@@ -75,6 +77,26 @@ async function createCategory(category) {
 
 ## <span id="功能特性">功能特性</span>
 
+### <span id="api-基本模式">API 基本模式</span>
+
+该库中的所有 API 模块都遵循统一的设计模式，每个 API 类都包含以下核心要素：
+
+#### 核心属性
+- **`entityClass`**: 实体对象的类，用于创建和反序列化实体对象
+- **`entityInfoClass`**: 实体信息类，用于创建基本信息对象
+- **`CRITERIA_DEFINITIONS`**: 查询条件定义数组，用于验证查询参数
+- **`@HasLogger`**: 装饰器，为类自动注入日志记录器
+
+#### 标准方法模式
+每个 API 类通常包含以下标准方法：
+
+- **查询操作**: `get()`, `getInfo()`, `getByCode()`, `list()`, `listInfo()`
+- **创建更新**: `add()`, `update()`, `updateProperty()`
+- **删除恢复**: `delete()`, `restore()`, `purge()`, `batchDelete()`, `batchRestore()`
+- **其他操作**: `exists()`, `import()`, `export()`
+
+所有方法都使用 `@Log` 装饰器进行日志记录，并支持可选的加载提示显示。
+
 ### <span id="api-模块">API 模块</span>
 
 该库提供了多种 API 模块，每个模块对应不同的业务实体：
@@ -123,6 +145,17 @@ async function createCategory(category) {
   - `verifyCodeApi`: 验证码
   - `wechatApi`: 微信相关
 
+### <span id="自定义-api-开发">自定义 API 开发</span>
+
+该库最大的优势在于提供了一套完整的工具函数，让开发者可以快速构建自定义的 API 模块。通过使用这些工具函数，您可以：
+
+- **快速开发**: 使用标准化的实现函数，减少重复代码
+- **保持一致性**: 所有 API 遵循相同的模式和约定
+- **自动化处理**: 内置错误处理、日志记录、加载状态管理
+- **类型安全**: 内置参数验证和类型检查
+
+详细的开发指南请参阅：[自定义 API 开发指南](./doc/custom-api-development.md)
+
 ### <span id="实现工具">实现工具</span>
 
 库提供了一系列实现函数，用于构建通用的 API 操作：
@@ -170,4 +203,4 @@ async function createCategory(category) {
 有关更多详细信息，请参阅 [LICENSE](LICENSE) 文件。
 
 [@qubit-ltd/common-api]: https://npmjs.com/package/@qubit-ltd/common-api
-[GitHub 仓库]: https://github.com/Haixing-Hu/js-common-api 
+[GitHub 仓库]: https://github.com/Haixing-Hu/js-common-api

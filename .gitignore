@@ -139,3 +139,5 @@ doc
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+references/*
