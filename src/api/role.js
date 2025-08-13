@@ -118,7 +118,7 @@ class RoleApi {
    * @param {PageRequest|object} pageRequest
    *     分页请求。
    * @param {object} criteria
-   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：      
+   *     查询条件参数，所有条件之间用`AND`连接。允许的条件包括：
    *  - `appId: string|number|bigint` 所属应用的ID；
    *  - `appCode: string` 所属应用的代码；
    *  - `appName: string` 所属应用的名称包含的字符串；
@@ -523,4 +523,6 @@ class RoleApi {
   }
 }
 
-export default RoleApi;
+const roleApi = new RoleApi();
+
+export default roleApi;

@@ -345,4 +345,6 @@ class UserRoleApi {
   }
 }
 
-export default UserRoleApi;
+const userRoleApi = new UserRoleApi();
+
+export default userRoleApi;
