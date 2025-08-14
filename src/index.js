@@ -22,6 +22,7 @@ import districtApi from './api/district';
 import employeeApi from './api/employee';
 import feedbackApi from './api/feedback';
 import fileApi from './api/file';
+import faqApi from './api/faq';
 import { assignOptions, toJsonOptions } from './api/impl/options';
 import addImpl from './api/impl/add-impl';
 import {
@@ -121,6 +122,7 @@ export {
   employeeApi,
   feedbackApi,
   fileApi,
+  faqApi,
   organizationApi,
   personApi,
   provinceApi,
