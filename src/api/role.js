@@ -6,7 +6,7 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { Role, StatefulInfo } from '@qubit-ltd/common-model';
+import { Role, State, StatefulInfo } from '@qubit-ltd/common-model';
 import { HasLogger, Log } from '@qubit-ltd/logging';
 import addImpl from './impl/add-impl';
 import { batchDeleteImpl, deleteImpl } from './impl/delete-impl';
@@ -17,7 +17,7 @@ import importImpl from './impl/import-impl';
 import { listImpl, listInfoImpl } from './impl/list-impl';
 import { batchPurgeImpl, purgeAllImpl, purgeImpl } from './impl/purge-impl';
 import { batchRestoreImpl, restoreImpl } from './impl/restore-impl';
-import { updateImpl } from './impl/update-impl';
+import { updateImpl, updatePropertyImpl } from './impl/update-impl';
 
 /**
  * 提供管理`Role`对象的API。
@@ -210,6 +210,24 @@ class RoleApi {
   @Log
   update(entity, showLoading = true) {
     return updateImpl(this, '/role/{id}', entity, showLoading);
+  }
+
+  /**
+   * 根据ID，更新一个`Role`对象的状态。
+   *
+   * @param {string|number|bigint} id
+   *     `Role`对象的ID。
+   * @param {State|string} state
+   *     要更新的`Role`对象的状态。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<String|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回则数据被更新的UTC时间戳；
+   *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  updateState(id, state, showLoading = true) {
+    return updatePropertyImpl(this, '/role/{id}/state', id, 'state', [State, String], state, showLoading);
   }
 
   /**
