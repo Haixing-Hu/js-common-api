@@ -437,4 +437,6 @@ class FaqApi {
   }
 }
 
-export default FaqApi;
+const faqApi = new FaqApi();
+
+export default faqApi;
