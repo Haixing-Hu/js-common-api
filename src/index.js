@@ -82,6 +82,7 @@ import {
   updatePropertyByKeyImpl,
   updateByParentAndKeyImpl,
 } from './api/impl/update-impl';
+import operationLogApi from './api/operation-log';
 import organizationApi from './api/organization';
 import personApi from './api/person';
 import provinceApi from './api/province';
@@ -123,6 +124,7 @@ export {
   feedbackApi,
   fileApi,
   faqApi,
+  operationLogApi,
   organizationApi,
   personApi,
   provinceApi,
