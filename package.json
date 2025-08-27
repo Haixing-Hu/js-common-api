@@ -1,6 +1,6 @@
 {
   "name": "@qubit-ltd/common-api",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "A JavaScript library of encapsulation of common APIs",
   "author": "Haixing Hu (starfish.hu@gmail.com)",
   "license": "Apache-2.0",
@@ -46,15 +46,15 @@
   },
   "peerDependencies": {
     "@babel/runtime": "^7.26.0",
-    "@qubit-ltd/common-app": "^1.11.17",
-    "@qubit-ltd/common-decorator": "^3.10.2",
+    "@qubit-ltd/common-app": "^1.11.20",
+    "@qubit-ltd/common-decorator": "^3.10.3",
     "@qubit-ltd/common-filter": "^1.10.2",
-    "@qubit-ltd/common-model": "^4.18.2",
-    "@qubit-ltd/common-normalizer": "^1.8.2",
+    "@qubit-ltd/common-model": "^4.20.0",
+    "@qubit-ltd/common-normalizer": "^1.8.3",
     "@qubit-ltd/common-ui": "^1.14.2",
-    "@qubit-ltd/common-util": "^5.4.1",
-    "@qubit-ltd/config": "^1.2.1",
-    "@qubit-ltd/logging": "^1.4.9"
+    "@qubit-ltd/common-util": "^5.4.3",
+    "@qubit-ltd/config": "^1.2.2",
+    "@qubit-ltd/logging": "^1.4.10"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",
@@ -112,7 +112,8 @@
     "rollup-plugin-analyzer": "^4.0.0",
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "^5.9.2",
-    "vue": "^3.5.20"
+    "vue": "^3.5.20",
+    "vue-eslint-parser": "^10.2.0"
   },
   "packageManager": "yarn@4.5.0"
 }
