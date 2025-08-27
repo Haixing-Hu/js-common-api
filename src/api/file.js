@@ -48,7 +48,15 @@ class FileApi {
     checkArgumentType('file', file, File);
     checkArgumentType('contentType', contentType, String, true);
     checkArgumentType('onUploadProgress', onUploadProgress, Function, true);
-    return this.__uploadImpl(filename, file, undefined, undefined, contentType, onUploadProgress, showLoading);
+    const params = {
+      filename,
+      algorithm: undefined,
+      hash: undefined,
+      contentType,
+      onUploadProgress,
+      showLoading,
+    };
+    return this.__uploadImpl(file, params);
   }
 
   /**
@@ -56,12 +64,12 @@ class FileApi {
    *
    * @param {string} filename
    *     待上传的文件的原始文件名。
+   * @param {string|null|undefined} algorithm
+   *     计算哈希值所使用的哈希算法代码。
+   * @param {string|null|undefined} hash
+   *     待上传的文件按照指定的哈希算法计算出的哈希值。若{@code algorithm}为{@code null}，则忽略此参数。
    * @param {Blob|File} file
    *     待上传的文件对象。
-   * @param {string|null|undefined} hashAlgorithm
-   *     计算哈希值所使用的哈希算法代码。
-   * @param {string|null|undefined} hashValue
-   *     待上传的文件按照指定的哈希算法计算出的哈希值。若{@code hashAlgorithm}为{@code null}，则忽略此参数。
    * @param {string|null|undefined} contentType
    *     待上传文件的 Content-Type。可以为`null`或者`undefined`。
    * @param {function|null|undefined} onUploadProgress
@@ -76,28 +84,36 @@ class FileApi {
    *     `Upload`对象；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  uploadWithHash(filename, file, hashAlgorithm, hashValue,
+  uploadWithHash(filename, algorithm, hash, file,
       contentType = undefined, onUploadProgress = undefined, showLoading = true) {
     checkArgumentType('filename', filename, String);
+    checkArgumentType('algorithm', algorithm, String);
+    checkArgumentType('hash', hash, String);
     checkArgumentType('file', file, File);
-    checkArgumentType('hashAlgorithm', hashAlgorithm, String);
-    checkArgumentType('hashValue', hashValue, String);
     checkArgumentType('contentType', contentType, String, true);
     checkArgumentType('onUploadProgress', onUploadProgress, Function, true);
-    return this.__uploadImpl(filename, file, hashAlgorithm, hashValue, contentType, onUploadProgress, showLoading);
+    const params = {
+      filename,
+      algorithm,
+      hash,
+      contentType,
+      onUploadProgress,
+      showLoading,
+    };
+    return this.__uploadImpl(file, params);
   }
 
   /**
    * 文件上传功能的内部实现。
    *
-   * @param {string} filename
-   *     待上传的文件的原始文件名。
    * @param {Blob|File} file
    *     待上传的文件对象。
-   * @param {string|null|undefined} hashAlgorithm
+   * @param {string} filename
+   *     待上传的文件的原始文件名。
+   * @param {string|null|undefined} algorithm
    *     计算哈希值所使用的哈希算法代码。
-   * @param {string|null|undefined} hashValue
-   *     待上传的文件按照指定的哈希算法计算出的哈希值。若{@code hashAlgorithm}为{@code null}，则忽略此参数。
+   * @param {string|null|undefined} hash
+   *     待上传的文件按照指定的哈希算法计算出的哈希值。若{@code algorithm}为{@code null}，则忽略此参数。
    * @param {string|null|undefined} contentType
    *     待上传文件的 Content-Type。可以为`null`或者`undefined`。
    * @param {function|null|undefined} onUploadProgress
@@ -112,17 +128,17 @@ class FileApi {
    *     `Upload`对象；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    * @private
    */
-  __uploadImpl(filename, file, hashAlgorithm, hashValue, contentType, onUploadProgress, showLoading) {
+  __uploadImpl(file, { filename, algorithm, hash, contentType, onUploadProgress, showLoading }) {
     const headers = {
       'Content-Type': 'multipart/form-data',
     };
     const formData = new FormData();
     formData.append('filename', filename);
-    if (hashAlgorithm) {
-      formData.append('hashAlgorithm', hashAlgorithm);
+    if (algorithm) {
+      formData.append('algorithm', algorithm);
     }
-    if (hashValue) {
-      formData.append('hashValue', hashValue);
+    if (hash) {
+      formData.append('hash', hash);
     }
     if (contentType) {
       formData.append('contentType', contentType);
