@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 import {
   Dict,
+  DictEntry,
   DictEntryInfo,
   InfoWithEntity,
   State,
@@ -275,6 +276,38 @@ class DictApi {
   }
 
   /**
+   * 根据ID，获取指定的`Dict`对象的所有词条的列表。
+   *
+   * @param {string|number|bigint} id
+   *     `Dict`对象的ID。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Array<DictEntry>|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Dict`对象
+   *     的所有词条的列表；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getEntries(id, showLoading = true) {
+    return getPropertyImpl(this, '/dict/{id}/entry', 'entries', DictEntry, id, showLoading);
+  }
+
+  /**
+   * 根据代码，获取指定的`Dict`对象的所有词条的列表。
+   *
+   * @param {string} code
+   *     `Dict`对象的代码。
+   * @param {boolean} showLoading
+   *     是否显示加载提示。
+   * @return {Promise<Array<DictEntry>|ErrorInfo>}
+   *     此HTTP请求的`Promise`对象。若操作成功，则解析成功并返回指定的`Dict`对象
+   *     的所有词条的列表；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
+   */
+  @Log
+  getEntriesByCode(code, showLoading = true) {
+    return getPropertyByKeyImpl(this, '/dict/code/{code}/entry', 'entries', DictEntry, 'code', code, showLoading);
+  }
+
+  /**
    * 根据ID，获取指定的`Dict`对象的所有词条的基本信息列表。
    *
    * @param {string|number|bigint} id
@@ -286,8 +319,8 @@ class DictApi {
    *     的所有词条的基本信息列表；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getEntries(id, showLoading = true) {
-    return getPropertyImpl(this, '/dict/{id}/entry', 'entries', DictEntryInfo, id, showLoading);
+  getEntryInfos(id, showLoading = true) {
+    return getPropertyImpl(this, '/dict/{id}/entry/info', 'entry infos', DictEntryInfo, id, showLoading);
   }
 
   /**
@@ -302,8 +335,8 @@ class DictApi {
    *     的所有词条的基本信息列表；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
    */
   @Log
-  getEntriesByCode(code, showLoading = true) {
-    return getPropertyByKeyImpl(this, '/dict/code/{code}/entry', 'entries', DictEntryInfo, 'code', code, showLoading);
+  getEntryInfosByCode(code, showLoading = true) {
+    return getPropertyByKeyImpl(this, '/dict/code/{code}/entry/info', 'entry infos', DictEntryInfo, 'code', code, showLoading);
   }
 
   /**
