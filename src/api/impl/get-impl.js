@@ -68,8 +68,9 @@ function getImpl(api, url, id, showLoading, options = {}) {
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getByKeyImpl(api, url, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType('keyName', keyName, String);
-  checkArgumentType('keyValue', keyValue, String);
+  // 检查调用方传入的参数：keyName 是参数名（如 'code'），keyValue 是要检查的值
+  // 这样错误信息会显示为 "The value of the argument 'code' must be a String"
+  checkArgumentType(keyName, keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   const params = toJSON({
     ...options,
@@ -132,8 +133,9 @@ function getInfoImpl(api, url, id, showLoading) {
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getInfoByKeyImpl(api, url, keyName, keyValue, showLoading) {
-  checkArgumentType('keyName', keyName, String);
-  checkArgumentType('keyValue', keyValue, String);
+  // 检查调用方传入的参数：keyName 是参数名（如 'code'），keyValue 是要检查的值
+  // 这样错误信息会显示为 "The value of the argument 'code' must be a String"
+  checkArgumentType(keyName, keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   if (showLoading) {
     loading.showGetting();
@@ -208,8 +210,9 @@ function getPropertyImpl(api, url, propertyName, propertyClass, id, showLoading,
  *     或`null`若该对象的属性值为`null`；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getPropertyByKeyImpl(api, url, propertyName, propertyClass, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType('keyName', keyName, String);
-  checkArgumentType('keyValue', keyValue, String);
+  // 检查调用方传入的参数：keyName 是参数名（如 'code'），keyValue 是要检查的值
+  // 这样错误信息会显示为 "The value of the argument 'code' must be a String"
+  checkArgumentType(keyName, keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   const params = toJSON({
     ...options,
@@ -249,8 +252,9 @@ function getPropertyByKeyImpl(api, url, propertyName, propertyClass, keyName, ke
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType('parentKeyName', parentKeyName, String);
-  checkArgumentType('parentKeyValue', parentKeyValue, [String, Number, BigInt]);
+  // 检查调用方传入的参数：parentKeyName 是父参数名，parentKeyValue 是要检查的父参数值
+  // 这样错误信息会显示为 "The value of the argument 'organizationId' must be a String, Number or BigInt"
+  checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
   checkArgumentType('keyName', keyName, String);
   checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
@@ -294,8 +298,9 @@ function getByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName,
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getInfoByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName, keyValue, showLoading) {
-  checkArgumentType('parentKeyName', parentKeyName, String);
-  checkArgumentType('parentKeyValue', parentKeyValue, [String, Number, BigInt]);
+  // 检查调用方传入的参数：parentKeyName 是父参数名，parentKeyValue 是要检查的父参数值
+  // 这样错误信息会显示为 "The value of the argument 'organizationId' must be a String, Number or BigInt"
+  checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
   checkArgumentType('keyName', keyName, String);
   checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
@@ -347,8 +352,9 @@ function getInfoByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyN
  */
 function getPropertyByParentAndKeyImpl(api, url, propertyName, propertyClass,
     parentKeyName, parentKeyValue, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType('parentKeyName', parentKeyName, String);
-  checkArgumentType('parentKeyValue', parentKeyValue, [String, Number, BigInt]);
+  // 检查调用方传入的参数：parentKeyName 是父参数名，parentKeyValue 是要检查的父参数值
+  // 这样错误信息会显示为 "The value of the argument 'organizationId' must be a String, Number or BigInt"
+  checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
   checkArgumentType('keyName', keyName, String);
   checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);

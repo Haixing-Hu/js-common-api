@@ -111,6 +111,8 @@ function updateByKeyImpl(api, url, keyName, entity, showLoading, options = {}) {
 function updatePropertyImpl(api, url, id, propertyName, propertyClass,
     propertyValue, showLoading, options = {}) {
   checkIdArgumentType(id);
+  // 检查调用方传入的属性参数：propertyName 是属性名（如 'state'），propertyValue 是要检查的属性值
+  // 这样错误信息会显示为 "The value of the argument 'state' must be a State"
   checkArgumentType(propertyName, propertyValue, propertyClass);
   checkArgumentType('showLoading', showLoading, Boolean);
   const data = toJSON(propertyValue, toJsonOptions);
@@ -152,7 +154,9 @@ function updatePropertyImpl(api, url, id, propertyName, propertyClass,
  */
 function updatePropertyByKeyImpl(api, url, keyName, keyValue, propertyName,
     propertyClass, propertyValue, showLoading, options = {}) {
+  // 检查调用方传入的参数：keyName 是参数名（如 'code'），keyValue 是要检查的值
   checkArgumentType(keyName, keyValue, String);
+  // 检查调用方传入的属性参数：propertyName 是属性名（如 'state'），propertyValue 是要检查的属性值
   checkArgumentType(propertyName, propertyValue, propertyClass);
   checkArgumentType('showLoading', showLoading, Boolean);
   const data = toJSON(propertyValue, toJsonOptions);

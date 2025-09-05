@@ -57,6 +57,8 @@ function existsImpl(api, url, id, showLoading) {
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function existsKeyImpl(api, url, keyName, keyValue, showLoading) {
+  // 检查调用方传入的参数：keyName 是参数名（如 'code'），keyValue 是要检查的值
+  // 这样错误信息会显示为 "The value of the argument 'code' must be a String"
   checkArgumentType(keyName, keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   if (showLoading) {
@@ -90,6 +92,8 @@ function existsKeyImpl(api, url, keyName, keyValue, showLoading) {
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function existsParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName, keyValue, showLoading) {
+  // 检查调用方传入的参数：parentKeyName 是父参数名，parentKeyValue 是要检查的父参数值
+  // keyName 是子参数名，keyValue 是要检查的子参数值
   checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
   checkArgumentType(keyName, keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
