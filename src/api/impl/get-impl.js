@@ -68,7 +68,8 @@ function getImpl(api, url, id, showLoading, options = {}) {
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getByKeyImpl(api, url, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType(keyName, keyValue, String);
+  checkArgumentType('keyName', keyName, String);
+  checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   const params = toJSON({
     ...options,
@@ -131,7 +132,8 @@ function getInfoImpl(api, url, id, showLoading) {
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getInfoByKeyImpl(api, url, keyName, keyValue, showLoading) {
-  checkArgumentType(keyName, keyValue, String);
+  checkArgumentType('keyName', keyName, String);
+  checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   if (showLoading) {
     loading.showGetting();
@@ -206,7 +208,8 @@ function getPropertyImpl(api, url, propertyName, propertyClass, id, showLoading,
  *     或`null`若该对象的属性值为`null`；若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getPropertyByKeyImpl(api, url, propertyName, propertyClass, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType(keyName, keyValue, String);
+  checkArgumentType('keyName', keyName, String);
+  checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   const params = toJSON({
     ...options,
@@ -246,8 +249,10 @@ function getPropertyByKeyImpl(api, url, propertyName, propertyClass, keyName, ke
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
-  checkArgumentType(keyName, keyValue, String);
+  checkArgumentType('parentKeyName', parentKeyName, String);
+  checkArgumentType('parentKeyValue', parentKeyValue, [String, Number, BigInt]);
+  checkArgumentType('keyName', keyName, String);
+  checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   const params = toJSON({
     ...options,
@@ -289,8 +294,10 @@ function getByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName,
  *     若操作失败，则解析失败并返回一个`ErrorInfo`对象。
  */
 function getInfoByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName, keyValue, showLoading) {
-  checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
-  checkArgumentType(keyName, keyValue, String);
+  checkArgumentType('parentKeyName', parentKeyName, String);
+  checkArgumentType('parentKeyValue', parentKeyValue, [String, Number, BigInt]);
+  checkArgumentType('keyName', keyName, String);
+  checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   if (showLoading) {
     loading.showGetting();
@@ -340,8 +347,10 @@ function getInfoByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyN
  */
 function getPropertyByParentAndKeyImpl(api, url, propertyName, propertyClass,
     parentKeyName, parentKeyValue, keyName, keyValue, showLoading, options = {}) {
-  checkArgumentType(parentKeyName, parentKeyValue, [String, Number, BigInt]);
-  checkArgumentType(keyName, keyValue, String);
+  checkArgumentType('parentKeyName', parentKeyName, String);
+  checkArgumentType('parentKeyValue', parentKeyValue, [String, Number, BigInt]);
+  checkArgumentType('keyName', keyName, String);
+  checkArgumentType('keyValue', keyValue, String);
   checkArgumentType('showLoading', showLoading, Boolean);
   const params = toJSON({
     ...options,
