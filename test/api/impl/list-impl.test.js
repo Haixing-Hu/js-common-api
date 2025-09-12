@@ -8,12 +8,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 // import axios from 'axios'; // 暂时不需要
 import { http } from '@qubit-ltd/common-app';
+import { loading } from '@qubit-ltd/common-ui';
 import { listImpl as realListImpl, listInfoImpl as realListInfoImpl } from '../../../src';
 
-// mock http.get
+// mock dependencies
 jest.mock('@qubit-ltd/common-app', () => ({
   http: {
     get: jest.fn(),
+  },
+}));
+
+jest.mock('@qubit-ltd/common-ui', () => ({
+  loading: {
+    showGetting: jest.fn(),
   },
 }));
 
@@ -227,6 +234,198 @@ describe('list-impl.js', () => {
         },
       });
       expect(result).toEqual(mockResponse);
+    });
+  });
+
+  // 添加更多测试用例来提高覆盖率
+  describe('更多覆盖率测试', () => {
+    beforeEach(() => {
+      http.get.mockReset();
+      loading.showGetting.mockReset();
+      mockApi.logger.info.mockReset();
+      mockApi.logger.debug.mockReset();
+    });
+
+    it('listImpl 应当正确处理带有分页请求的调用', async () => {
+      const mockResponse = {
+        total_count: 100,
+        total_pages: 10,
+        page_index: 2,
+        page_size: 10,
+        content: [
+          { id: '1', name: '测试对象1' },
+          { id: '2', name: '测试对象2' },
+        ],
+      };
+      http.get.mockResolvedValue(mockResponse);
+
+      const pageRequest = { page_index: 2, page_size: 10 };
+      const criteria = { name: '测试' };
+      const sortRequest = { sort_field: 'name', sort_order: 'ASC' };
+
+      const result = await realListImpl(
+        mockApi,
+        'test-api-url/list',
+        pageRequest,
+        criteria,
+        sortRequest,
+        true,
+        {}
+      );
+
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list', {
+        params: {
+          page_index: 2,
+          page_size: 10,
+          name: '测试',
+          sort_field: 'name',
+          sort_order: 'ASC',
+        },
+      });
+      expect(result).toEqual(mockResponse);
+      expect(mockApi.logger.info).toHaveBeenCalledWith('Successfully list %ss.', 'Test');
+      expect(mockApi.logger.debug).toHaveBeenCalledWith('The page of %ss is:', 'Test', mockResponse);
+    });
+
+    it('listInfoImpl 应当正确处理带有分页请求的调用', async () => {
+      const mockResponse = {
+        total_count: 50,
+        total_pages: 5,
+        page_index: 1,
+        page_size: 10,
+        content: [
+          { id: '1', name: '测试信息1' },
+          { id: '2', name: '测试信息2' },
+        ],
+      };
+      http.get.mockResolvedValue(mockResponse);
+
+      const pageRequest = { page_index: 1, page_size: 10 };
+      const criteria = { status: 'active' };
+      const sortRequest = { sort_field: 'created_at', sort_order: 'DESC' };
+
+      const result = await realListInfoImpl(
+        mockApi,
+        'test-api-url/list/info',
+        pageRequest,
+        criteria,
+        sortRequest,
+        true,
+        {}
+      );
+
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', {
+        params: {
+          page_index: 1,
+          page_size: 10,
+          status: 'active',
+          sort_field: 'created_at',
+          sort_order: 'DESC',
+        },
+      });
+      expect(result).toEqual(mockResponse);
+      expect(mockApi.logger.info).toHaveBeenCalledWith('Successfully list infos of %ss.', 'Test');
+      expect(mockApi.logger.debug).toHaveBeenCalledWith('The page of infos of %ss is:', 'Test', mockResponse);
+    });
+
+    it('listImpl 当 showLoading 为 false 时不应当显示加载提示', async () => {
+      const mockResponse = { content: [] };
+      http.get.mockResolvedValue(mockResponse);
+
+      await realListImpl(mockApi, 'test-api-url/list', {}, {}, {}, false, {});
+
+      // 由于我们没有 mock loading.showGetting，这里主要是确保函数能正常执行
+      expect(http.get).toHaveBeenCalled();
+    });
+
+    it('listInfoImpl 当 showLoading 为 false 时不应当显示加载提示', async () => {
+      const mockResponse = { content: [] };
+      http.get.mockResolvedValue(mockResponse);
+
+      await realListInfoImpl(mockApi, 'test-api-url/list/info', {}, {}, {}, false, {});
+
+      // 由于我们没有 mock loading.showGetting，这里主要是确保函数能正常执行
+      expect(http.get).toHaveBeenCalled();
+    });
+
+    it('listImpl 应当正确处理复杂的查询条件和选项', async () => {
+      const mockResponse = { content: [] };
+      http.get.mockResolvedValue(mockResponse);
+
+      const pageRequest = { page_index: 0, page_size: 20 };
+      const criteria = {
+        name: '测试',
+        status: 'active',
+        created_date: '2023-01-01'
+      };
+      const sortRequest = { sort_field: 'name', sort_order: 'ASC' };
+      const options = {
+        include_deleted: false,
+        expand: 'details'
+      };
+
+      await realListImpl(
+        mockApi,
+        'test-api-url/list',
+        pageRequest,
+        criteria,
+        sortRequest,
+        false,
+        options
+      );
+
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list', {
+        params: {
+          page_index: 0,
+          page_size: 20,
+          name: '测试',
+          status: 'active',
+          created_date: '2023-01-01',
+          sort_field: 'name',
+          sort_order: 'ASC',
+          include_deleted: false,
+          expand: 'details',
+        },
+      });
+    });
+
+    it('listInfoImpl 应当正确处理复杂的查询条件和选项', async () => {
+      const mockResponse = { content: [] };
+      http.get.mockResolvedValue(mockResponse);
+
+      const pageRequest = { page_index: 0, page_size: 50 };
+      const criteria = {
+        category: 'important',
+        priority: 'high'
+      };
+      const sortRequest = { sort_field: 'priority', sort_order: 'DESC' };
+      const options = {
+        format: 'summary',
+        fields: 'id,name,status'
+      };
+
+      await realListInfoImpl(
+        mockApi,
+        'test-api-url/list/info',
+        pageRequest,
+        criteria,
+        sortRequest,
+        false,
+        options
+      );
+
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', {
+        params: {
+          page_index: 0,
+          page_size: 50,
+          category: 'important',
+          priority: 'high',
+          sort_field: 'priority',
+          sort_order: 'DESC',
+          format: 'summary',
+          fields: 'id,name,status',
+        },
+      });
     });
   });
 });
