@@ -6,18 +6,16 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import axios from 'axios';
-import { listImpl as realListImpl, listInfoImpl as realListInfoImpl } from '../../../src';
+// import axios from 'axios'; // 暂时不需要
 import { http } from '@qubit-ltd/common-app';
+import { listImpl as realListImpl, listInfoImpl as realListInfoImpl } from '../../../src';
 
 // mock http.get
-jest.mock('@qubit-ltd/common-app', () => {
-  return {
-    http: {
-      get: jest.fn(),
-    },
-  };
-});
+jest.mock('@qubit-ltd/common-app', () => ({
+  http: {
+    get: jest.fn(),
+  },
+}));
 
 // 构造最简 mock api
 const mockApi = {
@@ -40,23 +38,23 @@ const mockApi = {
 function listImpl(url, criteria, options) {
   return realListImpl(
     mockApi,
-    url + '/list',
+    `${url}/list`,
     {},
     criteria ?? {},
     {},
     false,
-    options ?? {}
+    options ?? {},
   );
 }
 function listInfoImpl(url, criteria, options) {
   return realListInfoImpl(
     mockApi,
-    url + '/list/info',
+    `${url}/list/info`,
     {},
     criteria ?? {},
     {},
     false,
-    options ?? {}
+    options ?? {},
   );
 }
 
@@ -91,16 +89,16 @@ describe('list-impl.js', () => {
       const result = await listImpl('test-api-url', criteria, { headers: { 'Content-Type': 'application/json' } });
 
       // 验证
-      expect(http.get).toHaveBeenCalledWith('test-api-url/list', { 
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list', {
         params: {
           name: '测试',
           state: 'NORMAL',
           page_index: 0,
           page_size: 10,
           headers: {
-            'content-_type': 'application/json',
+            'content-type': 'application/json',
           },
-        } 
+        },
       });
       expect(result).toEqual(mockResponse);
     });
@@ -163,13 +161,13 @@ describe('list-impl.js', () => {
       const result = await listInfoImpl('test-api-url', criteria);
 
       // 验证
-      expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', { 
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', {
         params: {
           name: '测试',
           state: 'NORMAL',
           page_index: 0,
           page_size: 10,
-        } 
+        },
       });
       expect(result).toEqual(mockResponse);
     });
@@ -219,14 +217,14 @@ describe('list-impl.js', () => {
       const result = await listInfoImpl('test-api-url', criteria, options);
 
       // 验证
-      expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', { 
+      expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', {
         params: {
           name: '测试',
           headers: {
             'authorization': 'Bearer token123',
           },
           timeout: 5000,
-        } 
+        },
       });
       expect(result).toEqual(mockResponse);
     });

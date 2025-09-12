@@ -122,7 +122,10 @@ function updatePropertyImpl(api, url, id, propertyName, propertyClass,
   }
   return http.put(url.replaceAll('{id}', stringifyId(id)), data, { params }).then((timestamp) => {
     api.logger.info('Successfully update the %s of a %s by its ID "%s" at:',
-      propertyName, api.entityClass.name, id, timestamp);
+      propertyName,
+      api.entityClass.name,
+      id,
+      timestamp);
     return timestamp;
   });
 }
@@ -166,7 +169,11 @@ function updatePropertyByKeyImpl(api, url, keyName, keyValue, propertyName,
   }
   return http.put(url.replaceAll(`{${keyName}}`, keyValue), data, { params }).then((timestamp) => {
     api.logger.info('Successfully update the %s of a %s by its %s "%s" at:',
-      propertyName, api.entityClass.name, keyName, keyValue, timestamp);
+      propertyName,
+      api.entityClass.name,
+      keyName,
+      keyValue,
+      timestamp);
     return timestamp;
   });
 }

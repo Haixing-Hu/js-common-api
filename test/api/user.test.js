@@ -6,42 +6,38 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import axios from 'axios';
-import { userApi } from '../../src';
+// import axios from 'axios'; // 暂时不需要
 import { loading } from '@qubit-ltd/common-ui';
 import { http } from '@qubit-ltd/common-app';
+import { userApi } from '../../src';
 
 // 模拟 http
-jest.mock('@qubit-ltd/common-app', () => {
-  return {
-    http: {
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-    },
-  };
-});
+jest.mock('@qubit-ltd/common-app', () => ({
+  http: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
 
 // 模拟 loading
-jest.mock('@qubit-ltd/common-ui', () => {
-  return {
-    loading: {
-      showGetting: jest.fn(),
-      showAdding: jest.fn(),
-      showUpdating: jest.fn(),
-      showDeleting: jest.fn(),
-      setImpl: jest.fn(),
-    },
-  };
-});
+jest.mock('@qubit-ltd/common-ui', () => ({
+  loading: {
+    showGetting: jest.fn(),
+    showAdding: jest.fn(),
+    showUpdating: jest.fn(),
+    showDeleting: jest.fn(),
+    setImpl: jest.fn(),
+  },
+}));
 
 describe('user.js', () => {
   // 在每次测试前重置 mock
   beforeEach(() => {
     // 设置 loading 实现
     loading.setImpl({});
-    
+
     http.get.mockReset();
     http.post.mockReset();
     http.put.mockReset();
@@ -293,4 +289,4 @@ describe('user.js', () => {
       expect(result).toEqual(mockResponse);
     });
   });
-}); 
+});

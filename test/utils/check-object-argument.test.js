@@ -12,13 +12,21 @@ import checkObjectArgument from '../../src/utils/check-object-argument';
 // 为测试创建一个简单的类
 class TestClass {
   id = null;
+
   code = '';
+
   name = '';
+
   state = State.NORMAL;
+
   category = null;
+
   description = '';
+
   createTime = '';
+
   modifyTime = '';
+
   deleteTime = '';
 }
 

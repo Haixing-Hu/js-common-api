@@ -270,7 +270,11 @@ function getByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName,
   ).then((obj) => {
     const result = api.entityClass.create(obj, assignOptions);
     api.logger.info('Successfully get the %s by parent %s "%s" and its %s "%s".',
-        api.entityClass.name, parentKeyName, parentKeyValue, keyName, keyValue);
+      api.entityClass.name,
+      parentKeyName,
+      parentKeyValue,
+      keyName,
+      keyValue);
     api.logger.debug('The %s is:', api.entityClass.name, result);
     return result;
   });
@@ -316,8 +320,7 @@ function getInfoByParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyN
       parentKeyName,
       parentKeyValue,
       keyName,
-      keyValue,
-    );
+      keyValue);
     api.logger.debug('The info of the %s is:', api.entityClass.name, result);
     return result;
   });
@@ -375,8 +378,7 @@ function getPropertyByParentAndKeyImpl(api, url, propertyName, propertyClass,
       parentKeyName,
       parentKeyValue,
       keyName,
-      keyValue,
-    );
+      keyValue);
     api.logger.debug('The %s of the %s is:', propertyName, api.entityClass.name, result);
     return result;
   });

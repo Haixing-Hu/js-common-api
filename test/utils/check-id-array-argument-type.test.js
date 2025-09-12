@@ -54,4 +54,4 @@ describe('checkIdArrayArgumentType', () => {
       expect(e.message).toContain('testIds[1]');
     }
   });
-}); 
+});

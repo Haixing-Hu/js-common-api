@@ -32,7 +32,8 @@ describe('checkArgumentSortRequest', () => {
     () => {
       const sortRequest = { sortField: 'name', sortOrder: 123 };
       expect(() => checkSortRequestArgument(sortRequest)).toThrow(TypeError);
-    });
+    },
+  );
 
   it('does not throw when sortRequest is a valid SortRequest object', () => {
     const sortRequest = new SortRequest('name', SortOrder.ASC);

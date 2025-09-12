@@ -23,7 +23,7 @@ function checkIdArrayArgumentType(value, name = 'ids') {
   if ((typeof name !== 'string') && (!(name instanceof String))) {
     throw new TypeError('The name must be a string.');
   }
-  checkArgumentType(name, value, Array);  
+  checkArgumentType(name, value, Array);
   // 检查数组中的每个元素是否为合法的ID
   if (value && value.length > 0) {
     for (let i = 0; i < value.length; i++) {
@@ -32,4 +32,4 @@ function checkIdArrayArgumentType(value, name = 'ids') {
   }
 }
 
-export default checkIdArrayArgumentType; 
+export default checkIdArrayArgumentType;

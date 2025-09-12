@@ -85,7 +85,7 @@ class FileApi {
    */
   @Log
   uploadWithHash(filename, algorithm, hash, file,
-      contentType = undefined, onUploadProgress = undefined, showLoading = true) {
+    contentType = undefined, onUploadProgress = undefined, showLoading = true) {
     checkArgumentType('filename', filename, String);
     checkArgumentType('algorithm', algorithm, String);
     checkArgumentType('hash', hash, String);

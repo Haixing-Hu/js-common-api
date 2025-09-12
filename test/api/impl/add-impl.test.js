@@ -6,18 +6,16 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import axios from 'axios';
-import addImpl from '../../../src/api/impl/add-impl';
+// import axios from 'axios'; // 暂时不需要
 import { http } from '@qubit-ltd/common-app';
+import addImpl from '../../../src/api/impl/add-impl';
 
 // mock http.post
-jest.mock('@qubit-ltd/common-app', () => {
-  return {
-    http: {
-      post: jest.fn(),
-    },
-  };
-});
+jest.mock('@qubit-ltd/common-app', () => ({
+  http: {
+    post: jest.fn(),
+  },
+}));
 
 // 定义一个测试类
 class TestEntity {
@@ -66,7 +64,7 @@ describe('add-impl.js', () => {
       const result = await addImpl(mockApi, 'test-api-url', newObj, false, { headers: { 'Content-Type': 'application/json' } });
 
       // 验证
-      expect(http.post).toHaveBeenCalledWith('test-api-url', newObj, { params: { headers: { 'content-_type': 'application/json' } } });
+      expect(http.post).toHaveBeenCalledWith('test-api-url', newObj, { params: { headers: { 'content-type': 'application/json' } } });
       expect(result).toEqual(mockResponse);
     });
 
@@ -107,9 +105,9 @@ describe('add-impl.js', () => {
     it('应当正确处理带有选项的请求', async () => {
       // 模拟对象、选项和返回数据
       const newObj = { code: 'test-code', name: '测试对象' };
-      const options = { 
+      const options = {
         headers: { 'Authorization': 'Bearer token123' },
-        timeout: 5000
+        timeout: 5000,
       };
       const mockResponse = {
         id: '123',
@@ -126,4 +124,4 @@ describe('add-impl.js', () => {
       expect(result).toEqual(mockResponse);
     });
   });
-}); 
+});

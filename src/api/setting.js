@@ -118,7 +118,7 @@ class SettingApi {
   update(name, value, showLoading = true) {
     return updatePropertyImpl(this, '/setting/{id}', name, 'value', String, value, showLoading);
   }
-  
+
   /**
    * 以布尔值形式获取指定设置的值。
    *
@@ -144,7 +144,7 @@ class SettingApi {
     }
     return null;
   }
-  
+
   /**
    * 以数字形式获取指定设置的值。
    *
@@ -164,7 +164,7 @@ class SettingApi {
     }
     return null;
   }
-  
+
   /**
    * 以长整数形式获取指定设置的值。
    *
@@ -188,7 +188,7 @@ class SettingApi {
     }
     return null;
   }
-  
+
   /**
    * 以浮点数形式获取指定设置的值。
    *
@@ -208,7 +208,7 @@ class SettingApi {
     }
     return null;
   }
-  
+
   /**
    * 以双精度浮点数形式获取指定设置的值。
    *
@@ -224,7 +224,7 @@ class SettingApi {
   async getDouble(name, showLoading = true) {
     return this.getFloat(name, showLoading);
   }
-  
+
   /**
    * 以字符串形式获取指定设置的值。
    *
@@ -244,7 +244,7 @@ class SettingApi {
     }
     return null;
   }
-  
+
   /**
    * 以日期形式获取指定设置的值。
    *
@@ -283,7 +283,7 @@ class SettingApi {
     const strValue = value === null || value === undefined ? null : String(value);
     return this.update(name, strValue, showLoading);
   }
-  
+
   /**
    * 以整数的形式设置指定设置的值。
    *
@@ -302,7 +302,7 @@ class SettingApi {
     const strValue = value === null || value === undefined ? null : String(value);
     return this.update(name, strValue, showLoading);
   }
-  
+
   /**
    * 以长整数的形式设置指定设置的值。
    *
@@ -321,7 +321,7 @@ class SettingApi {
     const strValue = value === null || value === undefined ? null : String(value);
     return this.update(name, strValue, showLoading);
   }
-  
+
   /**
    * 以浮点数的形式设置指定设置的值。
    *
@@ -340,7 +340,7 @@ class SettingApi {
     const strValue = value === null || value === undefined ? null : String(value);
     return this.update(name, strValue, showLoading);
   }
-  
+
   /**
    * 以双精度浮点数的形式设置指定设置的值。
    *
@@ -358,7 +358,7 @@ class SettingApi {
   setDouble(name, value, showLoading = true) {
     return this.setFloat(name, value, showLoading);
   }
-  
+
   /**
    * 以字符串的形式设置指定设置的值。
    *
@@ -376,7 +376,7 @@ class SettingApi {
   setString(name, value, showLoading = true) {
     return this.update(name, value, showLoading);
   }
-  
+
   /**
    * 以日期的形式设置指定设置的值。
    *
@@ -395,7 +395,7 @@ class SettingApi {
     const strValue = value === null || value === undefined ? null : value.toISOString();
     return this.update(name, strValue, showLoading);
   }
-  
+
   /**
    * 检查并更新指定的设置的值。
    *

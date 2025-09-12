@@ -6,18 +6,16 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import axios from 'axios';
-import { getImpl, getByKeyImpl, getInfoImpl, getInfoByKeyImpl } from '../../../src/api/impl/get-impl';
+// import axios from 'axios'; // 暂时不需要
 import { http } from '@qubit-ltd/common-app';
+import { getImpl, getByKeyImpl, getInfoImpl, getInfoByKeyImpl } from '../../../src/api/impl/get-impl';
 
 // mock http.get
-jest.mock('@qubit-ltd/common-app', () => {
-  return {
-    http: {
-      get: jest.fn(),
-    },
-  };
-});
+jest.mock('@qubit-ltd/common-app', () => ({
+  http: {
+    get: jest.fn(),
+  },
+}));
 
 // 构造最简 mock api
 const mockApi = {
@@ -55,7 +53,7 @@ describe('get-impl.js', () => {
       const result = await getImpl(mockApi, 'test-api-url/{id}', '123', false, { headers: { 'Content-Type': 'application/json' } });
 
       // 验证
-      expect(http.get).toHaveBeenCalledWith('test-api-url/123', { params: { headers: { 'content-_type': 'application/json' } } });
+      expect(http.get).toHaveBeenCalledWith('test-api-url/123', { params: { headers: { 'content-type': 'application/json' } } });
       expect(result).toEqual(mockResponse);
     });
 
@@ -83,7 +81,7 @@ describe('get-impl.js', () => {
       const result = await getByKeyImpl(mockApi, 'test-api-url/{code}', 'code', 'test-code', false, { headers: { 'Content-Type': 'application/json' } });
 
       // 验证
-      expect(http.get).toHaveBeenCalledWith('test-api-url/test-code', { params: { headers: { 'content-_type': 'application/json' } } });
+      expect(http.get).toHaveBeenCalledWith('test-api-url/test-code', { params: { headers: { 'content-type': 'application/json' } } });
       expect(result).toEqual(mockResponse);
     });
   });
@@ -125,4 +123,4 @@ describe('get-impl.js', () => {
       expect(result).toEqual(mockResponse);
     });
   });
-}); 
+});

@@ -103,7 +103,11 @@ function existsParentAndKeyImpl(api, url, parentKeyName, parentKeyValue, keyName
   const theUrl = url.replaceAll(`{${parentKeyName}}`, stringifyId(parentKeyValue)).replaceAll(`{${keyName}}`, keyValue);
   return http.head(theUrl).then(() => {
     api.logger.info('Successfully checked the existence of %s by parent %s "%s" and its %s "%s".',
-        api.entityClass.name, parentKeyName, parentKeyValue, keyName, keyValue);
+      api.entityClass.name,
+      parentKeyName,
+      parentKeyValue,
+      keyName,
+      keyValue);
     return true;
   });
 }
