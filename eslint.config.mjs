@@ -26,6 +26,7 @@ export default [
       },
       globals: {
         BigInt: true,
+        Blob: 'readonly',
         File: 'readonly',
         FormData: 'readonly',
         URLSearchParams: 'readonly',

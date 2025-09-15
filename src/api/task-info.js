@@ -6,7 +6,7 @@
 //    All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
-import { PageRequest, TaskInfo, TaskStatus } from '@qubit-ltd/common-model';
+import { TaskInfo, TaskStatus } from '@qubit-ltd/common-model';
 import { HasLogger, Log } from '@qubit-ltd/logging';
 import { getImpl, getPropertyImpl } from './impl/get-impl';
 import { listImpl } from './impl/list-impl';

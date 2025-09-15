@@ -18,7 +18,7 @@ import {
   getPropertyByKeyImpl,
   getByParentAndKeyImpl,
   getInfoByParentAndKeyImpl,
-  getPropertyByParentAndKeyImpl
+  getPropertyByParentAndKeyImpl,
 } from '../../../src/api/impl/get-impl';
 
 // mock dependencies
@@ -279,7 +279,7 @@ describe('get-impl.js', () => {
         '456',
         'code',
         'TEST_CODE',
-        false
+        false,
       );
 
       expect(http.get).toHaveBeenCalledWith('test-api-url/"456"/TEST_CODE/property', { params: {} });
@@ -312,7 +312,7 @@ describe('get-impl.js', () => {
         'code',
         'TEST_CODE',
         false,
-        options
+        options,
       );
 
       expect(http.get).toHaveBeenCalledWith('test-api-url/"456"/TEST_CODE/property', { params: { include_details: true } });

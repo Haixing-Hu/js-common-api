@@ -270,7 +270,7 @@ describe('list-impl.js', () => {
         criteria,
         sortRequest,
         true,
-        {}
+        {},
       );
 
       expect(http.get).toHaveBeenCalledWith('test-api-url/list', {
@@ -311,7 +311,7 @@ describe('list-impl.js', () => {
         criteria,
         sortRequest,
         true,
-        {}
+        {},
       );
 
       expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', {
@@ -356,12 +356,12 @@ describe('list-impl.js', () => {
       const criteria = {
         name: '测试',
         status: 'active',
-        created_date: '2023-01-01'
+        created_date: '2023-01-01',
       };
       const sortRequest = { sort_field: 'name', sort_order: 'ASC' };
       const options = {
         include_deleted: false,
-        expand: 'details'
+        expand: 'details',
       };
 
       await realListImpl(
@@ -371,7 +371,7 @@ describe('list-impl.js', () => {
         criteria,
         sortRequest,
         false,
-        options
+        options,
       );
 
       expect(http.get).toHaveBeenCalledWith('test-api-url/list', {
@@ -396,12 +396,12 @@ describe('list-impl.js', () => {
       const pageRequest = { page_index: 0, page_size: 50 };
       const criteria = {
         category: 'important',
-        priority: 'high'
+        priority: 'high',
       };
       const sortRequest = { sort_field: 'priority', sort_order: 'DESC' };
       const options = {
         format: 'summary',
-        fields: 'id,name,status'
+        fields: 'id,name,status',
       };
 
       await realListInfoImpl(
@@ -411,7 +411,7 @@ describe('list-impl.js', () => {
         criteria,
         sortRequest,
         false,
-        options
+        options,
       );
 
       expect(http.get).toHaveBeenCalledWith('test-api-url/list/info', {

@@ -2627,10 +2627,10 @@ __metadata:
     "@babel/runtime": "npm:^7.28.4"
     "@jest/core": "npm:^30.1.3"
     "@qubit-ltd/clone": "npm:^1.13.4"
-    "@qubit-ltd/common-app": "npm:^1.11.22"
+    "@qubit-ltd/common-app": "npm:^1.11.23"
     "@qubit-ltd/common-decorator": "npm:^3.10.5"
     "@qubit-ltd/common-filter": "npm:^1.11.1"
-    "@qubit-ltd/common-model": "npm:^4.22.1"
+    "@qubit-ltd/common-model": "npm:^4.22.2"
     "@qubit-ltd/common-normalizer": "npm:^1.8.5"
     "@qubit-ltd/common-ui": "npm:^1.15.2"
     "@qubit-ltd/common-util": "npm:^5.4.7"
@@ -2654,7 +2654,7 @@ __metadata:
     "@rollup/plugin-json": "npm:^6.1.0"
     "@rollup/plugin-node-resolve": "npm:^16.0.1"
     "@rollup/plugin-terser": "npm:^0.4.4"
-    axios: "npm:^1.12.1"
+    axios: "npm:^1.12.2"
     babel-jest: "npm:^29.7.0"
     babel-plugin-transform-object-hasown: "npm:^1.1.0"
     chai: "npm:^6.0.1"
@@ -2678,22 +2678,22 @@ __metadata:
     vue: "npm:^3.5.21"
     vue-eslint-parser: "npm:^10.2.0"
   peerDependencies:
-    "@babel/runtime": ^7.26.0
-    "@qubit-ltd/common-app": ^1.11.20
-    "@qubit-ltd/common-decorator": ^3.10.3
-    "@qubit-ltd/common-filter": ^1.10.2
-    "@qubit-ltd/common-model": ^4.22.0
-    "@qubit-ltd/common-normalizer": ^1.8.3
-    "@qubit-ltd/common-ui": ^1.14.2
-    "@qubit-ltd/common-util": ^5.4.3
-    "@qubit-ltd/config": ^1.2.2
-    "@qubit-ltd/logging": ^1.4.10
+    "@babel/runtime": ^7.28.4
+    "@qubit-ltd/common-app": ^1.11.23
+    "@qubit-ltd/common-decorator": ^3.10.5
+    "@qubit-ltd/common-filter": ^1.11.1
+    "@qubit-ltd/common-model": ^4.22.2
+    "@qubit-ltd/common-normalizer": ^1.8.5
+    "@qubit-ltd/common-ui": ^1.15.2
+    "@qubit-ltd/common-util": ^5.4.7
+    "@qubit-ltd/config": ^1.2.4
+    "@qubit-ltd/logging": ^1.4.12
   languageName: unknown
   linkType: soft
 
-"@qubit-ltd/common-app@npm:^1.11.22":
-  version: 1.11.22
-  resolution: "@qubit-ltd/common-app@npm:1.11.22"
+"@qubit-ltd/common-app@npm:^1.11.23":
+  version: 1.11.23
+  resolution: "@qubit-ltd/common-app@npm:1.11.23"
   peerDependencies:
     "@babel/runtime": ^7.28.4
     "@qubit-ltd/common-ui": ^1.15.2
@@ -2704,8 +2704,8 @@ __metadata:
     "@qubit-ltd/pinia-decorator": ^3.4.4
     "@qubit-ltd/storage": ^1.4.4
     "@qubit-ltd/type-detect": ^2.2.3
-    axios: ^1.9.0
-  checksum: 10c0/4a880853a0c3e66a0ea1781349739f68df957d3610860c948fcda5ea77e14aaa92c33200d2d8eccfb6bbd071f37518cfed4c57aa8f63d144019da00fdefc09a2
+    axios: ^1.12.2
+  checksum: 10c0/287cd926e0dda3e4e94b59b3a8a9dee7b33727055e0751cf6958f3e09da6032e295129be08222c4e7493f534e5437295c86ba8f81ee930e3b8160dbbadf2b733
   languageName: node
   linkType: hard
 
@@ -2738,9 +2738,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@qubit-ltd/common-model@npm:^4.22.1":
-  version: 4.22.1
-  resolution: "@qubit-ltd/common-model@npm:4.22.1"
+"@qubit-ltd/common-model@npm:^4.22.2":
+  version: 4.22.2
+  resolution: "@qubit-ltd/common-model@npm:4.22.2"
   peerDependencies:
     "@babel/runtime": ^7.28.4
     "@qubit-ltd/common-decorator": ^3.10.5
@@ -2750,7 +2750,7 @@ __metadata:
     "@qubit-ltd/common-validator": ^4.10.1
     "@qubit-ltd/logging": ^1.4.12
     dayjs: ^1.11.18
-  checksum: 10c0/ee374f5b3548f4f484626e8adb351051da1fcd5c394f87d195c5469284050123a819a7729e73541f4665a4fa92d4ecade7332bfba3cb14d5113c7994049ea1dd
+  checksum: 10c0/1b3c1d147a03b78e99993f6624d1bfc47c4e80f3a51637760267f1f00a5cd2152ca1a2798e102d115b597c4c712c363d40af271c77ad1e668e7226811544b91d
   languageName: node
   linkType: hard
 
@@ -4034,14 +4034,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.12.1":
-  version: 1.12.1
-  resolution: "axios@npm:1.12.1"
+"axios@npm:^1.12.2":
+  version: 1.12.2
+  resolution: "axios@npm:1.12.2"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/eda4dff56c02d13b950fd9487b678ac197ce5f21dfc98df73632df29e45d8dd24602a34e8d9b6e016d84a41ef7fd7fc4a7618060a72cc536b91cda1eaa9cd907
+  checksum: 10c0/80b063e318cf05cd33a4d991cea0162f3573481946f9129efb7766f38fde4c061c34f41a93a9f9521f02b7c9565ccbc197c099b0186543ac84a24580017adfed
   languageName: node
   linkType: hard
 

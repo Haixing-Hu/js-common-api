@@ -13,7 +13,7 @@ import {
   updateByKeyImpl,
   updatePropertyImpl,
   updatePropertyByKeyImpl,
-  updateByParentAndKeyImpl
+  updateByParentAndKeyImpl,
 } from '../../../src/api/impl/update-impl';
 
 // mock dependencies
@@ -210,7 +210,7 @@ describe('update-impl.js', () => {
         'name',
         String,
         '新名称',
-        false
+        false,
       );
 
       expect(http.put).toHaveBeenCalledWith('test-api-url/TEST_CODE/property', '新名称', { params: {} });
@@ -234,7 +234,7 @@ describe('update-impl.js', () => {
         'name',
         String,
         '新名称',
-        false
+        false,
       )).toThrow(TypeError);
     });
 
@@ -247,7 +247,7 @@ describe('update-impl.js', () => {
         'name',
         Number,
         '新名称',
-        false
+        false,
       )).toThrow(TypeError);
     });
 
@@ -263,7 +263,7 @@ describe('update-impl.js', () => {
         'name',
         String,
         '新名称',
-        true
+        true,
       );
 
       expect(loading.showUpdating).toHaveBeenCalled();
@@ -283,7 +283,7 @@ describe('update-impl.js', () => {
         String,
         '新名称',
         false,
-        options
+        options,
       );
 
       expect(http.put).toHaveBeenCalledWith('test-api-url/TEST_CODE/property', '新名称', { params: { force: true } });
@@ -303,7 +303,7 @@ describe('update-impl.js', () => {
         '456',
         'code',
         entity,
-        false
+        false,
       );
 
       expect(http.put).toHaveBeenCalledWith('test-api-url/"456"/TEST_CODE', { parent_id: '456', code: 'TEST_CODE', name: '测试对象' }, { params: {} });
@@ -330,7 +330,7 @@ describe('update-impl.js', () => {
         456,
         'code',
         entity,
-        false
+        false,
       );
 
       expect(http.put).toHaveBeenCalledWith('test-api-url/456/TEST_CODE', { parent_id: 456, code: 'TEST_CODE', name: '测试对象' }, { params: {} });
@@ -345,7 +345,7 @@ describe('update-impl.js', () => {
         {},
         'code',
         entity,
-        false
+        false,
       )).toThrow(TypeError);
     });
 
@@ -358,7 +358,7 @@ describe('update-impl.js', () => {
         '456',
         'code',
         entity,
-        false
+        false,
       )).toThrow(TypeError);
     });
 
@@ -370,7 +370,7 @@ describe('update-impl.js', () => {
         '456',
         'code',
         'invalid',
-        false
+        false,
       )).toThrow(TypeError);
     });
 
@@ -386,7 +386,7 @@ describe('update-impl.js', () => {
         '456',
         'code',
         entity,
-        true
+        true,
       );
 
       expect(loading.showUpdating).toHaveBeenCalled();
@@ -406,7 +406,7 @@ describe('update-impl.js', () => {
         'code',
         entity,
         false,
-        options
+        options,
       );
 
       expect(http.put).toHaveBeenCalledWith('test-api-url/"456"/TEST_CODE', { parent_id: '456', code: 'TEST_CODE', name: '测试对象' }, { params: { force: true } });
@@ -449,7 +449,7 @@ describe('update-impl.js', () => {
         'name',
         String,
         '新名称',
-        'invalid'
+        'invalid',
       )).toThrow(TypeError);
     });
 
@@ -462,7 +462,7 @@ describe('update-impl.js', () => {
         '456',
         'code',
         entity,
-        'invalid'
+        'invalid',
       )).toThrow(TypeError);
     });
   });

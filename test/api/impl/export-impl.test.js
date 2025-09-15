@@ -8,7 +8,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 import { http } from '@qubit-ltd/common-app';
 import { loading } from '@qubit-ltd/common-ui';
-import { CommonMimeType } from '@qubit-ltd/common-model';
 import exportImpl from '../../../src/api/impl/export-impl';
 
 // mock dependencies

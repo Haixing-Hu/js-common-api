@@ -182,7 +182,7 @@ class SettingApi {
     if (setting && setting.value !== null && setting.value !== undefined) {
       try {
         return BigInt(setting.value);
-      } catch (e) {
+      } catch {
         return parseInt(setting.value, 10);
       }
     }

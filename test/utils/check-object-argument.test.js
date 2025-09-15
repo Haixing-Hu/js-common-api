@@ -9,27 +9,6 @@
 import { State } from '@qubit-ltd/common-model';
 import checkObjectArgument from '../../src/utils/check-object-argument';
 
-// 为测试创建一个简单的类
-class TestClass {
-  id = null;
-
-  code = '';
-
-  name = '';
-
-  state = State.NORMAL;
-
-  category = null;
-
-  description = '';
-
-  createTime = '';
-
-  modifyTime = '';
-
-  deleteTime = '';
-}
-
 // 定义测试的查询条件字段
 const TEST_CRITERIA_DEFINITIONS = [
   // 名称中应包含的字符串
